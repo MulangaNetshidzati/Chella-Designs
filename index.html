@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chella Designs - Online Shop</title>
+    <style>
+        /* --- Color Palette based on the Logo --- */
+        :root {
+            --pink: #f48fb1;
+            --teal: #4db6ac;
+            --gold: #d4af37;
+            --text-dark: #333333;
+            --bg-light: #fdfbf7;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* --- Navigation --- */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Placeholder for the provided logo */
+        .logo {
+            width: 120px;
+            height: auto;
+            /* Replace URL with your actual logo image path */
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="50"><text x="10" y="30" font-family="cursive" font-size="24" fill="%23f48fb1">Chella</text><text x="10" y="45" font-family="sans-serif" font-size="10" fill="%234db6ac">DESIGNS</text></svg>') no-repeat center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--pink);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -15px;
+            background-color: var(--pink);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        /* --- Main Content Sections --- */
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--gold);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--pink);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        /* --- Product Grid --- */
+        .category-title {
+            color: var(--teal);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card h4 {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .product-price {
+            color: var(--pink);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: var(--teal);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #3a9d94;
+        }
+
+        .btn-pink {
+            background-color: var(--pink);
+        }
+
+        .btn-pink:hover {
+            background-color: #e07b9e;
+        }
+
+        /* --- Forms & Auth --- */
+        .form-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* --- Cart & Invoice --- */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .discount-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .discount-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .invoice-box {
+            background: var(--white);
+            padding: 30px;
+            border: 2px dashed var(--teal);
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .reference-number {
+            font-size: 1.5em;
+            color: var(--pink);
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fdfbf7;
+            border: 1px solid var(--pink);
+            display: inline-block;
+        }
+
+        /* --- Dashboard --- */
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--white);
+        }
+
+        .dashboard-table th, .dashboard-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .dashboard-table th {
+            background-color: var(--teal);
+            color: white;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: var(--pink);
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo-container">
+            <div class="logo" title="Chella Designs Logo"></div>
+            <h1 style="color: var(--pink); font-family: cursive; margin: 0;">Chella Designs</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a onclick="showSection('home')">Home</a></li>
+                <li><a onclick="showSection('shop')">Shop</a></li>
+                <li><a onclick="showSection('tracking')">Track Order</a></li>
+                <li><a onclick="showSection('contact')">Contact</a></li>
+                <li><a onclick="showSection('profile')" id="nav-profile">Login / Sign Up</a></li>
+                <li><a onclick="showSection('dashboard')" id="nav-dashboard" style="display:none; color: var(--gold);">Seller Dashboard</a></li>
+                <li class="cart-icon" onclick="showSection('cart')">
+                    🛒 <span class="cart-count" id="cart-count">0</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HOME PAGE -->
+        <section id="home" class="section active">
+            <div style="text-align: center; padding: 40px 20px;">
+                <h2 style="font-size: 2.5em; border: none;">Welcome to Chella Designs</h2>
+                <p style="font-size: 1.2em; color: #666;">Create • Customise • Inspire</p>
+                <p>Browse our wide range of custom mugs, cake toppers, stickers, t-shirts, and more!</p>
+                <button class="btn btn-pink" style="width: auto; padding: 15px 30px; font-size: 1.1em;" onclick="showSection('shop')">Shop Now</button>
+            </div>
+        </section>
+
+        <!-- SHOP PAGE -->
+        <section id="shop" class="section">
+            <h2>Our Products</h2>
+            <div id="product-catalog">
+                <!-- Products injected via JS -->
+            </div>
+        </section>
+
+        <!-- CART PAGE -->
+        <section id="cart" class="section">
+            <h2>Your Shopping Cart</h2>
+            <div id="cart-items-container">
+                <!-- Cart items injected via JS -->
+            </div>
+            <div id="cart-summary" style="display: none;">
+                <div class="discount-input">
+                    <input type="text" id="discount-code" placeholder="Enter Promo Code (Try CHELLA10)">
+                    <button class="btn" onclick="applyDiscount()">Apply</button>
+                </div>
+                <div class="cart-total" id="cart-total-display">Total: R0</div>
+                <button class="btn btn-pink" style="margin-top: 15px;" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            </div>
+        </section>
+
+        <!-- CHECKOUT & INVOICE PAGE -->
+        <section id="checkout" class="section">
+            <h2>Checkout</h2>
+            <div class="form-container" id="checkout-form-container">
+                <form onsubmit="processPayment(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" required id="checkout-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" required id="checkout-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Address</label>
+                        <textarea required id="checkout-address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="tel" required id="checkout-phone">
+                    </div>
+                    <button type="submit" class="btn btn-pink">Pay Now (Simulated)</button>
+                </form>
+            </div>
+            
+            <!-- Invoice Slip -->
+            <div id="invoice-slip" style="display: none;">
+                <div class="invoice-box">
+                    <h3>Payment Successful!</h3>
+                    <p>Thank you for your order. A confirmation email has been sent.</p>
+                    <p>Your Proof of Payment Reference Number:</p>
+                    <div class="reference-number" id="invoice-ref">REF-000000</div>
+                    <div id="invoice-details" style="text-align: left; margin-top: 20px;">
+                        <!-- Details injected via JS -->
+                    </div>
+                    <button class="btn" style="margin-top: 20px;" onclick="showSection('home')">Return to Home</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACKING PAGE -->
+        <section id="tracking" class="section">
+            <h2>Track Your Order</h2>
+            <div class="form-container">
+                <div class="form-group">
+                    <label>Enter Reference Number</label>
+                    <input type="text" id="tracking-ref" placeholder="e.g., REF-123456">
+                </div>
+                <button class="btn" onclick="trackOrder()">Track Order</button>
+                <div id="tracking-result" style="margin-top: 20px; font-weight: bold;"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE / LOGIN / SIGNUP PAGE -->
+        <section id="profile" class="section">
+            <h2>Customer Profile</h2>
+            <div id="auth-container" class="form-container">
+                <h3 id="auth-title">Login</h3>
+                <form onsubmit="handleAuth(event)">
+                    <div class="form-group" id="name-group" style="display: none;">
+                        <label>Full Name</label>
+                        <input type="text" id="auth-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" required id="auth-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" required id="auth-password">
+                    </div>
+                    <button type="submit" class="btn btn-pink" id="auth-submit-btn">Login</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px; cursor: pointer; color: var(--teal);" onclick="toggleAuthMode()">
+                    <span id="auth-toggle-text">Don't have an account? Sign Up</span>
+                </p>
+            </div>
+            
+            <div id="user-info" style="display: none;">
+                <div class="invoice-box" style="text-align: left;">
+                    <h3>Welcome, <span id="profile-name"></span>!</h3>
+                    <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                    <p><strong>Order History:</strong></p>
+                    <ul id="user-orders-list">
+                        <!-- User orders injected via JS -->
+                    </ul>
+                    <button class="btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SELLER DASHBOARD -->
+        <section id="dashboard" class="section">
+            <h2>Seller Dashboard (Admin Only)</h2>
+            <p>View all customer purchases, delivery details, and order statuses.</p>
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Ref Number</th>
+                        <th>Customer Name</th>
+                        <th>Contact & Email</th>
+                        <th>Delivery Address</th>
+                        <th>Items Ordered</th>
+                        <th>Total (R)</th>
+                    </tr>
+                </thead>
+                <tbody id="dashboard-orders">
+                    <!-- Orders injected via JS -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- CONTACT PAGE -->
+        <section id="contact" class="section">
+            <h2>Contact Us</h2>
+            <div class="form-container">
+                <p><strong>Phone:</strong> Michelle - 083 413 5617</p>
+                <p><strong>Email:</strong> info@chelladesigns.co.za</p>
+                <p><strong>Operating Hours:</strong> Mon-Fri 09:00 - 17:00</p>
+                <br>
+                <form onsubmit="alert('Message sent! We will get back to you soon.'); event.preventDefault();">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Message</label>
+                        <textarea required rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TERMS AND CONDITIONS -->
+        <section id="terms" class="section">
+            <h2>Terms and Conditions</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h3>1. General</h3>
+                <p>By placing an order with Chella Designs, you agree to the following terms and conditions.</p>
+                <h3>2. Payments</h3>
+                <p>All payments must be made upfront. Orders will only be processed once proof of payment is verified.</p>
+                <h3>3. Delivery</h3>
+                <p>Delivery times may vary based on location and product customization. Tracking details will be provided upon dispatch.</p>
+                <h3>4. Refunds and Returns</h3>
+                <p>Due to the customized nature of our products, we do not accept returns unless the item is defective. Please contact us within 48 hours of receiving a defective item.</p>
+                <h3>5. Privacy Policy</h3>
+                <p>Your personal information (name, address, contact) is only used for order fulfillment and will not be shared with third parties.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Chella Designs. All rights reserved. | <a onclick="showSection('terms')">Terms & Conditions</a></p>
+    </footer>
+
+    <script>
+        // --- Product Data from Image ---
+        const products = [
+            // Mugs
+            { id: 1, category: 'Mugs', name: 'Standard Mug', price: 50 },
+            { id: 2, category: 'Mugs', name: 'Magic Mug', price: 80 },
+            { id: 3, category: 'Mugs', name: 'XL Mug', price: 70 },
+            // Mouse Pads
+            { id: 4, category: 'Mouse Pads', name: 'Standard Mouse Pad', price: 60 },
+            { id: 5, category: 'Mouse Pads', name: 'XL Mouse Pad', price: 120 },
+            // Cake Toppers
+            { id: 6, category: 'Cake Toppers', name: 'Standard Cut', price: 50 },
+            { id: 7, category: 'Cake Toppers', name: '2D Cut', price: 70 },
+            { id: 8, category: 'Cake Toppers', name: '3D Cut', price: 90 },
+            { id: 9, category: 'Cake Toppers', name: 'Single Standard Cut Out', price: 5 },
+            { id: 10, category: 'Cake Toppers', name: 'Single 2D Cut Out', price: 10 },
+            { id: 11, category: 'Cake Toppers', name: 'Single 3D Cut Out', price: 15 },
+            // Key Rings
+            { id: 12, category: 'Key Rings', name: 'Standard 1 Side', price: 25 },
+            { id: 13, category: 'Key Rings', name: 'Standard Double Side', price: 50 },
+            { id: 14, category: 'Key Rings', name: 'Long Key Ring', price: 30 },
+            { id: 15, category: 'Key Rings', name: 'Love Key Ring', price: 35 },
+            // Stickers
+            { id: 16, category: 'Stickers', name: 'Small Sticker', price: 3 },
+            { id: 17, category: 'Stickers', name: 'Medium Sticker', price: 6 },
+            { id: 18, category: 'Stickers', name: 'Large Sticker', price: 9 },
+            // Colouring Books
+            { id: 19, category: 'Colouring Books', name: 'A6 Colouring Book', price: 10 },
+            { id: 20, category: 'Colouring Books', name: 'A6 Book + 4 Crayons', price: 16 },
+            { id: 21, category: 'Colouring Books', name: 'A5 Colouring Book', price: 25 },
+            { id: 22, category: 'Colouring Books', name: 'A4 Colouring Book', price: 40 },
+            { id: 23, category: 'Colouring Books', name: 'A4 Book + 12 Pencils', price: 60 },
+            // Smarties Shaker
+            { id: 24, category: 'Smarties Shaker', name: 'Smarties Shaker', price: 20 },
+            // T-Shirts
+            { id: 25, category: 'T-Shirts', name: 'Small Design T-Shirt', price: 50 },
+            { id: 26, category: 'T-Shirts', name: 'Medium Design T-Shirt', price: 90 },
+            { id: 27, category: 'T-Shirts', name: 'Large Design T-Shirt', price: 120 }
+        ];
+
+        let cart = [];
+        let currentUser = null;
+        let isLoginMode = true;
+        let allOrders = []; // Store orders for dashboard
+
+        // --- Initialize Shop ---
+        function renderCatalog() {
+            const catalog = document.getElementById('product-catalog');
+            catalog.innerHTML = '';
+            
+            const categories = [...new Set(products.map(p => p.category))];
+            
+            categories.forEach(cat => {
+                const catDiv = document.createElement('div');
+                catDiv.innerHTML = `<h3 class="category-title">${cat}</h3>`;
+                
+                const grid = document.createElement('div');
+                grid.className = 'product-grid';
+                
+                products.filter(p => p.category === cat).forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <h4>${product.name}</h4>
+                        <div class="product-price">R${product.price}</div>
+                        <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                catDiv.appendChild(grid);
+                catalog.appendChild(catDiv);
+            });
+        }
+
+        // --- Navigation ---
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'cart') renderCart();
+            if (sectionId === 'dashboard') renderDashboard();
+            if (sectionId === 'profile') checkAuthState();
+        }
+
+        // --- Cart Logic ---
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            
+            updateCartCount();
+            alert(`${product.name} added to cart!`);
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.qty, 0);
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const summary = document.getElementById('cart-summary');
+            container.innerHTML = '';
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p>Your cart is empty.</p>';
+                summary.style.display = 'none';
+                return;
+            }
+            
+            summary.style.display = 'block';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong> (R${item.price}) <br>
+                        Qty: ${item.qty}
+                    </div>
+                    <div>
+                        <span style="font-weight:bold; margin-right: 15px;">R${item.price * item.qty}</span>
+                        <button class="btn btn-pink" style="width: auto; padding: 5px 10px;" onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            
+            document.getElementById('cart-total-display').innerText = `Total: R${total}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        // --- Discount Logic ---
+        function applyDiscount() {
+            const code = document.getElementById('discount-code').value.toUpperCase();
+            if (code === 'CHELLA10') {
+                alert('Discount applied! 10% off your order.');
+                // Apply 10% discount to total display (simplified for prototype)
+                let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                let discounted = total * 0.9;
+                document.getElementById('cart-total-display').innerText = `Total: R${discounted.toFixed(2)} (Discounted)`;
+            } else {
+                alert('Invalid promo code.');
+            }
+        }
+
+        // --- Checkout & Invoice ---
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+            showSection('checkout');
+            document.getElementById('checkout-form-container').style.display = 'block';
+            document.getElementById('invoice-slip').style.display = 'none';
+        }
+
+        function processPayment(event) {
+            event.preventDefault();
+            
+            // Simulate payment processing
+            const refNum = 'REF-' + Math.floor(100000 + Math.random() * 900000);
+            const name = document.getElementById('checkout-name').value;
+            const email = document.getElementById('checkout-email').value;
+            const address = document.getElementById('checkout-address').value;
+            const phone = document.getElementById('checkout-phone').value;
+            
+            // Calculate final total
+            let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            // Create Order Object
+            const order = {
+                ref: refNum,
+                customer: name,
+                email: email,
+                phone: phone,
+                address: address,
+                items: [...cart],
+                total: total
+            };
+            
+            allOrders.push(order); // Save to dashboard
+            
+            // Generate Invoice UI
+            document.getElementById('checkout-form-container').style.display = 'none';
+            document.getElementById('invoice-slip').style.display = 'block';
+            document.getElementById('invoice-ref').innerText = refNum;
+            
+            let itemsHtml = cart.map(i => `<li>${i.name} (x${i.qty}) - R${i.price * i.qty}</li>`).join('');
+            document.getElementById('invoice-details').innerHTML = `
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Delivery Address:</strong> ${address}</p>
+                <p><strong>Contact:</strong> ${phone}</p>
+                <p><strong>Items:</strong></p>
+                <ul>${itemsHtml}</ul>
+                <p style="font-size: 1.2em;"><strong>Total Paid: R${total}</strong></p>
+                <p style="color: green; font-weight: bold;">Status: Paid & Processing</p>
+            `;
+            
+            // Simulate Email Confirmation
+            setTimeout(() => {
+                alert(`Email Confirmation: A receipt and verification link has been sent to ${email}.`);
+            }, 1000);
+            
+            // Clear cart
+            cart = [];
+            updateCartCount();
+        }
+
+        // --- Tracking ---
+        function trackOrder() {
+            const ref = document.getElementById('tracking-ref').value.toUpperCase();
+            const resultDiv = document.getElementById('tracking-result');
+            const order = allOrders.find(o => o.ref === ref);
+            
+            if (order) {
+                resultDiv.innerHTML = `
+                    <p style="color: var(--teal);">Order Found!</p>
+                    <p>Status: <strong>Processing / Ready for Dispatch</strong></p>
+                    <p>Delivery to: ${order.address}</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p style="color: red;">Order not found. Please check your reference number.</p>`;
+            }
+        }
+
+        // --- Auth Simulation ---
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? 'Login' : 'Sign Up';
+            document.getElementById('auth-submit-btn').innerText = isLoginMode ? 'Login' : 'Sign Up';
+            document.getElementById('auth-toggle-text').innerText = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
+            document.getElementById('name-group').style.display = isLoginMode ? 'none' : 'block';
+        }
+
+        function handleAuth(event) {
+            event.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const name = document.getElementById('auth-name').value;
+            
+            if (isLoginMode) {
+                // Simulate login
+                currentUser = { name: 'Valued Customer', email: email };
+                alert('Login successful!');
+            } else {
+                // Simulate signup
+                currentUser = { name: name, email: email };
+                alert(`Account created! A verification email has been sent to ${email}.`);
+            }
+            checkAuthState();
+        }
+
+        function checkAuthState() {
+            const authContainer = document.getElementById('auth-container');
+            const userInfo = document.getElementById('user-info');
+            const navProfile = document.getElementById('nav-profile');
+            
+            if (currentUser) {
+                authContainer.style.display = 'none';
+                userInfo.style.display = 'block';
+                document.getElementById('profile-name').innerText = currentUser.name;
+                document.getElementById('profile-email').innerText = currentUser.email;
+                navProfile.innerText = 'My Profile';
+                
+                // Show admin dashboard only for a specific mock admin email
+                if (currentUser.email === 'admin@chelladesigns.co.za') {
+                    document.getElementById('nav-dashboard').style.display = 'block';
+                }
+            } else {
+                authContainer.style.display = 'block';
+                userInfo.style.display = 'none';
+                navProfile.innerText = 'Login / Sign Up';
+                document.getElementById('nav-dashboard').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            checkAuthState();
+            alert('Logged out.');
+        }
+
+        // --- Seller Dashboard ---
+        function renderDashboard() {
+            const tbody = document.getElementById('dashboard-orders');
+            tbody.innerHTML = '';
+            
+            if (allOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No orders yet.</td></tr>';
+                return;
+            }
+            
+            allOrders.forEach(order => {
+                const items = order.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${order.ref}</td>
+                    <td>${order.customer}</td>
+                    <td>${order.phone}<br>${order.email}</td>
+                    <td>${order.address}</td>
+                    <td>${items}</td>
+                    <td>R${order.total}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Initialize
+        renderCatalog();
+        checkAuthState();
+
+    </script>
+</body>
+</html>
