@@ -31,7 +31,6 @@ button{font-family:'Poppins',sans-serif;cursor:pointer;border:none}
 input,textarea,select{font-family:'Poppins',sans-serif}
 img{max-width:100%;display:block}
 
-/* BACKGROUND */
 .bg-blobs{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:floaty 18s ease-in-out infinite}
 .blob.b1{width:420px;height:420px;background:#f9a8d4;top:-120px;left:-100px}
@@ -46,55 +45,26 @@ img{max-width:100%;display:block}
 @keyframes pulseGold{0%,100%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 0 rgba(234,179,8,.5)}60%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 12px rgba(234,179,8,0)}}
 @keyframes growBar{from{height:0 !important;opacity:0}to{opacity:1}}
 @keyframes newRow{0%{background:#fef3c7}100%{background:#fffafc}}
+@keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
 
-/* LOGIN GATE */
-#login-gate{
-  position:fixed;inset:0;background:rgba(255,255,255,.97);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;
-  transition:opacity .4s, visibility .4s;
+/* ACCESS DENIED REDIRECT SCREEN (brief, shows for <1s before redirect) */
+#redirect-screen{
+  position:fixed;inset:0;background:rgba(255,255,255,.98);
+  backdrop-filter:blur(10px);z-index:9999;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;
 }
-#login-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.login-card{
-  background:#fff;border-radius:28px;padding:44px 40px;max-width:460px;width:100%;
-  box-shadow:0 30px 80px rgba(126,34,206,.25);border:1px solid var(--line);
-  text-align:center;animation:fadeUp .55s both;
+#redirect-screen.show{display:flex}
+#redirect-screen .rlock{
+  width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#fee2e2,#fecaca);
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  box-shadow:0 20px 40px rgba(239,68,68,.25);
 }
-.login-card .lock-ico{
-  width:86px;height:86px;border-radius:50%;background:var(--grad-pink);
-  display:flex;align-items:center;justify-content:center;font-size:2.4rem;
-  margin:0 auto 22px;box-shadow:0 20px 40px rgba(236,72,153,.4);
-  animation:floaty 3s ease-in-out infinite;
+#redirect-screen h2{font-size:1.4rem;color:#b91c1c}
+#redirect-screen p{font-size:.9rem;color:var(--muted);max-width:380px;text-align:center}
+#redirect-screen .spinner{
+  width:36px;height:36px;border:4px solid #fecaca;
+  border-top-color:#ef4444;border-radius:50%;animation:spin .8s linear infinite;
 }
-.login-card h1{font-size:1.9rem;margin-bottom:6px}
-.login-card h1 span{background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
-.login-card .lc-sub{color:var(--muted);font-size:.88rem;margin-bottom:28px}
-.login-card .form-group{text-align:left;margin-bottom:16px}
-.login-card .form-group label{display:block;font-size:.78rem;font-weight:700;margin-bottom:7px;color:var(--ink)}
-.login-card .form-group input{
-  width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:14px;
-  font-size:.88rem;background:#fcfcfd;transition:.3s;
-}
-.login-card .form-group input:focus{outline:none;border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(236,72,153,.10);}
-.login-card .hint-box{
-  margin-top:20px;padding:14px;background:linear-gradient(135deg,#fff0f7,#f5f3ff);
-  border-radius:14px;font-size:.78rem;color:var(--purple-deep);text-align:left;
-  border:1.5px dashed var(--pink-soft);
-}
-.login-card .hint-box strong{display:block;color:var(--pink-deep);margin-bottom:3px}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:13px 24px;border-radius:50px;font-weight:600;font-size:.9rem;
-  background:var(--grad-teal);color:#fff;transition:.3s;
-  box-shadow:0 8px 20px rgba(20,184,166,.28);
-}
-.btn:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,184,166,.4)}
-.btn:active{transform:scale(.97)}
-.btn-pink{background:var(--grad-pink);box-shadow:0 8px 20px rgba(236,72,153,.32)}
-.btn-pink:hover{box-shadow:0 14px 32px rgba(236,72,153,.46)}
-.btn-ghost{background:#f4f4f5;color:var(--ink);box-shadow:none}
-.btn-ghost:hover{background:#e9e9ec}
-.btn-block{width:100%}
 
 /* HEADER */
 header{
@@ -109,6 +79,7 @@ header{
 }
 .logo-container{display:flex;align-items:center;gap:12px}
 .logo-img{height:52px;width:52px;object-fit:contain;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(190,24,93,.18);}
+.logo-fallback{height:52px;width:52px;border-radius:50%;display:none;align-items:center;justify-content:center;background:var(--grad-pink);color:#fff;font-family:'Dancing Script',cursive;font-size:1.3rem;font-weight:700;}
 .brand-text{display:flex;flex-direction:column;line-height:1}
 .brand-text .b1{font-family:'Dancing Script',cursive;font-size:1.7rem;font-weight:700;background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand-text .b2{font-size:.55rem;letter-spacing:.32em;color:var(--teal-deep);font-weight:600;margin-top:1px}
@@ -141,6 +112,13 @@ header{
   font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;
   border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite;
 }
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:11px 22px;border-radius:50px;font-weight:600;font-size:.85rem;
+  transition:.3s;
+}
+.btn-pink{background:var(--grad-pink);color:#fff;box-shadow:0 8px 20px rgba(236,72,153,.32)}
+.btn-pink:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(236,72,153,.46)}
 
 /* MAIN */
 main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
@@ -150,7 +128,6 @@ main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
 .section-head .underline{width:110px;height:5px;border-radius:5px;margin:12px auto 0;background:var(--grad-rainbow);background-size:300% 100%;animation:gradShift 4s linear infinite;}
 .section-head p{color:var(--muted);margin-top:12px;font-size:.95rem}
 
-/* STATS */
 .dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
 .stat-card{
   background:#fff;border:1px solid var(--line);border-radius:var(--radius);
@@ -173,7 +150,6 @@ main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
 .stat-card .sc-trend{font-size:.72rem;font-weight:700;color:#16a34a;margin-top:6px}
 .stat-card .sc-trend.warn{color:#d97706}
 
-/* TABS */
 .dash-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
 .dtab{
   padding:10px 20px;border-radius:50px;background:#fff;border:1.5px solid var(--line);
@@ -189,7 +165,6 @@ main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
   animation:pulseGold 1.6s ease-in-out infinite;
 }
 
-/* TABLE */
 .table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
 .table-scroll{overflow-x:auto}
 table.dash{width:100%;border-collapse:collapse;min-width:1000px}
@@ -231,7 +206,6 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .sp-completed{background:#dcfce7;color:#166534}
 .sp-cancelled{background:#fee2e2;color:#991b1b}
 
-/* CHART */
 .chart-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);margin-top:24px;}
 .chart-card h3{font-size:1.15rem;margin-bottom:22px;display:flex;align-items:center;gap:9px}
 .bars{display:flex;align-items:flex-end;gap:16px;height:190px;padding:0 4px}
@@ -241,11 +215,9 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .bar .bar-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:800;color:var(--pink-deep);white-space:nowrap;}
 .bar-lbl{font-size:.68rem;color:var(--muted);font-weight:600;text-align:center;line-height:1.2}
 
-/* EMPTY */
 .empty-state{text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-state .big{font-size:3.4rem;display:block;margin-bottom:14px;animation:floaty 3s ease-in-out infinite}
 
-/* TOASTS */
 .toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
 .toast{
   background:var(--ink);color:#fff;padding:13px 26px;border-radius:50px;font-size:.85rem;
@@ -256,9 +228,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .toast.teal{background:var(--grad-teal)}
 .toast.gold{background:var(--grad-gold);color:#3a2c00}
 .toast.out{animation:fadeOutDown .35s forwards}
-@keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
 
-/* NEW ORDER FLASH BANNER */
 .flash-banner{
   position:fixed;top:88px;left:50%;transform:translateX(-50%);
   background:var(--grad-gold);color:#3a2c00;padding:13px 26px;
@@ -270,10 +240,8 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .flash-banner.show{display:flex}
 .flash-banner .fb-emoji{font-size:1.2rem;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
 
-/* RESPONSIVE */
 @media(max-width:700px){
   main{padding:22px 15px 50px}
-  .login-card{padding:34px 26px}
   .dash-badge{display:none}
   .stat-card .sc-val{font-size:1.6rem}
 }
@@ -281,56 +249,31 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 </head>
 <body>
 
+<!-- ============================================================
+     ACCESS DENIED — briefly shown before redirect to index.html
+     ============================================================ -->
+<div id="redirect-screen">
+  <div class="rlock">🔒</div>
+  <h2>Admin Access Required</h2>
+  <p>You must open this dashboard through the <strong>admin link</strong> on the main site. Redirecting you now…</p>
+  <div class="spinner"></div>
+</div>
+
 <div class="bg-blobs">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
 </div>
 
-<!-- ============================================================
-     LOGIN GATE
-     ============================================================ -->
-<div id="login-gate">
-  <div class="login-card">
-    <div class="lock-ico">🔐</div>
-    <h1>Seller <span>Dashboard</span></h1>
-    <p class="lc-sub">Chella Designs • Admin access only</p>
-
-    <form onsubmit="handleLogin(event)">
-      <div class="form-group">
-        <label>Admin Email</label>
-        <input type="email" id="login-email" required placeholder="admin@chelladesigns.co.za" value="admin@chelladesigns.co.za">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="login-pass" required placeholder="••••••••" value="admin123">
-      </div>
-      <button type="submit" class="btn btn-pink btn-block" style="padding:15px">🔓 Unlock Dashboard</button>
-    </form>
-
-    <div class="hint-box">
-      <strong>💡 Demo credentials</strong>
-      Email: <code>admin@chelladesigns.co.za</code><br>
-      Password: any value
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     FLASH NEW-ORDER BANNER
-     ============================================================ -->
 <div class="flash-banner" id="flash-banner">
   <span class="fb-emoji">🔔</span>
   <span id="flash-text">New order received!</span>
 </div>
 
-<!-- ============================================================
-     HEADER
-     ============================================================ -->
 <header>
   <div class="nav-wrap">
     <div class="logo-container">
       <img src="chella-logo.png" alt="Chella Designs" class="logo-img"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-      <div class="logo-fallback" style="height:52px;width:52px;border-radius:50%;display:none;align-items:center;justify-content:center;background:var(--grad-pink);color:#fff;font-family:'Dancing Script';font-size:1.3rem;font-weight:700;">Chella</div>
+      <div class="logo-fallback">Chella</div>
       <div class="brand-text">
         <span class="b1">Chella</span>
         <span class="b2">DESIGNS</span>
@@ -351,9 +294,6 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
   </div>
 </header>
 
-<!-- ============================================================
-     MAIN
-     ============================================================ -->
 <main>
   <div class="section-head">
     <h2>Seller <span>Dashboard</span></h2>
@@ -396,17 +336,63 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 /* ============================================================
    SHARED KEYS — MUST MATCH index.html
    ============================================================ */
-const STORAGE_KEY  = 'chella_orders_v4';
-const USER_KEY     = 'chella_user_v4';
-const CHANNEL_NAME = 'chella_orders_channel_v4';
-const ADMIN_EMAIL  = 'admin@chelladesigns.co.za';
-const SESSION_KEY  = 'chella_dash_session_v1';
-const STATUS_FLOW  = ['Pending','Accepted','Printing','Shipped','Completed'];
+const STORAGE_KEY     = 'chella_orders_v4';
+const CHANNEL_NAME    = 'chella_orders_channel_v4';
+const ADMIN_KEY_STORE = 'chella_admin_key_v4';
+const SESSION_FLAG    = 'chella_dash_session';
+const STATUS_FLOW     = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 const CAT_EMOJIS = {
   'Mugs':'☕','Mouse Pads':'🖱️','Cake Toppers':'🎂','Key Rings':'🔑',
   'Stickers':'✨','Colouring Books':'🎨','Smarties Shaker':'🍬','T-Shirts':'👕'
 };
+
+/* ============================================================
+   ACCESS CONTROL
+   ------------------------------------------------------------
+   The dashboard NEVER auto-logs in from a shared storage.
+   Access is granted only when:
+     (a) THIS tab already has a valid session (sessionStorage), OR
+     (b) the URL contains a ?key= matching the admin key that
+         index.html stored in THIS browser's localStorage.
+   Otherwise: redirect straight to index.html — no login state.
+   ============================================================ */
+function checkAccess(){
+  // 1) Already authenticated THIS tab?
+  try {
+    if (sessionStorage.getItem(SESSION_FLAG) === '1') return true;
+  } catch(e){}
+
+  // 2) Valid ?key= from the admin link?
+  let urlKey = null;
+  try { urlKey = new URLSearchParams(location.search).get('key'); } catch(e){}
+  let storedKey = null;
+  try { storedKey = localStorage.getItem(ADMIN_KEY_STORE); } catch(e){}
+
+  if (urlKey && storedKey && urlKey === storedKey){
+    try { sessionStorage.setItem(SESSION_FLAG, '1'); } catch(e){}
+    // Strip the key from the URL bar so it can't be copy-pasted elsewhere
+    try { history.replaceState(null, '', location.pathname); } catch(e){}
+    return true;
+  }
+
+  return false;
+}
+
+// Hard gate — redirect immediately if not authorised
+if (!checkAccess()){
+  const rs = document.getElementById('redirect-screen');
+  if (rs) rs.classList.add('show');
+  setTimeout(() => {
+    try { window.location.replace('index.html'); }
+    catch(e){ window.location.href = 'index.html'; }
+  }, 900);
+}
+
+function logout(){
+  try { sessionStorage.removeItem(SESSION_FLAG); } catch(e){}
+  window.location.replace('index.html');
+}
 
 /* ============================================================
    STATE
@@ -432,7 +418,7 @@ function toast(msg, type='pink'){
 }
 
 /* ============================================================
-   BROADCAST CHANNEL — receive instant order notifications
+   BROADCAST CHANNEL
    ============================================================ */
 try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){ console.warn('BroadcastChannel unavailable'); }
 
@@ -442,7 +428,6 @@ function initBroadcast(){
     const { type, payload } = e.data || {};
     if (type === 'order_created'){
       allOrders = loadOrders();
-      // Mark the newest order as new
       if (payload && payload.ref) newOrderRefs.add(payload.ref);
       renderDashboard();
       flashNewOrder(payload);
@@ -453,7 +438,6 @@ function initBroadcast(){
     }
   };
 }
-
 function broadcast(type, payload){
   if (bc){
     try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){}
@@ -491,44 +475,6 @@ function saveOrders(){
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
   catch(e){ console.warn('Could not save orders', e); }
 }
-function isLoggedIn(){
-  try { return localStorage.getItem(SESSION_KEY) === '1'; }
-  catch(e){ return false; }
-}
-function setLoggedIn(v){
-  try {
-    if (v) localStorage.setItem(SESSION_KEY, '1');
-    else localStorage.removeItem(SESSION_KEY);
-  } catch(e){}
-}
-
-/* ============================================================
-   LOGIN GATE
-   ============================================================ */
-function handleLogin(e){
-  e.preventDefault();
-  const email = $('login-email').value.trim().toLowerCase();
-  if (email !== ADMIN_EMAIL){
-    toast('❌ Only the admin email can access the dashboard', 'pink');
-    return;
-  }
-  setLoggedIn(true);
-  $('login-gate').classList.add('hidden');
-  toast('👋 Welcome back, Michelle!', 'teal');
-  renderDashboard();
-}
-function logout(){
-  setLoggedIn(false);
-  $('login-gate').classList.remove('hidden');
-  toast('👋 Logged out of dashboard');
-}
-function checkGate(){
-  if (isLoggedIn()){
-    $('login-gate').classList.add('hidden');
-  } else {
-    $('login-gate').classList.remove('hidden');
-  }
-}
 
 /* ============================================================
    DASHBOARD RENDER
@@ -543,13 +489,10 @@ function renderDashboard(){
 
 function updatePendingDot(){
   const badge = $('pending-dot');
+  if (!badge) return;
   const pending = allOrders.filter(o => o.status === 'Pending').length;
-  if (pending > 0){
-    badge.innerText = pending;
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
-  }
+  if (pending > 0){ badge.innerText = pending; badge.style.display = 'flex'; }
+  else { badge.style.display = 'none'; }
 }
 
 function renderStats(){
@@ -592,7 +535,6 @@ function renderTabs(){
     Completed: allOrders.filter(o => o.status === 'Completed').length,
     Cancelled: allOrders.filter(o => o.status === 'Cancelled').length
   };
-
   const tabs = [['all','🌐 All'], ...STATUS_FLOW.map(s => [s, s]), ['Cancelled','Cancelled']];
   $('dash-tabs').innerHTML = tabs.map(([key, label]) => `
     <button class="dtab ${selectedStatusFilter === key ? 'active' : ''}"
@@ -602,11 +544,7 @@ function renderTabs(){
     </button>`).join('');
 }
 
-function setStatusFilter(s){
-  selectedStatusFilter = s;
-  renderTabs();
-  renderTable();
-}
+function setStatusFilter(s){ selectedStatusFilter = s; renderTabs(); renderTable(); }
 
 function renderTable(){
   const tbody = $('dashboard-orders');
@@ -684,10 +622,7 @@ function setOrderStatus(ref, status){
   newOrderRefs.delete(ref);
   saveOrders();
   renderDashboard();
-
-  // Notify the customer's index.html tab INSTANTLY
   broadcast('order_updated', { ref, status });
-
   toast(`📋 ${ref} → ${status}`, status === 'Cancelled' ? 'pink' : 'teal');
 }
 
@@ -744,8 +679,7 @@ function renderChart(){
    ============================================================ */
 function manualRefresh(){
   const ico = $('refresh-ico');
-  ico.classList.add('spinning');
-  setTimeout(() => ico.classList.remove('spinning'), 800);
+  if (ico){ ico.classList.add('spinning'); setTimeout(() => ico.classList.remove('spinning'), 800); }
   allOrders = loadOrders();
   broadcast('request_sync');
   renderDashboard();
@@ -765,11 +699,8 @@ window.addEventListener('storage', e => {
 window.addEventListener('focus', () => {
   const prev = allOrders.length;
   allOrders = loadOrders();
-  if (allOrders.length !== prev){
-    renderDashboard();
-  }
+  if (allOrders.length !== prev) renderDashboard();
 });
-// Light poll — 3s refresh, only re-renders if signatures differ
 let __lastSig = '';
 setInterval(() => {
   const fresh = loadOrders();
@@ -785,18 +716,22 @@ setInterval(() => {
    INIT
    ============================================================ */
 (function init(){
+  // If we got this far, checkAccess() already passed at the top of the script.
+  // Only proceed if authorised — otherwise the redirect is already in motion.
+  if (!checkAccess()) return;
+
   initBroadcast();
-  checkGate();
   allOrders = loadOrders();
   renderDashboard();
 
-  // Ask the customer site tabs to broadcast their current state
   setTimeout(() => broadcast('request_sync'), 200);
 
   console.log('%c📊 Chella Designs — Seller Dashboard',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c⚡ Real-time sync active — orders appear instantly from index.html',
     'font-size:12px;color:#14b8a6;font-weight:bold');
+  console.log('%c🔐 Access granted via one-time admin link — no auto-login on fresh browsers',
+    'font-size:12px;color:#ec4899;font-weight:bold');
 })();
 </script>
 </body>
