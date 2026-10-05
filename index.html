@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chella Designs | Create • Customise • Inspire</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     GOOGLE MAPS PLACES API
+     Replace AIzaSyB_PLACEHOLDER_REPLACE_ME with your real API key.
+     Enable: Places API + Maps JavaScript API in Google Cloud Console.
+     If left as placeholder, the site falls back to a built-in
+     South African area autocomplete (works offline).
+     ============================================================ -->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_PLACEHOLDER_REPLACE_ME&libraries=places&language=en&region=ZA"
+  async defer
+  onload="initAddressAutocomplete()"
+  onerror="console.warn('Google Maps failed to load — using offline address suggestions.');">
+</script>
+
 <style>
 /* ============================================================
    CHELLA DESIGNS — DESIGN TOKENS
@@ -122,6 +137,18 @@ nav a.nav-link.active::after{
 }
 .cart-count.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
+.dash-notify{
+  position:absolute;top:-2px;right:-2px;
+  background:var(--gold);color:#3a2c00;border-radius:50%;
+  min-width:18px;height:18px;font-size:.62rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(234,179,8,.55);
+  animation:pulseGold 1.6s ease-in-out infinite;
+}
+@keyframes pulseGold{
+  0%,100%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 0 rgba(234,179,8,.5)}
+  60%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 8px rgba(234,179,8,0)}
+}
 .burger{display:none;background:none;font-size:1.6rem;color:var(--pink-deep)}
 
 /* ============================================================
@@ -680,6 +707,123 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .pay-overlay p{font-weight:600;color:var(--pink-deep);letter-spacing:.05em}
 
 /* ============================================================
+   ADDRESS FIELD WITH MAP PIN
+   ============================================================ */
+.address-wrap{position:relative}
+.address-wrap .pin-ico{
+  position:absolute;left:16px;top:14px;font-size:1.05rem;
+  pointer-events:none;z-index:2;
+}
+.address-wrap input,
+.address-wrap textarea{
+  padding-left:44px !important;
+}
+.address-wrap .addr-hint{
+  position:absolute;right:14px;top:14px;
+  font-size:.68rem;font-weight:600;color:var(--teal-deep);
+  background:#e0f7f5;padding:3px 10px;border-radius:50px;
+  pointer-events:none;transition:.3s;
+}
+.address-wrap .addr-hint.hidden{opacity:0}
+.address-wrap.loading .addr-hint{background:#fef3c7;color:#92400e}
+.address-wrap.loading .addr-hint::after{content:' …'}
+.pac-container{
+  border-radius:14px !important;
+  box-shadow:0 16px 40px rgba(0,0,0,.18) !important;
+  border:none !important;
+  font-family:'Poppins',sans-serif !important;
+  margin-top:6px;
+  overflow:hidden;
+}
+.pac-item{
+  padding:10px 14px !important;
+  font-size:.86rem !important;
+  cursor:pointer;
+  border-top:1px solid var(--line) !important;
+}
+.pac-item:hover{background:#fff7fb !important}
+.pac-item-query{font-weight:600 !important;color:var(--ink) !important}
+.pac-matched{color:var(--pink-deep) !important;font-weight:700 !important}
+.pac-icon{margin-right:8px !important}
+
+/* ============================================================
+   TRACKING — ORDER HISTORY CARDS
+   ============================================================ */
+.history-section{
+  margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto;
+}
+.history-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:18px;flex-wrap:wrap;
+}
+.history-head h3{font-size:1.25rem;display:flex;align-items:center;gap:9px}
+.history-head .refresh-btn{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+  border-radius:50px;background:#fff;border:1.5px solid var(--line);
+  font-size:.78rem;font-weight:600;color:var(--pink-deep);transition:.3s;
+}
+.history-head .refresh-btn:hover{background:var(--grad-pink);color:#fff;border-color:transparent;transform:rotate(-8deg)}
+.history-head .refresh-btn.spinning{animation:spin .8s linear}
+
+.order-card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;margin-bottom:16px;box-shadow:var(--shadow);
+  transition:.35s;animation:fadeUp .5s both;position:relative;overflow:hidden;
+}
+.order-card::before{
+  content:'';position:absolute;top:0;left:0;width:5px;height:100%;
+  background:var(--grad-pink);
+}
+.order-card.status-Pending::before{background:linear-gradient(180deg,#eab308,#f97316)}
+.order-card.status-Accepted::before{background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
+.order-card.status-Printing::before{background:linear-gradient(180deg,#a855f7,#7e22ce)}
+.order-card.status-Shipped::before{background:linear-gradient(180deg,#22d3ee,#0891b2)}
+.order-card.status-Completed::before{background:linear-gradient(180deg,#22c55e,#15803d)}
+.order-card.status-Cancelled::before{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+.order-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.oc-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:14px;
+}
+.oc-head .oc-ref-block{display:flex;flex-direction:column;gap:2px}
+.oc-items{
+  display:flex;flex-direction:column;gap:7px;
+  padding:14px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);
+  margin-bottom:14px;
+}
+.oc-item-line{
+  display:flex;align-items:center;gap:10px;font-size:.84rem;
+}
+.oc-item-line .oi-emoji{font-size:1.1rem;flex:0 0 auto}
+.oc-item-line .oi-name{flex:1;min-width:0}
+.oc-item-line .oi-custom{
+  display:block;font-size:.72rem;color:var(--purple-deep);
+  margin-top:2px;font-weight:500;
+}
+.oc-item-line .oi-qty{
+  color:var(--pink-deep);font-weight:700;
+  background:#fff0f7;padding:2px 9px;border-radius:50px;font-size:.72rem;
+}
+.oc-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.oc-foot .oc-total{font-size:1.1rem;font-weight:800;color:var(--pink-deep);font-family:'Playfair Display'}
+.oc-foot .oc-total small{display:block;font-size:.66rem;color:var(--muted);font-weight:500;letter-spacing:.05em}
+.track-steps{
+  display:flex;gap:6px;margin:16px 0 4px;
+}
+.tstep{flex:1;text-align:center;font-size:.6rem;color:var(--muted);font-weight:600;line-height:1.3}
+.tstep .tdot{
+  width:26px;height:26px;border-radius:50%;background:#f1f5f9;margin:0 auto 6px;
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#94a3b8;
+  transition:.4s;font-weight:700;
+}
+.tstep.done .tdot{background:var(--grad-pink);color:#fff;box-shadow:0 6px 14px rgba(236,72,153,.35)}
+.tstep.done{color:var(--pink-deep)}
+.tstep.cancelled .tdot{background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff}
+.tstep.cancelled{color:#b91c1c}
+
+/* ============================================================
    INVOICE
    ============================================================ */
 .invoice-box{
@@ -737,17 +881,23 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .stat-card .sc-val{font-size:1.9rem;font-weight:800;font-family:'Playfair Display';color:var(--ink)}
 .stat-card .sc-lbl{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .stat-card .sc-trend{font-size:.72rem;font-weight:700;color:#16a34a;margin-top:6px}
+.stat-card .sc-trend.warn{color:#d97706}
 
 .dash-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
 .dtab{
   padding:10px 20px;border-radius:50px;background:#fff;border:1.5px solid var(--line);
-  font-size:.8rem;font-weight:600;color:var(--muted);transition:.3s;
+  font-size:.8rem;font-weight:600;color:var(--muted);transition:.3s;position:relative;
 }
 .dtab:hover{border-color:var(--pink-soft);color:var(--pink-deep);transform:translateY(-2px)}
 .dtab.active{background:var(--grad-pink);color:#fff;border-color:transparent;
   box-shadow:0 8px 20px rgba(236,72,153,.3)}
 .dtab .cnt{background:rgba(0,0,0,.08);border-radius:50px;padding:1px 8px;font-size:.7rem;margin-left:6px}
 .dtab.active .cnt{background:rgba(255,255,255,.28)}
+.dtab .new-dot{
+  position:absolute;top:-3px;right:-3px;width:12px;height:12px;
+  background:var(--gold);border-radius:50%;border:2px solid #fff;
+  animation:pulseGold 1.6s ease-in-out infinite;
+}
 
 .table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
   overflow:hidden;box-shadow:var(--shadow)}
@@ -762,6 +912,8 @@ table.dash td{padding:15px 16px;border-bottom:1px solid var(--line);font-size:.8
 table.dash tbody tr{transition:.25s}
 table.dash tbody tr:hover{background:#fffafc}
 table.dash tbody tr:last-child td{border-bottom:none}
+table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);animation:newRow 2.2s ease-out}
+@keyframes newRow{0%{background:#fef3c7}100%{background:#fffafc}}
 .ref-code{font-family:'Courier New',monospace;font-weight:700;color:var(--pink-deep);font-size:.85rem}
 .cust-name{font-weight:600;color:var(--ink)}
 .cust-sub{font-size:.74rem;color:var(--muted);display:block}
@@ -849,15 +1001,6 @@ table.dash tbody tr:last-child td{border-bottom:none}
   border:1.5px solid var(--pink-soft);animation:fadeUp .5s both;font-size:.88rem;
 }
 .track-result h4{margin-bottom:10px;color:var(--pink-deep)}
-.track-steps{display:flex;gap:6px;margin-top:16px}
-.tstep{flex:1;text-align:center;font-size:.62rem;color:var(--muted);font-weight:600}
-.tstep .tdot{
-  width:26px;height:26px;border-radius:50%;background:#f1f5f9;margin:0 auto 6px;
-  display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#94a3b8;
-  transition:.4s;
-}
-.tstep.done .tdot{background:var(--grad-pink);color:#fff;box-shadow:0 6px 14px rgba(236,72,153,.35)}
-.tstep.done{color:var(--pink-deep)}
 
 /* ============================================================
    TOAST
@@ -904,9 +1047,7 @@ footer::before{
 /* ============================================================
    SOCIAL MEDIA ICONS
    ============================================================ */
-.social-row{
-  display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;
-}
+.social-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 .social-row.center{justify-content:center}
 .social-link{
   width:46px;height:46px;border-radius:50%;
@@ -929,7 +1070,6 @@ footer::before{
 .social-link.yt:hover{background:linear-gradient(135deg,#ff0000,#c4302b);border-color:transparent}
 .social-link.mail:hover{background:var(--grad-pink);border-color:transparent}
 
-/* Footer-specific overrides (dark background) */
 footer .social-link{
   background:rgba(255,255,255,.08);
   border-color:rgba(255,255,255,.14);
@@ -1026,10 +1166,86 @@ footer .social-link:hover{
   .modal-body{padding:20px}
   .modal-head,.modal-foot{padding:16px 20px}
   .cart-item{flex-wrap:wrap}
+  .tstep{font-size:.54rem}
+  .tstep .tdot{width:22px;height:22px;font-size:.6rem}
 }
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     OFFLINE ADDRESS SUGGESTIONS (fallback if Google Maps is off)
+     ============================================================ -->
+<datalist id="sa-areas">
+  <option value="Sandton"></option>
+  <option value="Rosebank"></option>
+  <option value="Randburg"></option>
+  <option value="Midrand"></option>
+  <option value="Centurion"></option>
+  <option value="Soweto"></option>
+  <option value="Roodepoort"></option>
+  <option value="Krugersdorp"></option>
+  <option value="Benoni"></option>
+  <option value="Boksburg"></option>
+  <option value="Germiston"></option>
+  <option value="Kempton Park"></option>
+  <option value="Vereeniging"></option>
+  <option value="Pretoria Central"></option>
+  <option value="Cape Town CBD"></option>
+  <option value="Sea Point"></option>
+  <option value="Camps Bay"></option>
+  <option value="Green Point"></option>
+  <option value="Woodstock"></option>
+  <option value="Observatory"></option>
+  <option value="Claremont"></option>
+  <option value="Bellville"></option>
+  <option value="Milnerton"></option>
+  <option value="Somerset West"></option>
+  <option value="Stellenbosch"></option>
+  <option value="Paarl"></option>
+  <option value="Hermanus"></option>
+  <option value="George"></option>
+  <option value="Knysna"></option>
+  <option value="Mossel Bay"></option>
+  <option value="Oudtshoorn"></option>
+  <option value="Durban CBD"></option>
+  <option value="Umhlanga"></option>
+  <option value="Ballito"></option>
+  <option value="Pietermaritzburg"></option>
+  <option value="Port Shepstone"></option>
+  <option value="Newcastle"></option>
+  <option value="Port Elizabeth"></option>
+  <option value="East London"></option>
+  <option value="Mthatha"></option>
+  <option value="Queenstown"></option>
+  <option value="Grahamstown"></option>
+  <option value="Bloemfontein"></option>
+  <option value="Welkom"></option>
+  <option value="Kimberley"></option>
+  <option value="Potchefstroom"></option>
+  <option value="Rustenburg"></option>
+  <option value="Polokwane"></option>
+  <option value="Tzaneen"></option>
+  <option value="Nelspruit"></option>
+</datalist>
+
+<datalist id="sa-cities">
+  <option value="Cape Town"></option>
+  <option value="Johannesburg"></option>
+  <option value="Durban"></option>
+  <option value="Pretoria"></option>
+  <option value="Port Elizabeth"></option>
+  <option value="Bloemfontein"></option>
+  <option value="East London"></option>
+  <option value="Polokwane"></option>
+  <option value="Nelspruit"></option>
+  <option value="Kimberley"></option>
+  <option value="Pietermaritzburg"></option>
+  <option value="Sandton"></option>
+  <option value="Centurion"></option>
+  <option value="Stellenbosch"></option>
+  <option value="George"></option>
+</datalist>
 
 <!-- ANIMATED BACKGROUND -->
 <div class="bg-blobs">
@@ -1068,7 +1284,8 @@ footer .social-link:hover{
           <span class="nav-ico">👤</span><span id="nav-profile-text">Account</span></a></li>
         <li><a class="nav-link" data-nav="dashboard" id="nav-dashboard"
                style="display:none" onclick="showSection('dashboard')">
-          <span class="nav-ico">📊</span><span>Dashboard</span></a></li>
+          <span class="nav-ico">📊</span><span>Dashboard</span>
+          <span class="dash-notify" id="dash-notify" style="display:none">0</span></a></li>
         <li><a class="nav-link cart-link" data-nav="cart" onclick="showSection('cart')">
           <span class="nav-ico">🛒</span><span>Cart</span>
           <span class="cart-count" id="cart-count">0</span></a></li>
@@ -1107,7 +1324,6 @@ footer .social-link:hover{
     </button>
   </div>
 
-  <!-- CATEGORY CAROUSEL -->
   <div class="carousel-block">
     <div class="cb-head">
       <h3>Browse by <em>Category</em></h3>
@@ -1118,12 +1334,11 @@ footer .social-link:hover{
     </div>
 
     <div class="carousel" id="home-carousel">
-      <div class="carousel-track" id="carousel-track"><!-- injected --></div>
+      <div class="carousel-track" id="carousel-track"></div>
     </div>
     <div class="dots" id="carousel-dots"></div>
   </div>
 
-  <!-- WHY US -->
   <div class="carousel-block">
     <div class="cb-head"><h3>Why <em>Chella</em>?</h3></div>
     <div class="product-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
@@ -1161,7 +1376,7 @@ footer .social-link:hover{
 
   <div class="shop-toolbar">
     <button class="cbtn" onclick="scrollChips(-1)">‹</button>
-    <div class="chip-scroller" id="chip-scroller"><!-- injected --></div>
+    <div class="chip-scroller" id="chip-scroller"></div>
     <button class="cbtn" onclick="scrollChips(1)">›</button>
     <button class="filter-btn" onclick="openDrawer()">
       ⚙️ Filters
@@ -1170,7 +1385,7 @@ footer .social-link:hover{
   </div>
 
   <div id="results-info" style="font-size:.83rem;color:var(--muted);margin-bottom:16px"></div>
-  <div class="product-grid" id="product-grid"><!-- injected --></div>
+  <div class="product-grid" id="product-grid"></div>
 </section>
 
 <!-- ============================ CART ============================ -->
@@ -1229,7 +1444,6 @@ footer .social-link:hover{
   <div id="paygate-content">
     <div class="pay-layout">
 
-      <!-- LEFT: payment form -->
       <div class="pay-card">
         <h3>💳 Payment Method</h3>
 
@@ -1249,7 +1463,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- CARD PANEL -->
         <div id="panel-card">
           <div class="card-visual">
             <div class="cv-chip"></div>
@@ -1287,7 +1500,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- EFT PANEL -->
         <div id="panel-eft" style="display:none">
           <div class="track-result" style="margin-top:0">
             <h4>🏦 Bank Transfer Details</h4>
@@ -1301,7 +1513,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- SNAPSCAN PANEL -->
         <div id="panel-snapscan" style="display:none">
           <div class="track-result" style="margin-top:0;text-align:center">
             <h4>📱 Scan to Pay with SnapScan</h4>
@@ -1310,7 +1521,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- APPLE PAY PANEL -->
         <div id="panel-applepay" style="display:none">
           <div class="applepay-panel">
             <div class="ap-device"></div>
@@ -1325,7 +1535,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- DELIVERY DETAILS -->
         <h3 style="margin-top:30px">🚚 Delivery Details</h3>
         <form id="delivery-form" onsubmit="event.preventDefault()">
           <div class="grid-2">
@@ -1341,14 +1550,34 @@ footer .social-link:hover{
               <label>Contact Number *</label>
               <input type="tel" id="co-phone" required placeholder="083 123 4567">
             </div>
+
+            <!-- ADDRESS WITH GOOGLE MAPS AUTOCOMPLETE -->
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Delivery Address * <span style="font-weight:500;color:var(--muted);font-size:.7rem">— start typing, suggestions appear</span></label>
+              <div class="address-wrap" id="addr-wrap">
+                <span class="pin-ico">📍</span>
+                <input
+                  type="text"
+                  id="co-address"
+                  required
+                  placeholder="e.g. 12 Rivonia Road, Sandton"
+                  list="sa-areas"
+                  autocomplete="off"
+                  spellcheck="false"
+                  oninput="markAddressTyping()">
+                <span class="addr-hint" id="addr-hint">🔎 Type to search</span>
+              </div>
+            </div>
+
             <div class="form-group">
               <label>City / Town *</label>
-              <input type="text" id="co-city" required placeholder="Cape Town">
+              <input type="text" id="co-city" required placeholder="Cape Town" list="sa-cities" autocomplete="off">
             </div>
-            <div class="form-group" style="grid-column:1/-1">
-              <label>Delivery Address *</label>
-              <textarea id="co-address" rows="3" required placeholder="123 Main Road, Suburb, Postal Code"></textarea>
+            <div class="form-group">
+              <label>Postal Code</label>
+              <input type="text" id="co-postal" placeholder="8001" maxlength="4" inputmode="numeric">
             </div>
+
             <div class="form-group" style="grid-column:1/-1">
               <label>Order Notes (optional)</label>
               <textarea id="co-notes" rows="2" placeholder="Special instructions for your order..."></textarea>
@@ -1368,7 +1597,6 @@ footer .social-link:hover{
         </form>
       </div>
 
-      <!-- RIGHT: order summary -->
       <div class="pay-card" style="position:sticky;top:100px">
         <h3>🧾 Your Order</h3>
         <div id="pay-summary-items"></div>
@@ -1380,7 +1608,6 @@ footer .social-link:hover{
     </div>
   </div>
 
-  <!-- INVOICE -->
   <div id="invoice-slip" style="display:none">
     <div class="invoice-box">
       <span class="inv-ico">🎉</span>
@@ -1401,9 +1628,9 @@ footer .social-link:hover{
 <!-- ============================ TRACKING ============================ -->
 <section id="tracking" class="section">
   <div class="section-head">
-    <h2>Track Your <span>Order</span></h2>
+    <h2>Track Your <span>Orders</span></h2>
     <div class="underline"></div>
-    <p>Enter the reference number from your proof of payment.</p>
+    <p>Look up any order by reference, or scroll down to see your full order history and live statuses.</p>
   </div>
 
   <div class="form-card">
@@ -1416,6 +1643,17 @@ footer .social-link:hover{
     <button class="btn btn-pink btn-block" onclick="trackOrder()">Track Order</button>
     <div id="tracking-result"></div>
   </div>
+
+  <!-- ORDER HISTORY -->
+  <div class="history-section">
+    <div class="history-head">
+      <h3>📜 Your Order History</h3>
+      <button class="refresh-btn" id="refresh-btn" onclick="refreshOrderHistory()">
+        🔄 Refresh Status
+      </button>
+    </div>
+    <div id="order-history-list"></div>
+  </div>
 </section>
 
 <!-- ============================ PROFILE ============================ -->
@@ -1425,7 +1663,6 @@ footer .social-link:hover{
     <div class="underline"></div>
   </div>
 
-  <!-- AUTH -->
   <div id="auth-container" class="form-card">
     <h3 id="auth-title">👋 Welcome Back</h3>
     <p class="fc-sub" id="auth-sub">Login to view your orders and saved details.</p>
@@ -1455,7 +1692,6 @@ footer .social-link:hover{
     </p>
   </div>
 
-  <!-- USER INFO -->
   <div id="user-info" style="display:none">
     <div class="form-card wide">
       <div class="profile-head">
@@ -1509,12 +1745,12 @@ footer .social-link:hover{
   <div class="section-head">
     <h2>Seller <span>Dashboard</span></h2>
     <div class="underline"></div>
-    <p>View, accept and manage every customer order in real time.</p>
+    <p>New customer orders appear here in real time. Accept, print, ship and complete.</p>
   </div>
 
-  <div class="dash-stats" id="dash-stats"><!-- injected --></div>
+  <div class="dash-stats" id="dash-stats"></div>
 
-  <div class="dash-tabs" id="dash-tabs"><!-- injected --></div>
+  <div class="dash-tabs" id="dash-tabs"></div>
 
   <div class="table-wrap">
     <div class="table-scroll">
@@ -1684,22 +1920,22 @@ footer .social-link:hover{
     <div class="foot-col">
       <h4>Follow Us</h4>
       <div class="social-row">
-        <a class="social-link fb" href="https://facebook.com/chelladesigns" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook">
+        <a class="social-link fb" href="https://facebook.com/chelladesigns" target="_blank" rel="noopener" aria-label="Facebook">
           <svg viewBox="0 0 24 24"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/></svg>
         </a>
-        <a class="social-link ig" href="https://instagram.com/chelladesigns" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">
+        <a class="social-link ig" href="https://instagram.com/chelladesigns" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 01-1.38-.9 3.7 3.7 0 01-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38A5.87 5.87 0 00.63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.67 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.67-.67 1.08-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.87 5.87 0 00-1.38-2.13A5.87 5.87 0 0019.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zM12 16a4 4 0 110-8 4 4 0 010 8zm7.85-10.4a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/></svg>
         </a>
-        <a class="social-link tiktok" href="https://tiktok.com/@chelladesigns" target="_blank" rel="noopener" title="TikTok" aria-label="TikTok">
+        <a class="social-link tiktok" href="https://tiktok.com/@chelladesigns" target="_blank" rel="noopener" aria-label="TikTok">
           <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64c.3 0 .58.04.86.13V9.4a6.33 6.33 0 00-.86-.05A6.34 6.34 0 005.14 20.4a6.34 6.34 0 0010.86-4.43V8.94a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.18-.37z"/></svg>
         </a>
-        <a class="social-link wa" href="https://wa.me/27834135617" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp">
+        <a class="social-link wa" href="https://wa.me/27834135617" target="_blank" rel="noopener" aria-label="WhatsApp">
           <svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.65-1.58-.9-2.16-.24-.58-.48-.5-.66-.51l-.56-.01c-.2 0-.5.07-.77.37-.27.3-1.02.99-1.02 2.42s1.04 2.81 1.19 3c.15.2 2.05 3.13 4.96 4.39.69.3 1.23.48 1.65.61.7.22 1.34.19 1.84.12.56-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.27-.19-.56-.34zM12.05 21.5h-.01a9.44 9.44 0 01-4.81-1.32l-.35-.2-3.58.94.96-3.49-.23-.36a9.43 9.43 0 01-1.45-5.04c0-5.21 4.25-9.46 9.48-9.46 2.53 0 4.9.99 6.69 2.77a9.4 9.4 0 012.77 6.7c0 5.21-4.25 9.46-9.47 9.46zM20.52 3.45A11.85 11.85 0 0012.05.02C5.51.02.19 5.34.19 11.88c0 2.09.55 4.13 1.59 5.92L.1 24l6.35-1.66a11.85 11.85 0 005.6 1.42h.01c6.53 0 11.85-5.32 11.85-11.86a11.8 11.8 0 00-3.39-8.45z"/></svg>
         </a>
-        <a class="social-link pin" href="https://pinterest.com/chelladesigns" target="_blank" rel="noopener" title="Pinterest" aria-label="Pinterest">
+        <a class="social-link pin" href="https://pinterest.com/chelladesigns" target="_blank" rel="noopener" aria-label="Pinterest">
           <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.2-2.4.04-3.44.22-.94 1.42-6.02 1.42-6.02s-.36-.73-.36-1.81c0-1.7.99-2.96 2.22-2.96 1.05 0 1.55.79 1.55 1.73 0 1.05-.67 2.63-1.02 4.09-.29 1.22.61 2.22 1.82 2.22 2.19 0 3.87-2.31 3.87-5.64 0-2.95-2.12-5.01-5.15-5.01-3.51 0-5.57 2.63-5.57 5.35 0 1.06.41 2.2.92 2.81.1.12.11.23.09.35-.09.38-.31 1.22-.36 1.39-.06.23-.19.28-.44.17-1.64-.76-2.66-3.15-2.66-5.07 0-4.13 3-7.92 8.65-7.92 4.54 0 8.07 3.24 8.07 7.56 0 4.51-2.85 8.14-6.8 8.14-1.33 0-2.58-.69-3-1.51l-.82 3.12c-.3 1.14-1.1 2.58-1.64 3.45 1.24.38 2.54.59 3.91.59 6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg>
         </a>
-        <a class="social-link mail" href="mailto:info@chelladesigns.co.za" title="Email" aria-label="Email">
+        <a class="social-link mail" href="mailto:info@chelladesigns.co.za" aria-label="Email">
           <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4.24l-8 4.99-8-4.99V6l8 4.99L20 6v2.24z"/></svg>
         </a>
       </div>
@@ -1775,7 +2011,6 @@ footer .social-link:hover{
 
     <div class="modal-body" style="padding:0">
       <div class="pd-grid">
-        <!-- VISUAL -->
         <div class="pd-visual" id="pm-visual">
           <div class="glow"></div>
           <div class="pd-preview" id="pm-preview">
@@ -1785,7 +2020,6 @@ footer .social-link:hover{
           </div>
         </div>
 
-        <!-- INFO -->
         <div class="pd-info">
           <span class="p-cat" id="pm-cat">Category</span>
           <h3 id="pm-name">Product Name</h3>
@@ -1795,7 +2029,6 @@ footer .social-link:hover{
           </div>
           <p class="pd-desc" id="pm-desc">Description goes here.</p>
 
-          <!-- QUANTITY -->
           <div class="pd-section">
             <h5>Quantity</h5>
             <div class="qty-row">
@@ -1808,7 +2041,6 @@ footer .social-link:hover{
             </div>
           </div>
 
-          <!-- CUSTOMISE -->
           <div class="pd-section" id="pm-custom-section" style="display:none">
             <div class="custom-toggle">
               <div class="ct-text">
@@ -1856,7 +2088,6 @@ footer .social-link:hover{
             </div>
           </div>
 
-          <!-- PRICE BREAKDOWN -->
           <div class="price-breakdown" id="price-breakdown">
             <div class="pb-row"><span>Base price</span><span id="pb-base">R0</span></div>
             <div class="pb-row" id="pb-text-row" style="display:none"><span>Custom text</span><span>+R15</span></div>
@@ -1902,6 +2133,75 @@ footer .social-link:hover{
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
+/* ============================================================
+   GOOGLE MAPS — ADDRESS AUTOCOMPLETE
+   ============================================================ */
+function initAddressAutocomplete(){
+  if (!window.google || !google.maps || !google.maps.places){
+    console.info('Chella: Google Places unavailable — using offline suggestions.');
+    return;
+  }
+
+  const input = document.getElementById('co-address');
+  const wrap  = document.getElementById('addr-wrap');
+  const hint  = document.getElementById('addr-hint');
+  if (!input || !wrap) return;
+
+  input.removeAttribute('list');
+  hint.innerText = '🌍 Google Maps';
+  hint.style.background = 'linear-gradient(135deg,#e0f7f5,#c7f9e5)';
+  hint.style.color = '#0f766e';
+
+  const ac = new google.maps.places.Autocomplete(input, {
+    types: ['address'],
+    componentRestrictions: { country: 'za' },
+    fields: ['address_components','formatted_address','geometry']
+  });
+
+  ac.addListener('place_changed', () => {
+    const place = ac.getPlace();
+    if (!place || !place.address_components) return;
+
+    let city = '', postal = '';
+    for (const c of place.address_components){
+      if (c.types.includes('locality')) city = c.long_name;
+      if (!city && c.types.includes('administrative_area_level_2')) city = c.long_name;
+      if (!city && c.types.includes('administrative_area_level_1')) city = c.long_name;
+      if (c.types.includes('postal_code')) postal = c.long_name;
+    }
+    if (city)   document.getElementById('co-city').value = city;
+    if (postal) document.getElementById('co-postal').value = postal;
+    if (place.formatted_address) input.value = place.formatted_address;
+
+    hint.innerText = '✓ Verified';
+    hint.style.background = '#dcfce7';
+    hint.style.color = '#166534';
+    toast('📍 Address verified via Google Maps', 'teal');
+  });
+}
+
+function markAddressTyping(){
+  const wrap = document.getElementById('addr-wrap');
+  const hint = document.getElementById('addr-hint');
+  if (!wrap || !hint) return;
+  if (window.google && google.maps && google.maps.places) return;
+
+  const v = document.getElementById('co-address').value.trim();
+  if (v.length > 3){
+    wrap.classList.add('loading');
+    hint.innerText = 'Searching';
+    hint.classList.remove('hidden');
+    clearTimeout(window.__addrHintTimer);
+    window.__addrHintTimer = setTimeout(() => {
+      wrap.classList.remove('loading');
+      hint.innerText = '🔎 Keep typing';
+    }, 700);
+  } else {
+    hint.innerText = '🔎 Type to search';
+    wrap.classList.remove('loading');
+  }
+}
+
 /* ============================================================
    DATA
    ============================================================ */
@@ -1970,6 +2270,9 @@ const PRODUCTS = [
 PRODUCTS.forEach(p => { p.custom = CUSTOM_CATS.includes(p.cat); });
 
 const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 75;
+const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
+const STORAGE_KEY = 'chella_orders_v2';
+const USER_KEY = 'chella_user_v2';
 
 /* ============================================================
    STATE
@@ -1985,6 +2288,7 @@ let modalCustom = { enabled:false, text:'', image:null, imageName:'', color:COLO
 let promoApplied = false;
 let payMethod = 'card';
 let selectedStatusFilter = 'all';
+let newOrderRefs = new Set();
 
 /* ============================================================
    HELPERS
@@ -2012,6 +2316,34 @@ function closeAlert(){ $('alert-modal').classList.remove('active'); }
 function toggleNav(){ $('main-nav').classList.toggle('open'); }
 
 /* ============================================================
+   PERSISTENCE — localStorage
+   ============================================================ */
+function saveOrders(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
+  catch(e){ console.warn('Could not save orders', e); }
+}
+function loadOrders(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch(e){ return null; }
+}
+function saveUser(){
+  try {
+    if (currentUser) localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+    else localStorage.removeItem(USER_KEY);
+  } catch(e){}
+}
+function loadUser(){
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+
+/* ============================================================
    NAVIGATION
    ============================================================ */
 function showSection(id){
@@ -2027,9 +2359,14 @@ function showSection(id){
   window.scrollTo({ top:0, behavior:'smooth' });
 
   if (id === 'cart') renderCart();
-  if (id === 'dashboard') renderDashboard();
+  if (id === 'dashboard') {
+    renderDashboard();
+    newOrderRefs.clear();
+    updateDashNotify();
+  }
   if (id === 'profile') checkAuthState();
   if (id === 'paygate') renderPaySummary();
+  if (id === 'tracking') renderOrderHistory();
 }
 
 /* ============================================================
@@ -2686,6 +3023,7 @@ function processPayment(){
   const phone   = $('co-phone').value.trim();
   const city    = $('co-city').value.trim();
   const address = $('co-address').value.trim();
+  const postal  = $('co-postal').value.trim();
   const notes   = $('co-notes').value.trim();
 
   if (!name || !email || !phone || !city || !address){
@@ -2715,7 +3053,6 @@ function processPayment(){
     showAlert('Confirm with Face ID', 'Double-click the side button to confirm your Apple Pay purchase.', '');
   }
 
-  // Loading overlay
   $('pay-overlay').classList.add('show');
   const steps = ['Contacting PayGate…','Verifying payment…','Authorising transaction…','Confirming order…'];
   let si = 0;
@@ -2738,7 +3075,7 @@ function processPayment(){
       email: email,
       phone: phone,
       city: city,
-      address: address,
+      address: address + (postal ? ', ' + postal : ''),
       notes: notes,
       items: cart.map(i => ({ ...i })),
       subtotal: cartSubtotal(),
@@ -2751,6 +3088,9 @@ function processPayment(){
     };
 
     allOrders.unshift(order);
+    newOrderRefs.add(order.ref);
+    saveOrders();
+    updateDashNotify();
 
     $('paygate-content').style.display = 'none';
     $('invoice-slip').style.display = 'block';
@@ -2774,7 +3114,7 @@ function processPayment(){
       <p><strong>👤 Name:</strong> ${name}</p>
       <p><strong>✉️ Email:</strong> ${email}</p>
       <p><strong>📞 Contact:</strong> ${phone}</p>
-      <p><strong>📍 Delivery:</strong> ${address}, ${city}</p>
+      <p><strong>📍 Delivery:</strong> ${order.address}, ${city}</p>
       ${notes ? `<p><strong>📝 Notes:</strong> ${notes}</p>` : ''}
       <p><strong>💳 Payment:</strong> ${
         payMethod === 'card' ? 'Card' :
@@ -2828,12 +3168,10 @@ function trackOrder(){
     return;
   }
 
-  const steps = ['Pending','Accepted','Printing','Shipped','Completed'];
-  const idx = steps.indexOf(order.status);
-
-  const stepsHtml = steps.map((s, i) => `
-    <div class="tstep ${i <= idx ? 'done' : ''}">
-      <div class="tdot">${i <= idx ? '✓' : i + 1}</div>${s}
+  const idx = order.status === 'Cancelled' ? -1 : STATUS_FLOW.indexOf(order.status);
+  const stepsHtml = STATUS_FLOW.map((s, i) => `
+    <div class="tstep ${i <= idx ? 'done' : ''} ${order.status === 'Cancelled' ? 'cancelled' : ''}">
+      <div class="tdot">${order.status === 'Cancelled' ? '✕' : (i <= idx ? '✓' : i + 1)}</div>${s}
     </div>`).join('');
 
   box.innerHTML = `
@@ -2845,6 +3183,71 @@ function trackOrder(){
       <p><strong>Total:</strong> ${R(order.total)}</p>
       <div class="track-steps">${stepsHtml}</div>
     </div>`;
+}
+
+function renderOrderHistory(){
+  const wrap = $('order-history-list');
+  if (!wrap) return;
+
+  if (!allOrders.length){
+    wrap.innerHTML = `<div class="empty-state" style="padding:40px 20px;background:#fff;border-radius:22px;box-shadow:var(--shadow)">
+      <span class="big">📭</span>
+      <h3>No orders yet</h3>
+      <p style="margin:10px 0 20px">When you place an order it will appear here with its live status.</p>
+      <button class="btn btn-pink" style="margin:0 auto" onclick="showSection('shop')">Start Shopping</button>
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML = allOrders.map(o => {
+    const idx = o.status === 'Cancelled' ? -1 : STATUS_FLOW.indexOf(o.status);
+    const stepsHtml = STATUS_FLOW.map((s, i) => `
+      <div class="tstep ${i <= idx ? 'done' : ''} ${o.status === 'Cancelled' ? 'cancelled' : ''}">
+        <div class="tdot">${o.status === 'Cancelled' ? '✕' : (i <= idx ? '✓' : i + 1)}</div>${s}
+      </div>`).join('');
+
+    const itemsHtml = o.items.map(i => {
+      let c = '';
+      if (i.custom){
+        const bits = [];
+        if (i.custom.text) bits.push(`"${i.custom.text}"`);
+        if (i.custom.image) bits.push('🖼️ image');
+        if (i.custom.colorName) bits.push(i.custom.colorName);
+        c = `<span class="oi-custom">🎨 ${bits.join(' • ')}</span>`;
+      }
+      return `<div class="oc-item-line">
+        <span class="oi-emoji">${i.emoji}</span>
+        <span class="oi-name">${i.name}${c}</span>
+        <span class="oi-qty">×${i.qty}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="order-card status-${o.status}">
+      <div class="oc-head">
+        <div class="oc-ref-block">
+          <span class="ref-code">${o.ref}</span>
+          <span class="cust-sub">${o.date} • ${o.method.toUpperCase()}</span>
+        </div>
+        <span class="status-pill sp-${o.status.toLowerCase()}">${o.status}</span>
+      </div>
+      <div class="oc-items">${itemsHtml}</div>
+      <div class="track-steps">${stepsHtml}</div>
+      <div class="oc-foot">
+        <div class="oc-total">${R(o.total)}<small>${o.items.length} item${o.items.length > 1 ? 's' : ''} • ${o.delivery ? 'incl. delivery' : ''}</small></div>
+        <span style="font-size:.76rem;color:var(--muted)">📍 ${o.city}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function refreshOrderHistory(){
+  const btn = $('refresh-btn');
+  if (btn){
+    btn.classList.add('spinning');
+    setTimeout(() => btn.classList.remove('spinning'), 800);
+  }
+  renderOrderHistory();
+  toast('🔄 Order statuses refreshed', 'teal');
 }
 
 /* ============================================================
@@ -2892,6 +3295,7 @@ function handleAuth(e){
     };
     toast('🎉 Account created successfully!', 'teal');
   }
+  saveUser();
   checkAuthState();
 }
 
@@ -2926,6 +3330,7 @@ function checkAuthState(){
 
     const isAdmin = currentUser.email === 'admin@chelladesigns.co.za';
     $('nav-dashboard').style.display = isAdmin ? 'flex' : 'none';
+    updateDashNotify();
 
     const list = $('user-orders-list');
     const mine = allOrders.filter(o => o.email === currentUser.email);
@@ -2977,12 +3382,14 @@ function saveProfile(e){
   currentUser.homeAddress = $('prof-home-address').value;
   currentUser.businessAddress = $('prof-business-address').value;
   currentUser.cardDetails = $('prof-card-details').value;
+  saveUser();
   checkAuthState();
   toast('💾 Profile updated successfully', 'teal');
 }
 
 function logout(){
   currentUser = null;
+  saveUser();
   checkAuthState();
   toast('👋 You have been logged out');
   showSection('home');
@@ -2991,13 +3398,24 @@ function logout(){
 /* ============================================================
    DASHBOARD
    ============================================================ */
-const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
+function updateDashNotify(){
+  const badge = $('dash-notify');
+  if (!badge) return;
+  const pending = allOrders.filter(o => o.status === 'Pending').length;
+  if (pending > 0){
+    badge.innerText = pending;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
 
 function renderDashboard(){
   renderDashStats();
   renderDashTabs();
   renderDashTable();
   renderRevenueChart();
+  updateDashNotify();
 }
 
 function renderDashStats(){
@@ -3021,7 +3439,7 @@ function renderDashStats(){
     <div class="stat-card c3">
       <div class="sc-top"><span class="sc-lbl">Awaiting Action</span><div class="sc-ico">⏳</div></div>
       <div class="sc-val">${pending}</div>
-      <div class="sc-trend" style="color:${pending ? '#d97706' : '#16a34a'}">
+      <div class="sc-trend ${pending ? 'warn' : ''}">
         ${pending ? '⚠ Needs review' : '✓ All caught up'}</div>
     </div>
     <div class="stat-card c4">
@@ -3047,6 +3465,7 @@ function renderDashTabs(){
     <button class="dtab ${selectedStatusFilter === key ? 'active' : ''}"
       onclick="setStatusFilter('${key}')">
       ${label}<span class="cnt">${counts[key] ?? 0}</span>
+      ${key === 'Pending' && counts.Pending > 0 ? '<span class="new-dot"></span>' : ''}
     </button>`).join('');
 }
 
@@ -3069,6 +3488,7 @@ function renderDashTable(){
   }
 
   tbody.innerHTML = list.map(o => {
+    const isNew = newOrderRefs.has(o.ref);
     const items = o.items.map(i => {
       let c = '';
       if (i.custom){
@@ -3088,9 +3508,10 @@ function renderDashTable(){
     const idx = STATUS_FLOW.indexOf(o.status);
     const canAdvance = idx >= 0 && idx < STATUS_FLOW.length - 1;
 
-    return `<tr>
+    return `<tr class="${isNew ? 'is-new' : ''}">
       <td><span class="ref-code">${o.ref}</span>
-          <span class="cust-sub">${o.date}</span></td>
+          <span class="cust-sub">${o.date}</span>
+          ${isNew ? '<span class="status-pill sp-pending" style="margin-top:4px;font-size:.6rem;padding:3px 8px">🆕 NEW</span>' : ''}</td>
       <td><span class="cust-name">${o.customer}</span>
           <span class="cust-sub">${o.city}</span></td>
       <td><span class="cust-sub" style="color:var(--ink);font-weight:600">${o.phone}</span>
@@ -3123,6 +3544,7 @@ function setOrderStatus(ref, status){
   const o = allOrders.find(x => x.ref === ref);
   if (!o) return;
   o.status = status;
+  saveOrders();
   renderDashboard();
   toast(`📋 ${ref} → ${status}`, status === 'Cancelled' ? 'pink' : 'teal');
 }
@@ -3133,6 +3555,7 @@ function advanceOrder(ref){
   const idx = STATUS_FLOW.indexOf(o.status);
   if (idx < STATUS_FLOW.length - 1){
     o.status = STATUS_FLOW[idx + 1];
+    saveOrders();
     renderDashboard();
     toast(`✅ ${ref} is now "${o.status}"`, 'teal');
   }
@@ -3177,6 +3600,12 @@ function renderRevenueChart(){
    SEED DEMO ORDERS
    ============================================================ */
 function seedDemoOrders(){
+  const saved = loadOrders();
+  if (saved && saved.length){
+    allOrders = saved;
+    return;
+  }
+
   allOrders = [
     {
       ref:'REF-482913', customer:'Thandi Mokoena', email:'thandi@email.com',
@@ -3240,6 +3669,7 @@ function seedDemoOrders(){
       status:'Pending', date:'2024-06-15 07:48', method:'applepay'
     }
   ];
+  saveOrders();
 }
 
 /* ============================================================
@@ -3251,8 +3681,14 @@ function seedDemoOrders(){
   buildFilterCategories();
   renderProducts();
   seedDemoOrders();
+
+  // Restore session
+  const savedUser = loadUser();
+  if (savedUser) currentUser = savedUser;
+
   renderDashboard();
   checkAuthState();
+  renderOrderHistory();
   updateCartCount();
 
   document.querySelectorAll('.modal-overlay').forEach(m => {
@@ -3286,8 +3722,18 @@ function seedDemoOrders(){
     if (e.target.classList.contains('f-cat')) updateFilterBadge();
   });
 
+  // Prefill delivery details if user is logged in
+  if (currentUser){
+    $('co-name').value  = `${currentUser.name} ${currentUser.surname || ''}`.trim();
+    $('co-email').value = currentUser.email;
+    $('co-phone').value = currentUser.phone || '';
+  }
+
   console.log('%c🎨 Chella Designs — Create • Customise • Inspire',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
+  console.log('%c📍 Google Maps autocomplete: ' +
+    (window.google ? 'active' : 'offline datalist fallback (add your API key to enable)'),
+    'font-size:12px;color:#14b8a6;font-weight:bold');
 })();
 </script>
 </body>
