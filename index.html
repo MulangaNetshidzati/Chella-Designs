@@ -136,6 +136,7 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .btn:active{transform:scale(.97)}
 .btn-pink{background:var(--grad-pink);box-shadow:0 8px 20px rgba(236,72,153,.32)}
 .btn-pink:hover{box-shadow:0 14px 32px rgba(236,72,153,.46)}
+.btn-gold{background:var(--grad-gold);color:#3a2c00;font-weight:700;box-shadow:0 8px 20px rgba(234,179,8,.32)}
 .btn-outline{background:#fff;color:var(--pink-deep);border:2px solid var(--pink-soft);box-shadow:none}
 .btn-outline:hover{background:#fff0f7;border-color:var(--pink);box-shadow:0 8px 22px rgba(236,72,153,.18)}
 .btn-ghost{background:#f4f4f5;color:var(--ink);box-shadow:none}
@@ -566,7 +567,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
           <span class="nav-ico">✉️</span><span>Contact</span></a></li>
         <li><a class="nav-link" data-nav="profile" id="nav-profile" onclick="showSection('profile')">
           <span class="nav-ico">👤</span><span id="nav-profile-text">Account</span></a></li>
-        <!-- Dashboard opens in a SEPARATE PAGE (new tab) -->
+        <!-- Dashboard link — href set dynamically in checkAuthState() with ?key= -->
         <li id="nav-dash-li" style="display:none">
           <a class="nav-link dash-link" href="dashboard.html" target="_blank" rel="noopener">
             <span class="nav-ico">📊</span><span>Dashboard</span>
@@ -1101,7 +1102,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </footer>
 
-<!-- FILTER DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 <aside class="drawer" id="filter-drawer">
   <div class="drawer-head">
@@ -1147,7 +1147,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </aside>
 
-<!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="product-modal">
   <div class="modal-box wide">
     <div class="modal-head">
@@ -1267,14 +1266,15 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 <script>
 /* ============================================================
-   SHARED STORAGE KEYS — must match dashboard.html EXACTLY
+   SHARED KEYS — must match dashboard.html EXACTLY
    ============================================================ */
 const STORAGE_KEY       = 'chella_orders_v4';
-const USER_KEY          = 'chella_user_v4';
-const SECTION_KEY       = 'chella_section_v4';
-const CART_KEY          = 'chella_cart_v4';
+const USER_KEY          = 'chella_user_v4';        // sessionStorage (per-tab)
+const SECTION_KEY       = 'chella_section_v4';     // sessionStorage (per-tab)
+const CART_KEY          = 'chella_cart_v4';        // sessionStorage (per-tab)
 const CHANNEL_NAME      = 'chella_orders_channel_v4';
 const ADMIN_EMAIL       = 'admin@chelladesigns.co.za';
+const ADMIN_KEY_STORE   = 'chella_admin_key_v4';
 const OLD_STORAGE_KEYS  = ['chella_orders_v3','chella_orders_v2','chella_user_v3','chella_user_v2'];
 const VALID_SECTIONS    = ['home','shop','cart','paygate','tracking','profile','contact','terms'];
 
@@ -1282,7 +1282,7 @@ const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 /* ============================================================
-   BROADCAST CHANNEL — zero-lag cross-tab messaging
+   BROADCAST CHANNEL
    ============================================================ */
 let bc = null;
 try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){ console.warn('BroadcastChannel unavailable'); }
@@ -1292,28 +1292,44 @@ function broadcast(type, payload){
     try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){}
   }
 }
-
 function initBroadcast(){
   if (!bc) return;
   bc.onmessage = e => {
-    const { type } = e.data || {};
+    const { type, payload } = e.data || {};
     if (type === 'order_created' || type === 'order_updated' || type === 'request_sync'){
-      // Re-read from storage & refresh views that depend on orders
       allOrders = loadOrders();
       renderOrderHistory();
       if (currentUser) checkAuthState();
       if (type === 'order_updated'){
-        // If the customer is on tracking, gently refresh lookup too
-        const ref = (e.data.payload && e.data.payload.ref) || '';
+        const ref = (payload && payload.ref) || '';
         if (ref && $('tracking-ref').value.trim().toUpperCase() === ref){
           trackOrder();
         }
-      }
-      if (type === 'order_created'){
-        toast('📨 New order synced from another tab', 'teal');
+        if ($('tracking').classList.contains('active')){
+          toast('📦 Order status updated', 'teal');
+        }
       }
     }
   };
+}
+
+/* ============================================================
+   ADMIN ACCESS KEY
+   ------------------------------------------------------------
+   A stable per-browser key stored in localStorage. Only the
+   admin flow can produce a link containing it. When the dashboard
+   is opened with a matching ?key=, it grants access. A fresh
+   browser that opens dashboard.html with no key (or wrong key)
+   gets redirected to index.html — no auto-login.
+   ============================================================ */
+function getOrCreateAdminKey(){
+  let k = null;
+  try { k = localStorage.getItem(ADMIN_KEY_STORE); } catch(e){}
+  if (!k){
+    k = 'chella_' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+    try { localStorage.setItem(ADMIN_KEY_STORE, k); } catch(e){}
+  }
+  return k;
 }
 
 /* ============================================================
@@ -1471,12 +1487,17 @@ function toggleNav(){ $('main-nav').classList.toggle('open'); }
    ============================================================ */
 function purgeOldData(){
   OLD_STORAGE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
+  // Kill any previously-persisted customer login (used to live in localStorage)
+  try { localStorage.removeItem('chella_user_v4'); } catch(e){}
+  try { localStorage.removeItem('chella_user_v3'); } catch(e){}
+  try { localStorage.removeItem('chella_user_v2'); } catch(e){}
 }
+
+/* Orders live in localStorage (shared across tabs so the dashboard can read them) */
 function saveOrders(){
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
   } catch(quotaErr){
-    // Strip old images to fit
     const trimmed = allOrders.map((o, i) => {
       if (i < 3) return o;
       return {
@@ -1496,24 +1517,28 @@ function loadOrders(){
     return Array.isArray(parsed) ? parsed : [];
   } catch(e){ return []; }
 }
+
+/* Customer session is PER-TAB only (sessionStorage) */
 function saveUser(){
   try {
-    if (currentUser) localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
-    else localStorage.removeItem(USER_KEY);
+    if (currentUser) sessionStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+    else sessionStorage.removeItem(USER_KEY);
   } catch(e){}
 }
 function loadUser(){
   try {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = sessionStorage.getItem(USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch(e){ return null; }
 }
-function saveSection(id){ try { localStorage.setItem(SECTION_KEY, id); } catch(e){} }
-function loadSection(){ try { return localStorage.getItem(SECTION_KEY) || 'home'; } catch(e){ return 'home'; } }
-function saveCart(){ try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e){} }
+
+/* Section + cart are PER-TAB only */
+function saveSection(id){ try { sessionStorage.setItem(SECTION_KEY, id); } catch(e){} }
+function loadSection(){ try { return sessionStorage.getItem(SECTION_KEY) || 'home'; } catch(e){ return 'home'; } }
+function saveCart(){ try { sessionStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e){} }
 function loadCart(){
   try {
-    const raw = localStorage.getItem(CART_KEY);
+    const raw = sessionStorage.getItem(CART_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -2084,14 +2109,10 @@ function processPayment(){
       placedBy: email.toLowerCase()
     };
 
-    // 1) Save to storage + memory
     allOrders.unshift(order);
     saveOrders();
-
-    // 2) BROADCAST to dashboard instantly (no lag)
     broadcast('order_created', order);
 
-    // 3) Render invoice
     $('paygate-content').style.display = 'none';
     $('invoice-slip').style.display = 'block';
     $('invoice-ref').innerText = refNum;
@@ -2317,6 +2338,16 @@ function checkAuthState(){
     $('nav-dash-li').style.display = isAdmin ? 'block' : 'none';
     $('admin-banner').style.display = isAdmin ? 'flex' : 'none';
 
+    // Attach the admin key to the Dashboard links so a fresh tab can open it.
+    if (isAdmin){
+      const key = getOrCreateAdminKey();
+      const dashHref = 'dashboard.html?key=' + encodeURIComponent(key);
+      const navLink    = document.querySelector('#nav-dash-li a');
+      const bannerLink = document.querySelector('#admin-banner a');
+      if (navLink)     navLink.href = dashHref;
+      if (bannerLink)  bannerLink.href = dashHref;
+    }
+
     const coName = $('co-name');
     if (coName && !coName.value){
       coName.value  = `${currentUser.name} ${currentUser.surname || ''}`.trim();
@@ -2398,16 +2429,11 @@ window.addEventListener('storage', e => {
       toast('🔄 Order status updated', 'teal');
     }
   }
-  if (e.key === USER_KEY){
-    currentUser = loadUser();
-    checkAuthState();
-  }
 });
 window.addEventListener('focus', () => {
   allOrders = loadOrders();
   renderOrderHistory();
 });
-// Light 5s poll — refreshes only if something actually changed
 setInterval(() => {
   const fresh = loadOrders();
   const sig = a => JSON.stringify(a.map(o => o.ref + o.status));
@@ -2471,8 +2497,10 @@ setInterval(() => {
 
   console.log('%c🎨 Chella Designs — Customer Site',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
-  console.log('%c📊 Dashboard is at dashboard.html — orders broadcast instantly via BroadcastChannel',
+  console.log('%c📊 Dashboard: dashboard.html?key=… — orders broadcast instantly',
     'font-size:12px;color:#eab308;font-weight:bold');
+  console.log('%c🔐 Customer sessions are per-tab (sessionStorage) — no auto-login on new tabs',
+    'font-size:12px;color:#14b8a6;font-weight:bold');
 })();
 </script>
 </body>
