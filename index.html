@@ -6,12 +6,16 @@
 <title>Chella Designs | Create • Customise • Inspire</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
+<!-- Google Maps (optional — replace key to enable live address autocomplete) -->
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_PLACEHOLDER_REPLACE_ME&libraries=places&language=en&region=ZA"
   async defer
   onload="initAddressAutocomplete()"
   onerror="console.warn('Google Maps failed — using offline address suggestions.');">
 </script>
+
+<!-- Supabase client (loaded async so the page renders instantly) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
 <style>
 :root{
@@ -143,6 +147,7 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .btn-ghost:hover{background:#e9e9ec}
 .btn-block{width:100%}
 .btn-sm{padding:8px 16px;font-size:.78rem}
+.btn[disabled]{opacity:.6;cursor:not-allowed;pointer-events:none}
 
 .shop-toolbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
 .chip-scroller{flex:1;display:flex;gap:10px;overflow-x:auto;scroll-behavior:smooth;padding:6px 2px;scrollbar-width:none;min-width:0;}
@@ -421,28 +426,60 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .auth-scroll::-webkit-scrollbar-thumb{background:var(--pink-soft);border-radius:50px}
 .auth-scroll::-webkit-scrollbar-track{background:transparent}
 
-/* Signup section divider */
+/* Back button for signup mode */
+.auth-back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px 8px 12px;border-radius:50px;
+  background:#fff;border:1.5px solid var(--line);
+  color:var(--pink-deep);font-size:.78rem;font-weight:700;
+  cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(190,24,93,.08);
+}
+.auth-back-btn .ab-arrow{
+  font-size:1rem;line-height:1;transition:transform .3s;
+  display:inline-flex;align-items:center;
+}
+.auth-back-btn:hover{
+  background:var(--grad-pink);color:#fff;border-color:transparent;
+  transform:translateX(-3px);
+  box-shadow:0 10px 22px rgba(236,72,153,.35);
+}
+.auth-back-btn:hover .ab-arrow{transform:translateX(-4px)}
+.auth-back-btn:active{transform:translateX(-3px) scale(.97)}
+.auth-back-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.auth-back-row .abr-step{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+
 .signup-section-title{
   font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
   font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px;
 }
-.signup-section-title::after{
-  content:'';flex:1;height:1px;background:var(--line);
-}
+.signup-section-title::after{content:'';flex:1;height:1px;background:var(--line);}
 
-/* Password strength + match hint */
 .pw-hint{font-size:.72rem;margin-top:5px;color:var(--muted)}
 .pw-hint.good{color:#16a34a}
 .pw-hint.warn{color:#d97706}
 .pw-hint.bad{color:#dc2626}
-
-/* Field errors */
-.field-error{
-  font-size:.72rem;color:#dc2626;margin-top:5px;display:none;
-}
+.field-error{font-size:.72rem;color:#dc2626;margin-top:5px;display:none}
 .field-error.show{display:block}
 .form-group.invalid input,
 .form-group.invalid textarea{border-color:#fca5a5;background:#fff5f5}
+
+/* Cloud status pill */
+.cloud-status{
+  position:fixed;bottom:20px;right:20px;z-index:800;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:50px;
+  background:#fff;border:1.5px solid var(--line);
+  font-size:.72rem;font-weight:700;color:var(--muted);
+  box-shadow:0 10px 24px rgba(0,0,0,.1);
+  transition:.3s;
+}
+.cloud-status .cs-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.cloud-status.ok .cs-dot{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2)}
+.cloud-status.offline .cs-dot{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.2)}
+.cloud-status.ok{color:#166534}
+.cloud-status.offline{color:#991b1b}
 
 .toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
 .toast{background:var(--ink);color:#fff;padding:13px 26px;border-radius:50px;font-size:.85rem;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;animation:toastIn .45s cubic-bezier(.34,1.56,.64,1) both;white-space:nowrap;}
@@ -536,6 +573,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   .cart-item{flex-wrap:wrap}
   .tstep{font-size:.54rem}
   .tstep .tdot{width:22px;height:22px;font-size:.6rem}
+  .cloud-status{right:12px;bottom:12px;font-size:.65rem;padding:7px 12px}
 }
 </style>
 </head>
@@ -570,6 +608,12 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 <div class="bg-blobs">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+</div>
+
+<!-- Cloud connection indicator -->
+<div class="cloud-status" id="cloud-status">
+  <span class="cs-dot"></span>
+  <span id="cloud-status-text">Connecting…</span>
 </div>
 
 <header>
@@ -875,7 +919,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
             <label class="switch"><input type="checkbox" id="express-ship" onchange="renderPaySummary()"><span class="slider"></span></label>
           </div>
 
-          <button class="btn btn-pink btn-block" style="padding:17px;font-size:1rem" onclick="processPayment()">
+          <button class="btn btn-pink btn-block" style="padding:17px;font-size:1rem" id="pay-submit-btn" onclick="processPayment(event)">
             🔒 Pay <span id="pay-btn-amount">R0</span> Now
           </button>
           <div class="secure-strip">🔐 Secured by PayGate • PCI-DSS Level 1 • 3D Secure</div>
@@ -937,7 +981,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </section>
 
-<!-- ============================ PROFILE / AUTH ============================ -->
+<!-- PROFILE / AUTH -->
 <section id="profile" class="section">
   <div class="section-head">
     <h2>My <span>Account</span></h2>
@@ -966,6 +1010,15 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
         <!-- SIGNUP-ONLY FIELDS -->
         <div id="signup-fields" style="display:none">
+
+          <!-- BACK BUTTON -->
+          <div class="auth-back-row">
+            <button type="button" class="auth-back-btn" onclick="backToLogin()" aria-label="Back to login">
+              <span class="ab-arrow">←</span> Back to Login
+            </button>
+            <span class="abr-step">New Account</span>
+          </div>
+
           <div class="signup-section-title">Personal Details</div>
 
           <div class="grid-2">
@@ -1140,6 +1193,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
         <a class="social-link tiktok" href="https://tiktok.com/@chelladesigns" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64c.3 0 .58.04.86.13V9.4a6.33 6.33 0 00-.86-.05A6.34 6.34 0 005.14 20.4a6.34 6.34 0 0010.86-4.43V8.94a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.18-.37z"/></svg></a>
         <a class="social-link wa" href="https://wa.me/27834135617" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.65-1.58-.9-2.16-.24-.58-.48-.5-.66-.51l-.56-.01c-.2 0-.5.07-.77.37-.27.3-1.02.99-1.02 2.42s1.04 2.81 1.19 3c.15.2 2.05 3.13 4.96 4.39.69.3 1.23.48 1.65.61.7.22 1.34.19 1.84.12.56-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.27-.19-.56-.34zM12.05 21.5h-.01a9.44 9.44 0 01-4.81-1.32l-.35-.2-3.58.94.96-3.49-.23-.36a9.43 9.43 0 01-1.45-5.04c0-5.21 4.25-9.46 9.48-9.46 2.53 0 4.9.99 6.69 2.77a9.4 9.4 0 012.77 6.7c0 5.21-4.25 9.46-9.47 9.46zM20.52 3.45A11.85 11.85 0 0012.05.02C5.51.02.19 5.34.19 11.88c0 2.09.55 4.13 1.59 5.92L.1 24l6.35-1.66a11.85 11.85 0 005.6 1.42h.01c6.53 0 11.85-5.32 11.85-11.86a11.8 11.8 0 00-3.39-8.45z"/></svg></a>
         <a class="social-link pin" href="https://pinterest.com/chelladesigns" target="_blank" rel="noopener" aria-label="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.2-2.4.04-3.44.22-.94 1.42-6.02 1.42-6.02s-.36-.73-.36-1.81c0-1.7.99-2.96 2.22-2.96 1.05 0 1.55.79 1.55 1.73 0 1.05-.67 2.63-1.02 4.09-.29 1.22.61 2.22 1.82 2.22 2.19 0 3.87-2.31 3.87-5.64 0-2.95-2.12-5.01-5.15-5.01-3.51 0-5.57 2.63-5.57 5.35 0 1.06.41 2.2.92 2.81.1.12.11.23.09.35-.09.38-.31 1.22-.36 1.39-.06.23-.19.28-.44.17-1.64-.76-2.66-3.15-2.66-5.07 0-4.13 3-7.92 8.65-7.92 4.54 0 8.07 3.24 8.07 7.56 0 4.51-2.85 8.14-6.8 8.14-1.33 0-2.58-.69-3-1.51l-.82 3.12c-.3 1.14-1.1 2.58-1.64 3.45 1.24.38 2.54.59 3.91.59 6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg></a>
+        <a class="social-link mail" href="mailto:info@chelladesigns.co.za" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4.24l-8 4.99-8-4.99V6l8 4.99L20 6v2.24z"/></svg></a>
       </div>
     </div>
   </div>
@@ -1206,7 +1260,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
         <a class="social-link tiktok" href="https://tiktok.com/@chelladesigns" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64c.3 0 .58.04.86.13V9.4a6.33 6.33 0 00-.86-.05A6.34 6.34 0 005.14 20.4a6.34 6.34 0 0010.86-4.43V8.94a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.18-.37z"/></svg></a>
         <a class="social-link wa" href="https://wa.me/27834135617" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.65-1.58-.9-2.16-.24-.58-.48-.5-.66-.51l-.56-.01c-.2 0-.5.07-.77.37-.27.3-1.02.99-1.02 2.42s1.04 2.81 1.19 3c.15.2 2.05 3.13 4.96 4.39.69.3 1.23.48 1.65.61.7.22 1.34.19 1.84.12.56-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.27-.19-.56-.34zM12.05 21.5h-.01a9.44 9.44 0 01-4.81-1.32l-.35-.2-3.58.94.96-3.49-.23-.36a9.43 9.43 0 01-1.45-5.04c0-5.21 4.25-9.46 9.48-9.46 2.53 0 4.9.99 6.69 2.77a9.4 9.4 0 012.77 6.7c0 5.21-4.25 9.46-9.47 9.46zM20.52 3.45A11.85 11.85 0 0012.05.02C5.51.02.19 5.34.19 11.88c0 2.09.55 4.13 1.59 5.92L.1 24l6.35-1.66a11.85 11.85 0 005.6 1.42h.01c6.53 0 11.85-5.32 11.85-11.86a11.8 11.8 0 00-3.39-8.45z"/></svg></a>
         <a class="social-link pin" href="https://pinterest.com/chelladesigns" target="_blank" rel="noopener" aria-label="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.2-2.4.04-3.44.22-.94 1.42-6.02 1.42-6.02s-.36-.73-.36-1.81c0-1.7.99-2.96 2.22-2.96 1.05 0 1.55.79 1.55 1.73 0 1.05-.67 2.63-1.02 4.09-.29 1.22.61 2.22 1.82 2.22 2.19 0 3.87-2.31 3.87-5.64 0-2.95-2.12-5.01-5.15-5.01-3.51 0-5.57 2.63-5.57 5.35 0 1.06.41 2.2.92 2.81.1.12.11.23.09.35-.09.38-.31 1.22-.36 1.39-.06.23-.19.28-.44.17-1.64-.76-2.66-3.15-2.66-5.07 0-4.13 3-7.92 8.65-7.92 4.54 0 8.07 3.24 8.07 7.56 0 4.51-2.85 8.14-6.8 8.14-1.33 0-2.58-.69-3-1.51l-.82 3.12c-.3 1.14-1.1 2.58-1.64 3.45 1.24.38 2.54.59 3.91.59 6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg></a>
-        <a class="social-link mail" href="mailto:info@chelladesigns.co.za" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4.24l-8 4.99-8-4.99V6l8 4.99L20 6v2.24z"/></svg></a>
       </div>
     </div>
   </div>
@@ -1216,6 +1269,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </footer>
 
+<!-- FILTER DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 <aside class="drawer" id="filter-drawer">
   <div class="drawer-head">
@@ -1261,6 +1315,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </aside>
 
+<!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="product-modal">
   <div class="modal-box wide">
     <div class="modal-head">
@@ -1380,99 +1435,88 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 <script>
 /* ============================================================
-   SHARED KEYS
+   CONFIG — replace with your real Supabase credentials
    ============================================================ */
-const STORAGE_KEY       = 'chella_orders_v4';
-const ACCOUNTS_KEY      = 'chella_accounts_v4';   // ← account registry (persistent)
-const USER_KEY          = 'chella_user_v4';        // ← session (per-tab)
-const SECTION_KEY       = 'chella_section_v4';
-const CART_KEY          = 'chella_cart_v4';
-const CHANNEL_NAME      = 'chella_orders_channel_v4';
-const ADMIN_EMAIL       = 'admin@chelladesigns.co.za';
-const ADMIN_PASSWORD    = 'admin123';
-const ADMIN_KEY_STORE   = 'chella_admin_key_v4';
-const OLD_STORAGE_KEYS  = ['chella_orders_v3','chella_orders_v2','chella_user_v3','chella_user_v2'];
-const VALID_SECTIONS    = ['home','shop','cart','paygate','tracking','profile','contact','terms'];
+const SUPABASE_URL  = 'https://YOUR-PROJECT.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOi...YOUR-ANON-KEY';
+
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
+const USER_KEY       = 'chella_user_session';   // per-tab session (sessionStorage)
+const SECTION_KEY    = 'chella_section_session';
+const CART_KEY       = 'chella_cart_session';
+const ADMIN_EMAIL    = 'admin@chelladesigns.co.za';
+const ADMIN_KEY_STORE = 'chella_admin_key_v4';
+const OLD_LOCAL_KEYS = [
+  'chella_orders_v4','chella_orders_v3','chella_orders_v2',
+  'chella_user_v4','chella_user_v3','chella_user_v2',
+  'chella_accounts_v4','chella_cart_v4','chella_section_v4',
+  'chella_accounts','chella_orders'
+];
+const VALID_SECTIONS = ['home','shop','cart','paygate','tracking','profile','contact','terms'];
 
 const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 75;
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 /* ============================================================
-   ACCOUNTS
-   ------------------------------------------------------------
-   Real account registry persisted in localStorage so that
-   logins validate against actual signups. New visitors
-   start with only the admin account seeded.
+   SUPABASE CLIENT — initialised once, waiting for CDN
    ============================================================ */
-function loadAccounts(){
-  try {
-    const raw = localStorage.getItem(ACCOUNTS_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === 'object') ? parsed : {};
-  } catch(e){ return {}; }
-}
-function saveAccounts(accounts){
-  try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); }
-  catch(e){ console.warn('Could not save accounts', e); }
-}
-function emailKey(email){ return String(email || '').trim().toLowerCase(); }
-
-function findAccount(email){
-  const accounts = loadAccounts();
-  return accounts[emailKey(email)] || null;
-}
-function upsertAccount(account){
-  const accounts = loadAccounts();
-  accounts[emailKey(account.email)] = account;
-  saveAccounts(accounts);
-}
-function isEmailTaken(email){
-  return !!findAccount(email);
+let sb = null;
+function waitForSupabase(){
+  return new Promise(resolve => {
+    if (window.supabase && typeof window.supabase.createClient === 'function'){
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      resolve(sb);
+      return;
+    }
+    let tries = 0;
+    const iv = setInterval(() => {
+      tries++;
+      if (window.supabase && typeof window.supabase.createClient === 'function'){
+        clearInterval(iv);
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        resolve(sb);
+      } else if (tries > 60){
+        clearInterval(iv);
+        console.error('Supabase CDN failed to load');
+        resolve(null);
+      }
+    }, 100);
+  });
 }
 
-/* Seed the admin account ONCE — never overwrite if user already exists */
-function seedAdminAccount(){
-  const accounts = loadAccounts();
-  if (!accounts[emailKey(ADMIN_EMAIL)]){
-    accounts[emailKey(ADMIN_EMAIL)] = {
-      name: 'Michelle',
-      surname: 'Adams',
-      email: ADMIN_EMAIL,
-      password: ADMIN_PASSWORD,
-      phone: '083 413 5617',
-      altPhone: '021 555 0199',
-      homeAddress: '123 Main Road, Cape Town, 8001',
-      businessAddress: '456 Business Ave, Johannesburg, 2001',
-      cardDetails: '**** **** **** 4242',
-      createdAt: Date.now(),
-      isAdmin: true
-    };
-    saveAccounts(accounts);
-  }
+function setCloudStatus(state, text){
+  const el = document.getElementById('cloud-status');
+  const t  = document.getElementById('cloud-status-text');
+  if (!el || !t) return;
+  el.classList.remove('ok','offline');
+  if (state) el.classList.add(state);
+  t.innerText = text;
 }
 
 /* ============================================================
-   BROADCAST CHANNEL
+   BROADCAST CHANNEL — same-tab cross-window notifications
    ============================================================ */
 let bc = null;
-try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){}
-
+try { bc = new BroadcastChannel('chella_orders_channel_v4'); } catch(e){}
 function broadcast(type, payload){
   if (bc){ try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){} }
 }
 function initBroadcast(){
   if (!bc) return;
-  bc.onmessage = e => {
+  bc.onmessage = async e => {
     const { type, payload } = e.data || {};
-    if (type === 'order_created' || type === 'order_updated' || type === 'request_sync'){
-      allOrders = loadOrders();
-      renderOrderHistory();
+    if (type === 'order_created' || type === 'request_sync'){
+      await refreshOrdersFromCloud();
       if (currentUser) checkAuthState();
-      if (type === 'order_updated'){
-        const ref = (payload && payload.ref) || '';
-        if (ref && $('tracking-ref').value.trim().toUpperCase() === ref) trackOrder();
-        if ($('tracking').classList.contains('active')) toast('📦 Order status updated', 'teal');
+    }
+    if (type === 'order_updated'){
+      await refreshOrdersFromCloud();
+      const ref = (payload && payload.ref) || '';
+      if (ref && document.getElementById('tracking-ref').value.trim().toUpperCase() === ref) trackOrder();
+      if (document.getElementById('tracking').classList.contains('active')){
+        toast('📦 Order status updated', 'teal');
       }
     }
   };
@@ -1495,10 +1539,7 @@ function getOrCreateAdminKey(){
    GOOGLE MAPS AUTOCOMPLETE
    ============================================================ */
 function initAddressAutocomplete(){
-  if (!window.google || !google.maps || !google.maps.places){
-    console.info('Chella: Google Places unavailable — using offline suggestions.');
-    return;
-  }
+  if (!window.google || !google.maps || !google.maps.places) return;
   const input = document.getElementById('co-address');
   const hint  = document.getElementById('addr-hint');
   if (!input || !hint) return;
@@ -1617,6 +1658,7 @@ let modalCustom = { enabled:false, text:'', image:null, imageName:'', color:COLO
 let promoApplied = false;
 let payMethod = 'card';
 let currentSection = 'home';
+let cloudReady = false;
 
 /* ============================================================
    HELPERS
@@ -1641,34 +1683,141 @@ function showAlert(title, message, icon='✅'){
 function closeAlert(){ $('alert-modal').classList.remove('active'); }
 function toggleNav(){ $('main-nav').classList.toggle('open'); }
 
-/* ============================================================
-   STORAGE
-   ============================================================ */
-function purgeOldData(){
-  OLD_STORAGE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
-  try { localStorage.removeItem('chella_user_v4'); } catch(e){}
-  try { localStorage.removeItem('chella_user_v3'); } catch(e){}
-  try { localStorage.removeItem('chella_user_v2'); } catch(e){}
+function purgeOldLocalData(){
+  OLD_LOCAL_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
 }
-function saveOrders(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
-  catch(quotaErr){
-    const trimmed = allOrders.map((o, i) => {
-      if (i < 3) return o;
-      return { ...o, items: o.items.map(it => it.custom ? { ...it, custom: { ...it.custom, image: null } } : it) };
-    });
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed)); } catch(e){}
-    allOrders = trimmed;
+
+/* ============================================================
+   CLOUD DATA LAYER — orders
+   ============================================================ */
+async function loadOrders(){
+  if (!sb) return [];
+  try {
+    const { data, error } = await sb
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error){ console.error('loadOrders:', error); setCloudStatus('offline','Cloud offline'); return []; }
+    setCloudStatus('ok','Cloud connected');
+    return (data || []).map(o => ({
+      id: o.id,
+      ref: o.ref,
+      customer: o.customer,
+      email: o.email,
+      phone: o.phone,
+      city: o.city,
+      address: o.address,
+      notes: o.notes,
+      items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+      subtotal: Number(o.subtotal) || 0,
+      delivery: Number(o.delivery) || 0,
+      discount: Number(o.discount) || 0,
+      total: Number(o.total) || 0,
+      status: o.status,
+      method: o.method,
+      placedBy: o.placed_by || o.email,
+      date: o.date,
+      createdAt: o.created_at
+    }));
+  } catch(e){
+    console.error('loadOrders exception:', e);
+    setCloudStatus('offline','Cloud offline');
+    return [];
   }
 }
-function loadOrders(){
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch(e){ return []; }
+function safeJsonParse(s, fallback){
+  try { return JSON.parse(s); } catch(e){ return fallback; }
 }
+async function refreshOrdersFromCloud(){
+  allOrders = await loadOrders();
+  renderOrderHistory();
+}
+async function insertOrder(order){
+  if (!sb) return null;
+  const payload = {
+    ref: order.ref,
+    customer: order.customer,
+    email: order.email,
+    phone: order.phone,
+    city: order.city,
+    address: order.address,
+    notes: order.notes,
+    items: order.items,
+    subtotal: order.subtotal,
+    delivery: order.delivery,
+    discount: order.discount,
+    total: order.total,
+    status: order.status,
+    method: order.method,
+    placed_by: order.placedBy,
+    date: order.date
+  };
+  const { data, error } = await sb.from('orders').insert(payload).select().single();
+  if (error){ console.error('insertOrder:', error); return null; }
+  return data;
+}
+
+/* ============================================================
+   CLOUD DATA LAYER — accounts
+   ============================================================ */
+async function findAccount(email){
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb
+      .from('accounts')
+      .select('*')
+      .eq('email', String(email || '').toLowerCase())
+      .maybeSingle();
+    if (error){ console.error('findAccount:', error); return null; }
+    return data;
+  } catch(e){ console.error('findAccount exception:', e); return null; }
+}
+async function upsertAccount(account){
+  if (!sb) return null;
+  const payload = {
+    email: account.email.toLowerCase(),
+    password: account.password,
+    first_name: account.name,
+    surname: account.surname,
+    phone: account.phone || null,
+    alt_phone: account.altPhone || null,
+    home_address: account.homeAddress || null,
+    business_address: account.businessAddress || null,
+    card_details: account.cardDetails || null,
+    is_admin: account.isAdmin || false
+  };
+  const { data, error } = await sb
+    .from('accounts')
+    .upsert(payload, { onConflict: 'email' })
+    .select()
+    .single();
+  if (error){ console.error('upsertAccount:', error); return null; }
+  return data;
+}
+async function updateAccount(email, patch){
+  if (!sb) return null;
+  const payload = {
+    first_name: patch.name,
+    surname: patch.surname,
+    phone: patch.phone,
+    alt_phone: patch.altPhone,
+    home_address: patch.homeAddress,
+    business_address: patch.businessAddress,
+    card_details: patch.cardDetails
+  };
+  const { data, error } = await sb
+    .from('accounts')
+    .update(payload)
+    .eq('email', email.toLowerCase())
+    .select()
+    .single();
+  if (error){ console.error('updateAccount:', error); return null; }
+  return data;
+}
+
+/* ============================================================
+   SESSION STORAGE (per-tab)
+   ============================================================ */
 function saveUser(){
   try {
     if (currentUser) sessionStorage.setItem(USER_KEY, JSON.stringify(currentUser));
@@ -2199,8 +2348,10 @@ function formatSignupCard(el){
   el.value = v ? v.replace(/(.{4})/g,'$1 ').trim() : '';
 }
 
-function processPayment(){
+async function processPayment(event){
+  if (event && event.preventDefault) event.preventDefault();
   if (!cart.length){ showAlert('Empty Cart','Your cart is empty.','🛒'); return; }
+
   const name    = $('co-name').value.trim();
   const email   = $('co-email').value.trim();
   const phone   = $('co-phone').value.trim();
@@ -2225,8 +2376,11 @@ function processPayment(){
     showAlert('Confirm with Face ID', 'Double-click the side button to confirm your Apple Pay purchase.', '');
   }
 
+  const submitBtn = $('pay-submit-btn');
+  if (submitBtn) submitBtn.disabled = true;
+
   $('pay-overlay').classList.add('show');
-  const steps = ['Contacting PayGate…','Verifying payment…','Confirming order…'];
+  const steps = ['Contacting PayGate…','Verifying payment…','Saving order…'];
   let si = 0;
   $('pay-overlay-text').innerText = steps[0];
   const iv = setInterval(() => {
@@ -2234,9 +2388,8 @@ function processPayment(){
     if (si < steps.length) $('pay-overlay-text').innerText = steps[si];
   }, 400);
 
-  setTimeout(() => {
+  setTimeout(async () => {
     clearInterval(iv);
-    $('pay-overlay').classList.remove('show');
 
     const refNum = 'REF-' + Math.floor(100000 + Math.random() * 900000);
     const total = cartTotal();
@@ -2261,8 +2414,20 @@ function processPayment(){
       placedBy: email.toLowerCase()
     };
 
+    const saved = await insertOrder(order);
+
+    $('pay-overlay').classList.remove('show');
+    if (submitBtn) submitBtn.disabled = false;
+
+    if (!saved){
+      showAlert('Could Not Save Order',
+        'Your order could not be saved to the cloud. Please check your internet connection and try again.', '⚠️');
+      toast('❌ Cloud save failed — order not placed', 'error');
+      return;
+    }
+
+    order.id = saved.id;
     allOrders.unshift(order);
-    saveOrders();
     broadcast('order_created', order);
 
     $('paygate-content').style.display = 'none';
@@ -2317,7 +2482,7 @@ function processPayment(){
 
     window.scrollTo({ top:0, behavior:'smooth' });
     setTimeout(() => {
-      showAlert('Email Confirmation', `A receipt and tracking link has been sent to ${email}. 💌`, '📧');
+      showAlert('Order Placed', `A receipt and tracking link has been sent to ${email}. 💌`, '📧');
     }, 500);
   }, 1200);
 }
@@ -2379,7 +2544,7 @@ function renderOrderHistory(){
       <div class="tstep ${i <= idx ? 'done' : ''} ${o.status === 'Cancelled' ? 'cancelled' : ''}">
         <div class="tdot">${o.status === 'Cancelled' ? '✕' : (i <= idx ? '✓' : i + 1)}</div>${s}
       </div>`).join('');
-    const itemsHtml = o.items.map(i => {
+    const itemsHtml = (o.items || []).map(i => {
       let c = '';
       if (i.custom){
         const bits = [];
@@ -2405,75 +2570,55 @@ function renderOrderHistory(){
       <div class="oc-items">${itemsHtml}</div>
       <div class="track-steps">${stepsHtml}</div>
       <div class="oc-foot">
-        <div class="oc-total">${R(o.total)}<small>${o.items.length} item${o.items.length > 1 ? 's' : ''} • ${o.delivery ? 'incl. delivery' : ''}</small></div>
+        <div class="oc-total">${R(o.total)}<small>${(o.items||[]).length} item${(o.items||[]).length > 1 ? 's' : ''} • ${o.delivery ? 'incl. delivery' : ''}</small></div>
         <span style="font-size:.76rem;color:var(--muted)">📍 ${o.city}</span>
       </div>
     </div>`;
   }).join('');
 }
-function refreshOrderHistory(){
+async function refreshOrderHistory(){
   const btn = $('refresh-btn');
   if (btn){ btn.classList.add('spinning'); setTimeout(() => btn.classList.remove('spinning'), 800); }
-  allOrders = loadOrders();
+  await refreshOrdersFromCloud();
   broadcast('request_sync');
-  renderOrderHistory();
-  toast('🔄 Order statuses refreshed', 'teal');
+  toast('🔄 Order statuses refreshed from cloud', 'teal');
 }
 
 /* ============================================================
-   AUTH — REAL VALIDATION AGAINST STORED ACCOUNTS
+   AUTH
    ============================================================ */
 function setFieldError(id, show){
   const el = $(id);
   if (!el) return;
   el.classList.toggle('show', show);
   const input = el.previousElementSibling;
-  if (input && input.parentElement){
-    input.parentElement.classList.toggle('invalid', show);
-  }
+  if (input && input.parentElement) input.parentElement.classList.toggle('invalid', show);
 }
 function clearFieldErrors(){
   document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
   document.querySelectorAll('.form-group.invalid').forEach(e => e.classList.remove('invalid'));
 }
-function isValidEmail(v){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
-}
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim()); }
 function updatePwHint(){
   const pw = $('auth-password-signup').value;
   const cf = $('auth-confirm').value;
   const pwHint = $('pw-hint');
   const matchHint = $('pw-match-hint');
 
-  if (!pw){
-    pwHint.className = 'pw-hint';
-    pwHint.innerText = 'Password must be at least 6 characters.';
-  } else if (pw.length < 6){
+  if (!pw){ pwHint.className = 'pw-hint'; pwHint.innerText = 'Password must be at least 6 characters.'; }
+  else if (pw.length < 6){
     pwHint.className = 'pw-hint bad';
     pwHint.innerText = `Too short — ${6 - pw.length} more character${6 - pw.length === 1 ? '' : 's'} needed.`;
-  } else if (pw.length < 10){
-    pwHint.className = 'pw-hint warn';
-    pwHint.innerText = 'Okay — a longer password is stronger.';
-  } else {
-    pwHint.className = 'pw-hint good';
-    pwHint.innerText = '✓ Strong password';
-  }
+  } else if (pw.length < 10){ pwHint.className = 'pw-hint warn'; pwHint.innerText = 'Okay — a longer password is stronger.'; }
+  else { pwHint.className = 'pw-hint good'; pwHint.innerText = '✓ Strong password'; }
 
-  if (!cf){
-    matchHint.className = 'pw-hint';
-    matchHint.innerText = 'Passwords must match.';
-  } else if (cf !== pw){
-    matchHint.className = 'pw-hint bad';
-    matchHint.innerText = '✕ Passwords do not match.';
-  } else {
-    matchHint.className = 'pw-hint good';
-    matchHint.innerText = '✓ Passwords match';
-  }
+  if (!cf){ matchHint.className = 'pw-hint'; matchHint.innerText = 'Passwords must match.'; }
+  else if (cf !== pw){ matchHint.className = 'pw-hint bad'; matchHint.innerText = '✕ Passwords do not match.'; }
+  else { matchHint.className = 'pw-hint good'; matchHint.innerText = '✓ Passwords match'; }
 }
 function toggleAuthMode(){
   isLoginMode = !isLoginMode;
   clearFieldErrors();
-
   $('auth-title').innerText = isLoginMode ? '👋 Welcome Back' : '✨ Create Account';
   $('auth-sub').innerText = isLoginMode
     ? 'Login to view your orders and saved details.'
@@ -2486,13 +2631,30 @@ function toggleAuthMode(){
   $('admin-hint').style.display    = isLoginMode ? 'block' : 'none';
   $('auth-container').classList.toggle('signup-mode', !isLoginMode);
 }
+function backToLogin(){
+  if (isLoginMode) return;
+  isLoginMode = false;
+  toggleAuthMode();
+  clearFieldErrors();
+  const card = document.getElementById('auth-container');
+  if (card) card.scrollIntoView({ behavior:'smooth', block:'start' });
+  toast('↩️ Returned to login', 'teal');
+}
 
-function handleAuth(e){
+async function handleAuth(e){
   e.preventDefault();
   clearFieldErrors();
 
+  if (!cloudReady){
+    showAlert('Connecting…', 'Please wait a moment while we connect to the cloud.', '⏳');
+    return;
+  }
+
+  const submitBtn = $('auth-submit-btn');
+  const originalText = submitBtn.innerText;
+
   if (isLoginMode){
-    /* -------------------- LOGIN -------------------- */
+    /* ================ LOGIN ================ */
     const email = $('auth-email-login').value.trim();
     const pw    = $('auth-password-login').value;
 
@@ -2501,32 +2663,35 @@ function handleAuth(e){
     if (!pw){ setFieldError('err-login-pass', true); hasError = true; }
     if (hasError) return;
 
-    const account = findAccount(email);
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Checking…';
+
+    const account = await findAccount(email);
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalText;
 
     if (!account){
-      showAlert('Account Not Found',
-        'No account exists with that email address. Please sign up first.', '❓');
+      showAlert('Account Not Found', 'No account exists with that email address. Please sign up first.', '❓');
       toast('❌ No account found for that email', 'error');
       return;
     }
     if (account.password !== pw){
-      showAlert('Incorrect Password',
-        'The password you entered is incorrect. Please try again.', '🔒');
+      showAlert('Incorrect Password', 'The password you entered is incorrect. Please try again.', '🔒');
       toast('❌ Incorrect password', 'error');
       return;
     }
 
-    /* Success — hydrate current user from stored account */
     currentUser = {
-      name: account.name,
+      name: account.first_name,
       surname: account.surname,
       email: account.email,
       phone: account.phone || '',
-      altPhone: account.altPhone || '',
-      homeAddress: account.homeAddress || '',
-      businessAddress: account.businessAddress || '',
-      cardDetails: account.cardDetails || '',
-      isAdmin: !!account.isAdmin
+      altPhone: account.alt_phone || '',
+      homeAddress: account.home_address || '',
+      businessAddress: account.business_address || '',
+      cardDetails: account.card_details || '',
+      isAdmin: !!account.is_admin
     };
     saveUser();
     checkAuthState();
@@ -2535,7 +2700,7 @@ function handleAuth(e){
     $('auth-password-login').value = '';
 
   } else {
-    /* -------------------- SIGN UP -------------------- */
+    /* ================ SIGN UP ================ */
     const firstName = $('auth-firstname').value.trim();
     const surname   = $('auth-surname').value.trim();
     const email     = $('auth-email-signup').value.trim();
@@ -2568,17 +2733,22 @@ function handleAuth(e){
       toast('❌ Passwords do not match', 'error');
       return;
     }
-    if (isEmailTaken(email)){
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Creating account…';
+
+    const existing = await findAccount(email);
+    if (existing){
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalText;
       setFieldError('err-signup-email', true);
       $('err-signup-email').innerText = 'That email is already registered. Please login instead.';
-      showAlert('Email Already Registered',
-        'An account with that email already exists. Try logging in instead.', '📧');
+      showAlert('Email Already Registered', 'An account with that email already exists. Try logging in instead.', '📧');
       toast('❌ Email already registered', 'error');
       return;
     }
 
-    /* Create the account */
-    const account = {
+    const newAccount = {
       name: firstName,
       surname: surname,
       email: email,
@@ -2588,29 +2758,36 @@ function handleAuth(e){
       homeAddress: homeAddr,
       businessAddress: bizAddr,
       cardDetails: cardDet,
-      createdAt: Date.now(),
       isAdmin: false
     };
-    upsertAccount(account);
 
-    /* Auto-login the new user */
+    const created = await upsertAccount(newAccount);
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalText;
+
+    if (!created){
+      showAlert('Signup Failed', 'Could not create your account. Please check your internet connection and try again.', '⚠️');
+      toast('❌ Could not create account', 'error');
+      return;
+    }
+
     currentUser = {
-      name: account.name,
-      surname: account.surname,
-      email: account.email,
-      phone: account.phone,
-      altPhone: account.altPhone,
-      homeAddress: account.homeAddress,
-      businessAddress: account.businessAddress,
-      cardDetails: account.cardDetails,
-      isAdmin: false
+      name: created.first_name,
+      surname: created.surname,
+      email: created.email,
+      phone: created.phone || '',
+      altPhone: created.alt_phone || '',
+      homeAddress: created.home_address || '',
+      businessAddress: created.business_address || '',
+      cardDetails: created.card_details || '',
+      isAdmin: !!created.is_admin
     };
     saveUser();
     checkAuthState();
     renderOrderHistory();
     toast('🎉 Account created — welcome to Chella Designs!', 'teal');
 
-    /* Clear signup form */
     ['auth-firstname','auth-surname','auth-email-signup','auth-password-signup',
      'auth-confirm','auth-phone','auth-altphone','auth-home-address',
      'auth-business-address','auth-card-details'].forEach(id => {
@@ -2679,7 +2856,7 @@ function checkAuthState(){
         <li>
           <div>
             <span class="ref-code">${o.ref}</span>
-            <span class="cust-sub">${o.date} • ${o.items.length} item${o.items.length>1?'s':''}</span>
+            <span class="cust-sub">${o.date} • ${(o.items||[]).length} item${(o.items||[]).length>1?'s':''}</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px">
             <strong style="color:var(--pink-deep)">${R(o.total)}</strong>
@@ -2708,29 +2885,24 @@ function toggleProfileEdit(){
     checkAuthState();
   }
 }
-function saveProfile(e){
+async function saveProfile(e){
   e.preventDefault();
   const updated = {
     name: $('prof-name').value.trim(),
     surname: $('prof-surname').value.trim(),
-    email: currentUser.email,       // email is the primary key — not editable here
+    email: currentUser.email,
     phone: $('prof-phone').value.trim(),
     altPhone: $('prof-alt-phone').value.trim(),
     homeAddress: $('prof-home-address').value.trim(),
     businessAddress: $('prof-business-address').value.trim(),
     cardDetails: $('prof-card-details').value.trim()
   };
-  /* Update in-memory user */
   Object.assign(currentUser, updated);
-  /* Persist to the account registry */
-  const account = findAccount(currentUser.email);
-  if (account){
-    Object.assign(account, updated);
-    upsertAccount(account);
-  }
   saveUser();
+  const result = await updateAccount(currentUser.email, updated);
   checkAuthState();
-  toast('💾 Profile updated successfully', 'teal');
+  if (result) toast('💾 Profile updated in cloud', 'teal');
+  else toast('⚠️ Saved locally, but cloud update failed', 'error');
 }
 function logout(){
   currentUser = null;
@@ -2742,56 +2914,24 @@ function logout(){
 }
 
 /* ============================================================
-   CROSS-TAB SYNC
-   ============================================================ */
-window.addEventListener('storage', e => {
-  if (e.key === STORAGE_KEY){
-    allOrders = loadOrders();
-    renderOrderHistory();
-    if (currentUser) checkAuthState();
-    if ($('tracking').classList.contains('active')){
-      toast('🔄 Order status updated', 'teal');
-    }
-  }
-});
-window.addEventListener('focus', () => {
-  allOrders = loadOrders();
-  renderOrderHistory();
-});
-setInterval(() => {
-  const fresh = loadOrders();
-  const sig = a => JSON.stringify(a.map(o => o.ref + o.status));
-  if (sig(fresh) !== sig(allOrders)){
-    allOrders = fresh;
-    renderOrderHistory();
-    if (currentUser) checkAuthState();
-  }
-}, 5000);
-
-/* ============================================================
    INIT
    ============================================================ */
-(function init(){
-  purgeOldData();
-  seedAdminAccount();       // ← seeds admin ONCE — never overwrites
-  initBroadcast();
-
+(async function init(){
+  purgeOldLocalData();
   buildCarousel();
   renderChips();
   buildFilterCategories();
   renderProducts();
 
-  allOrders   = loadOrders();
   cart        = loadCart();
   currentUser = loadUser();
-
   checkAuthState();
-  renderOrderHistory();
   updateCartCount();
 
   const savedSection = loadSection();
   showSection(savedSection, { skipPersist:true });
 
+  /* Bind UI events */
   document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => {
       if (e.target === m){ m.classList.remove('active'); document.body.style.overflow = ''; }
@@ -2804,13 +2944,11 @@ setInterval(() => {
       document.body.style.overflow = '';
     }
   });
-
   const car = $('home-carousel');
   if (car){
     car.addEventListener('mouseenter', () => clearInterval(slideTimer));
     car.addEventListener('mouseleave', startAutoSlide);
   }
-
   $('express-ship').addEventListener('change', renderPaySummary);
   $('price-range').addEventListener('input', updateFilterBadge);
   $('sort-select').addEventListener('change', updateFilterBadge);
@@ -2820,12 +2958,70 @@ setInterval(() => {
     if (e.target.classList.contains('f-cat')) updateFilterBadge();
   });
 
-  console.log('%c🎨 Chella Designs — Customer Site',
+  /* Connect to cloud */
+  setCloudStatus(null, 'Connecting…');
+  const client = await waitForSupabase();
+  if (!client){
+    setCloudStatus('offline', 'Cloud offline');
+    toast('⚠️ Cloud connection failed — some features unavailable', 'error');
+    return;
+  }
+
+  cloudReady = true;
+  initBroadcast();
+
+  allOrders = await loadOrders();
+  renderOrderHistory();
+  checkAuthState();
+  toast('☁️ Connected to Chella cloud', 'teal');
+
+  /* Real-time subscription — new/updated orders arrive instantly */
+  sb.channel('orders-live')
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        payload => {
+          if (payload.eventType === 'INSERT'){
+            const o = payload.new;
+            if (allOrders.some(x => x.ref === o.ref)) return;
+            allOrders.unshift({
+              id: o.id, ref: o.ref, customer: o.customer, email: o.email,
+              phone: o.phone, city: o.city, address: o.address, notes: o.notes,
+              items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+              subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
+              discount: Number(o.discount) || 0, total: Number(o.total) || 0,
+              status: o.status, method: o.method,
+              placedBy: o.placed_by || o.email, date: o.date, createdAt: o.created_at
+            });
+            renderOrderHistory();
+            if (currentUser) checkAuthState();
+          }
+          if (payload.eventType === 'UPDATE'){
+            const idx = allOrders.findIndex(x => x.ref === payload.new.ref);
+            if (idx >= 0){
+              const o = payload.new;
+              allOrders[idx] = {
+                ...allOrders[idx],
+                status: o.status,
+                items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+                total: Number(o.total) || allOrders[idx].total
+              };
+              renderOrderHistory();
+              if (currentUser) checkAuthState();
+              const ref = document.getElementById('tracking-ref').value.trim().toUpperCase();
+              if (ref === o.ref) trackOrder();
+            }
+          }
+          if (payload.eventType === 'DELETE'){
+            allOrders = allOrders.filter(x => x.ref !== payload.old.ref);
+            renderOrderHistory();
+          }
+        })
+    .subscribe();
+
+  console.log('%c🎨 Chella Designs — Cloud-connected',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
-  console.log('%c🔐 Real account validation active — login checks against stored accounts',
+  console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
-  console.log('%c👤 Admin: admin@chelladesigns.co.za / admin123',
-    'font-size:12px;color:#eab308;font-weight:bold');
 })();
 </script>
 </body>
