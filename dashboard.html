@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard | Chella Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --pink:#ec4899;--pink-soft:#f9a8d4;--pink-deep:#be185d;
+  --purple:#a855f7;--purple-deep:#7e22ce;
+  --teal:#14b8a6;--teal-deep:#0f766e;
+  --gold:#eab308;--gold-deep:#ca8a04;--orange:#f97316;
+  --ink:#15121c;--muted:#6b7280;--line:#f1e6ee;
+  --bg:#fffafc;--card:#ffffff;
+  --radius:22px;--radius-sm:14px;
+  --shadow:0 10px 30px rgba(190,24,93,.10);
+  --shadow-lg:0 24px 60px rgba(126,34,206,.18);
+  --grad-pink:linear-gradient(135deg,#ec4899,#a855f7);
+  --grad-teal:linear-gradient(135deg,#14b8a6,#22d3ee);
+  --grad-gold:linear-gradient(135deg,#eab308,#f97316);
+  --grad-rainbow:linear-gradient(120deg,#ec4899,#a855f7,#14b8a6,#eab308,#f97316);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden;min-height:100vh;}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;line-height:1.2}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{font-family:'Poppins',sans-serif;cursor:pointer;border:none}
+input,textarea,select{font-family:'Poppins',sans-serif}
+img{max-width:100%;display:block}
+
+/* BACKGROUND */
+.bg-blobs{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:floaty 18s ease-in-out infinite}
+.blob.b1{width:420px;height:420px;background:#f9a8d4;top:-120px;left:-100px}
+.blob.b2{width:380px;height:380px;background:#99f6e4;top:35%;right:-140px;animation-delay:-5s}
+.blob.b3{width:340px;height:340px;background:#e9d5ff;bottom:-120px;left:20%;animation-delay:-9s}
+.blob.b4{width:280px;height:280px;background:#fde68a;bottom:20%;right:25%;animation-delay:-13s}
+@keyframes floaty{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-50px) scale(1.12)}66%{transform:translate(-35px,35px) scale(.92)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
+@keyframes pulseGold{0%,100%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 0 rgba(234,179,8,.5)}60%{box-shadow:0 3px 10px rgba(234,179,8,.55),0 0 0 12px rgba(234,179,8,0)}}
+@keyframes growBar{from{height:0 !important;opacity:0}to{opacity:1}}
+@keyframes newRow{0%{background:#fef3c7}100%{background:#fffafc}}
+
+/* LOGIN GATE */
+#login-gate{
+  position:fixed;inset:0;background:rgba(255,255,255,.97);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;
+  transition:opacity .4s, visibility .4s;
+}
+#login-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-card{
+  background:#fff;border-radius:28px;padding:44px 40px;max-width:460px;width:100%;
+  box-shadow:0 30px 80px rgba(126,34,206,.25);border:1px solid var(--line);
+  text-align:center;animation:fadeUp .55s both;
+}
+.login-card .lock-ico{
+  width:86px;height:86px;border-radius:50%;background:var(--grad-pink);
+  display:flex;align-items:center;justify-content:center;font-size:2.4rem;
+  margin:0 auto 22px;box-shadow:0 20px 40px rgba(236,72,153,.4);
+  animation:floaty 3s ease-in-out infinite;
+}
+.login-card h1{font-size:1.9rem;margin-bottom:6px}
+.login-card h1 span{background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
+.login-card .lc-sub{color:var(--muted);font-size:.88rem;margin-bottom:28px}
+.login-card .form-group{text-align:left;margin-bottom:16px}
+.login-card .form-group label{display:block;font-size:.78rem;font-weight:700;margin-bottom:7px;color:var(--ink)}
+.login-card .form-group input{
+  width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:14px;
+  font-size:.88rem;background:#fcfcfd;transition:.3s;
+}
+.login-card .form-group input:focus{outline:none;border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(236,72,153,.10);}
+.login-card .hint-box{
+  margin-top:20px;padding:14px;background:linear-gradient(135deg,#fff0f7,#f5f3ff);
+  border-radius:14px;font-size:.78rem;color:var(--purple-deep);text-align:left;
+  border:1.5px dashed var(--pink-soft);
+}
+.login-card .hint-box strong{display:block;color:var(--pink-deep);margin-bottom:3px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 24px;border-radius:50px;font-weight:600;font-size:.9rem;
+  background:var(--grad-teal);color:#fff;transition:.3s;
+  box-shadow:0 8px 20px rgba(20,184,166,.28);
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,184,166,.4)}
+.btn:active{transform:scale(.97)}
+.btn-pink{background:var(--grad-pink);box-shadow:0 8px 20px rgba(236,72,153,.32)}
+.btn-pink:hover{box-shadow:0 14px 32px rgba(236,72,153,.46)}
+.btn-ghost{background:#f4f4f5;color:var(--ink);box-shadow:none}
+.btn-ghost:hover{background:#e9e9ec}
+.btn-block{width:100%}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:900;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);
+}
+.nav-wrap{
+  max-width:1400px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:18px;padding:12px 24px;
+}
+.logo-container{display:flex;align-items:center;gap:12px}
+.logo-img{height:52px;width:52px;object-fit:contain;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(190,24,93,.18);}
+.brand-text{display:flex;flex-direction:column;line-height:1}
+.brand-text .b1{font-family:'Dancing Script',cursive;font-size:1.7rem;font-weight:700;background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-text .b2{font-size:.55rem;letter-spacing:.32em;color:var(--teal-deep);font-weight:600;margin-top:1px}
+.dash-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);color:#3a2c00;
+  padding:7px 15px;border-radius:50px;font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;box-shadow:0 6px 14px rgba(234,179,8,.25);
+}
+.live-dot{
+  width:9px;height:9px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 0 0 rgba(34,197,94,.6);
+  animation:pulseLive 1.8s ease-in-out infinite;
+}
+@keyframes pulseLive{
+  0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+  60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
+}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:1.05rem;
+  color:var(--pink-deep);transition:.3s;position:relative;box-shadow:0 6px 16px rgba(190,24,93,.08);
+}
+.icon-btn:hover{background:var(--grad-pink);color:#fff;border-color:transparent;transform:scale(1.08);}
+.icon-btn.spinning{animation:spin .8s linear}
+.notify-dot{
+  position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;
+  background:var(--gold);color:#3a2c00;border-radius:50%;
+  font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite;
+}
+
+/* MAIN */
+main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
+.section-head{text-align:center;margin-bottom:34px}
+.section-head h2{font-size:clamp(1.9rem,4vw,2.6rem);display:inline-block}
+.section-head h2 span{background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
+.section-head .underline{width:110px;height:5px;border-radius:5px;margin:12px auto 0;background:var(--grad-rainbow);background-size:300% 100%;animation:gradShift 4s linear infinite;}
+.section-head p{color:var(--muted);margin-top:12px;font-size:.95rem}
+
+/* STATS */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.35s;
+  animation:fadeUp .5s both;
+}
+.stat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;}
+.stat-card.c1::before{background:var(--grad-pink)}
+.stat-card.c2::before{background:var(--grad-teal)}
+.stat-card.c3::before{background:var(--grad-gold)}
+.stat-card.c4::before{background:linear-gradient(180deg,#a855f7,#7e22ce)}
+.stat-card .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stat-card .sc-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:#fff0f7;}
+.stat-card.c2 .sc-ico{background:#e0f7f5}
+.stat-card.c3 .sc-ico{background:#fef9c3}
+.stat-card.c4 .sc-ico{background:#f3e8ff}
+.stat-card .sc-val{font-size:1.9rem;font-weight:800;font-family:'Playfair Display';color:var(--ink)}
+.stat-card .sc-lbl{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat-card .sc-trend{font-size:.72rem;font-weight:700;color:#16a34a;margin-top:6px}
+.stat-card .sc-trend.warn{color:#d97706}
+
+/* TABS */
+.dash-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
+.dtab{
+  padding:10px 20px;border-radius:50px;background:#fff;border:1.5px solid var(--line);
+  font-size:.8rem;font-weight:600;color:var(--muted);transition:.3s;position:relative;
+}
+.dtab:hover{border-color:var(--pink-soft);color:var(--pink-deep);transform:translateY(-2px)}
+.dtab.active{background:var(--grad-pink);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(236,72,153,.3);}
+.dtab .cnt{background:rgba(0,0,0,.08);border-radius:50px;padding:1px 8px;font-size:.7rem;margin-left:6px}
+.dtab.active .cnt{background:rgba(255,255,255,.28)}
+.dtab .new-dot{
+  position:absolute;top:-3px;right:-3px;width:12px;height:12px;
+  background:var(--gold);border-radius:50%;border:2px solid #fff;
+  animation:pulseGold 1.6s ease-in-out infinite;
+}
+
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.table-scroll{overflow-x:auto}
+table.dash{width:100%;border-collapse:collapse;min-width:1000px}
+table.dash th{
+  background:linear-gradient(135deg,#15121c,#3b2a45);color:#fff;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:15px 16px;text-align:left;font-weight:600;white-space:nowrap;
+}
+table.dash td{padding:15px 16px;border-bottom:1px solid var(--line);font-size:.83rem;vertical-align:top}
+table.dash tbody tr{transition:.25s}
+table.dash tbody tr:hover{background:#fffafc}
+table.dash tbody tr:last-child td{border-bottom:none}
+table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);animation:newRow 2.2s ease-out}
+.ref-code{font-family:'Courier New',monospace;font-weight:700;color:var(--pink-deep);font-size:.85rem}
+.cust-name{font-weight:600;color:var(--ink)}
+.cust-sub{font-size:.74rem;color:var(--muted);display:block}
+.item-line{font-size:.78rem;color:#4b5563;padding:2px 0;display:flex;gap:6px;align-items:flex-start}
+.item-line .il-q{color:var(--pink-deep);font-weight:700}
+.item-line .il-c{color:var(--purple-deep);font-size:.72rem}
+.act-row{display:flex;gap:7px;flex-wrap:wrap}
+.act{
+  padding:7px 13px;border-radius:50px;font-size:.72rem;font-weight:700;transition:.28s;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.act:hover{transform:translateY(-2px)}
+.act-accept{background:#dcfce7;color:#166534}
+.act-accept:hover{background:#16a34a;color:#fff}
+.act-reject{background:#fee2e2;color:#991b1b}
+.act-reject:hover{background:#dc2626;color:#fff}
+.act-next{background:#ede9fe;color:#5b21b6}
+.act-next:hover{background:#7e22ce;color:#fff}
+.act-view{background:#e0f7fa;color:#155e75}
+.act-view:hover{background:#0e7490;color:#fff}
+.status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:50px;font-size:.74rem;font-weight:700;letter-spacing:.05em;}
+.sp-pending{background:#fef3c7;color:#92400e}
+.sp-accepted{background:#dbeafe;color:#1e40af}
+.sp-printing{background:#ede9fe;color:#5b21b6}
+.sp-shipped{background:#cffafe;color:#155e75}
+.sp-completed{background:#dcfce7;color:#166534}
+.sp-cancelled{background:#fee2e2;color:#991b1b}
+
+/* CHART */
+.chart-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);margin-top:24px;}
+.chart-card h3{font-size:1.15rem;margin-bottom:22px;display:flex;align-items:center;gap:9px}
+.bars{display:flex;align-items:flex-end;gap:16px;height:190px;padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:56px;border-radius:12px 12px 4px 4px;background:var(--grad-pink);animation:growBar 1s cubic-bezier(.22,1,.36,1) both;position:relative;min-height:6px;transition:.3s;}
+.bar:hover{filter:brightness(1.12);transform:scaleY(1.03)}
+.bar .bar-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:800;color:var(--pink-deep);white-space:nowrap;}
+.bar-lbl{font-size:.68rem;color:var(--muted);font-weight:600;text-align:center;line-height:1.2}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:70px 20px;color:var(--muted)}
+.empty-state .big{font-size:3.4rem;display:block;margin-bottom:14px;animation:floaty 3s ease-in-out infinite}
+
+/* TOASTS */
+.toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
+.toast{
+  background:var(--ink);color:#fff;padding:13px 26px;border-radius:50px;font-size:.85rem;
+  font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;
+  animation:fadeUp .45s cubic-bezier(.34,1.56,.64,1) both;white-space:nowrap;
+}
+.toast.pink{background:var(--grad-pink)}
+.toast.teal{background:var(--grad-teal)}
+.toast.gold{background:var(--grad-gold);color:#3a2c00}
+.toast.out{animation:fadeOutDown .35s forwards}
+@keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
+
+/* NEW ORDER FLASH BANNER */
+.flash-banner{
+  position:fixed;top:88px;left:50%;transform:translateX(-50%);
+  background:var(--grad-gold);color:#3a2c00;padding:13px 26px;
+  border-radius:50px;font-size:.88rem;font-weight:700;
+  box-shadow:0 18px 40px rgba(234,179,8,.45);z-index:950;
+  display:none;align-items:center;gap:10px;
+  animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.flash-banner.show{display:flex}
+.flash-banner .fb-emoji{font-size:1.2rem;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  main{padding:22px 15px 50px}
+  .login-card{padding:34px 26px}
+  .dash-badge{display:none}
+  .stat-card .sc-val{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+</div>
+
+<!-- ============================================================
+     LOGIN GATE
+     ============================================================ -->
+<div id="login-gate">
+  <div class="login-card">
+    <div class="lock-ico">🔐</div>
+    <h1>Seller <span>Dashboard</span></h1>
+    <p class="lc-sub">Chella Designs • Admin access only</p>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Admin Email</label>
+        <input type="email" id="login-email" required placeholder="admin@chelladesigns.co.za" value="admin@chelladesigns.co.za">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" required placeholder="••••••••" value="admin123">
+      </div>
+      <button type="submit" class="btn btn-pink btn-block" style="padding:15px">🔓 Unlock Dashboard</button>
+    </form>
+
+    <div class="hint-box">
+      <strong>💡 Demo credentials</strong>
+      Email: <code>admin@chelladesigns.co.za</code><br>
+      Password: any value
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FLASH NEW-ORDER BANNER
+     ============================================================ -->
+<div class="flash-banner" id="flash-banner">
+  <span class="fb-emoji">🔔</span>
+  <span id="flash-text">New order received!</span>
+</div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header>
+  <div class="nav-wrap">
+    <div class="logo-container">
+      <img src="chella-logo.png" alt="Chella Designs" class="logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <div class="logo-fallback" style="height:52px;width:52px;border-radius:50%;display:none;align-items:center;justify-content:center;background:var(--grad-pink);color:#fff;font-family:'Dancing Script';font-size:1.3rem;font-weight:700;">Chella</div>
+      <div class="brand-text">
+        <span class="b1">Chella</span>
+        <span class="b2">DESIGNS</span>
+      </div>
+    </div>
+
+    <div class="dash-badge">
+      <span class="live-dot"></span> LIVE • Connected
+    </div>
+
+    <div class="nav-actions">
+      <button class="icon-btn" onclick="manualRefresh()" title="Refresh orders">
+        <span id="refresh-ico">🔄</span>
+        <span class="notify-dot" id="pending-dot" style="display:none">0</span>
+      </button>
+      <button class="icon-btn" onclick="logout()" title="Logout">🚪</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+<main>
+  <div class="section-head">
+    <h2>Seller <span>Dashboard</span></h2>
+    <div class="underline"></div>
+    <p>New customer orders arrive here in <strong>real time</strong>. Accept, print, ship and complete.</p>
+  </div>
+
+  <div class="dash-stats" id="dash-stats"></div>
+  <div class="dash-tabs" id="dash-tabs"></div>
+
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table class="dash">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Delivery Address</th>
+            <th>Items Ordered</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="dashboard-orders"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>📊 Revenue by Category</h3>
+    <div class="bars" id="revenue-chart"></div>
+  </div>
+</main>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+/* ============================================================
+   SHARED KEYS — MUST MATCH index.html
+   ============================================================ */
+const STORAGE_KEY  = 'chella_orders_v4';
+const USER_KEY     = 'chella_user_v4';
+const CHANNEL_NAME = 'chella_orders_channel_v4';
+const ADMIN_EMAIL  = 'admin@chelladesigns.co.za';
+const SESSION_KEY  = 'chella_dash_session_v1';
+const STATUS_FLOW  = ['Pending','Accepted','Printing','Shipped','Completed'];
+
+const CAT_EMOJIS = {
+  'Mugs':'☕','Mouse Pads':'🖱️','Cake Toppers':'🎂','Key Rings':'🔑',
+  'Stickers':'✨','Colouring Books':'🎨','Smarties Shaker':'🍬','T-Shirts':'👕'
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let allOrders = [];
+let selectedStatusFilter = 'all';
+let newOrderRefs = new Set();
+let bc = null;
+
+const R = n => 'R' + Number(n).toFixed(2).replace(/\.00$/,'');
+const $ = id => document.getElementById(id);
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+function toast(msg, type='pink'){
+  const wrap = $('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(),350); }, 3000);
+}
+
+/* ============================================================
+   BROADCAST CHANNEL — receive instant order notifications
+   ============================================================ */
+try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){ console.warn('BroadcastChannel unavailable'); }
+
+function initBroadcast(){
+  if (!bc) return;
+  bc.onmessage = e => {
+    const { type, payload } = e.data || {};
+    if (type === 'order_created'){
+      allOrders = loadOrders();
+      // Mark the newest order as new
+      if (payload && payload.ref) newOrderRefs.add(payload.ref);
+      renderDashboard();
+      flashNewOrder(payload);
+      toast('🎉 New order received! ' + (payload?.ref || ''), 'gold');
+    } else if (type === 'order_updated' || type === 'request_sync'){
+      allOrders = loadOrders();
+      renderDashboard();
+    }
+  };
+}
+
+function broadcast(type, payload){
+  if (bc){
+    try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){}
+  }
+}
+
+/* ============================================================
+   NEW-ORDER FLASH BANNER
+   ============================================================ */
+let flashTimer = null;
+function flashNewOrder(order){
+  const banner = $('flash-banner');
+  const text = $('flash-text');
+  if (!banner || !text) return;
+  const name = order?.customer || 'Customer';
+  const total = order?.total ? R(order.total) : '';
+  text.innerText = `New order from ${name} — ${total}`;
+  banner.classList.add('show');
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => banner.classList.remove('show'), 5000);
+}
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+function loadOrders(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch(e){ return []; }
+}
+function saveOrders(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
+  catch(e){ console.warn('Could not save orders', e); }
+}
+function isLoggedIn(){
+  try { return localStorage.getItem(SESSION_KEY) === '1'; }
+  catch(e){ return false; }
+}
+function setLoggedIn(v){
+  try {
+    if (v) localStorage.setItem(SESSION_KEY, '1');
+    else localStorage.removeItem(SESSION_KEY);
+  } catch(e){}
+}
+
+/* ============================================================
+   LOGIN GATE
+   ============================================================ */
+function handleLogin(e){
+  e.preventDefault();
+  const email = $('login-email').value.trim().toLowerCase();
+  if (email !== ADMIN_EMAIL){
+    toast('❌ Only the admin email can access the dashboard', 'pink');
+    return;
+  }
+  setLoggedIn(true);
+  $('login-gate').classList.add('hidden');
+  toast('👋 Welcome back, Michelle!', 'teal');
+  renderDashboard();
+}
+function logout(){
+  setLoggedIn(false);
+  $('login-gate').classList.remove('hidden');
+  toast('👋 Logged out of dashboard');
+}
+function checkGate(){
+  if (isLoggedIn()){
+    $('login-gate').classList.add('hidden');
+  } else {
+    $('login-gate').classList.remove('hidden');
+  }
+}
+
+/* ============================================================
+   DASHBOARD RENDER
+   ============================================================ */
+function renderDashboard(){
+  updatePendingDot();
+  renderStats();
+  renderTabs();
+  renderTable();
+  renderChart();
+}
+
+function updatePendingDot(){
+  const badge = $('pending-dot');
+  const pending = allOrders.filter(o => o.status === 'Pending').length;
+  if (pending > 0){
+    badge.innerText = pending;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderStats(){
+  const total = allOrders.length;
+  const revenue = allOrders.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + o.total, 0);
+  const pending = allOrders.filter(o => o.status === 'Pending').length;
+  const completed = allOrders.filter(o => o.status === 'Completed').length;
+
+  $('dash-stats').innerHTML = `
+    <div class="stat-card c1" style="animation-delay:.05s">
+      <div class="sc-top"><span class="sc-lbl">Total Orders</span><div class="sc-ico">📦</div></div>
+      <div class="sc-val">${total}</div>
+      <div class="sc-trend">▲ All time</div>
+    </div>
+    <div class="stat-card c2" style="animation-delay:.1s">
+      <div class="sc-top"><span class="sc-lbl">Revenue</span><div class="sc-ico">💰</div></div>
+      <div class="sc-val">${R(revenue)}</div>
+      <div class="sc-trend">▲ Excludes cancelled</div>
+    </div>
+    <div class="stat-card c3" style="animation-delay:.15s">
+      <div class="sc-top"><span class="sc-lbl">Awaiting Action</span><div class="sc-ico">⏳</div></div>
+      <div class="sc-val">${pending}</div>
+      <div class="sc-trend ${pending ? 'warn' : ''}">
+        ${pending ? '⚠ Needs review' : '✓ All caught up'}</div>
+    </div>
+    <div class="stat-card c4" style="animation-delay:.2s">
+      <div class="sc-top"><span class="sc-lbl">Completed</span><div class="sc-ico">✅</div></div>
+      <div class="sc-val">${completed}</div>
+      <div class="sc-trend">▲ Delivered</div>
+    </div>`;
+}
+
+function renderTabs(){
+  const counts = {
+    all: allOrders.length,
+    Pending: allOrders.filter(o => o.status === 'Pending').length,
+    Accepted: allOrders.filter(o => o.status === 'Accepted').length,
+    Printing: allOrders.filter(o => o.status === 'Printing').length,
+    Shipped: allOrders.filter(o => o.status === 'Shipped').length,
+    Completed: allOrders.filter(o => o.status === 'Completed').length,
+    Cancelled: allOrders.filter(o => o.status === 'Cancelled').length
+  };
+
+  const tabs = [['all','🌐 All'], ...STATUS_FLOW.map(s => [s, s]), ['Cancelled','Cancelled']];
+  $('dash-tabs').innerHTML = tabs.map(([key, label]) => `
+    <button class="dtab ${selectedStatusFilter === key ? 'active' : ''}"
+      onclick="setStatusFilter('${key}')">
+      ${label}<span class="cnt">${counts[key] ?? 0}</span>
+      ${key === 'Pending' && counts.Pending > 0 ? '<span class="new-dot"></span>' : ''}
+    </button>`).join('');
+}
+
+function setStatusFilter(s){
+  selectedStatusFilter = s;
+  renderTabs();
+  renderTable();
+}
+
+function renderTable(){
+  const tbody = $('dashboard-orders');
+  let list = allOrders;
+  if (selectedStatusFilter !== 'all') list = list.filter(o => o.status === selectedStatusFilter);
+
+  if (!list.length){
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:60px 20px;color:var(--muted)">
+      <div style="font-size:3rem;margin-bottom:14px">📭</div>
+      <strong style="display:block;font-size:1rem;color:var(--ink);margin-bottom:6px">No orders in this view yet</strong>
+      <span style="font-size:.82rem">New customer orders will appear here automatically.</span>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(o => {
+    const isNew = newOrderRefs.has(o.ref);
+    const items = o.items.map(i => {
+      let c = '';
+      if (i.custom){
+        const bits = [];
+        if (i.custom.text) bits.push(`"${i.custom.text}"`);
+        if (i.custom.image) bits.push('🖼️ img');
+        if (i.custom.colorName) bits.push(i.custom.colorName);
+        c = `<span class="il-c">🎨 ${bits.join(' • ')}</span>`;
+      }
+      return `<div class="item-line">
+        <span>${i.emoji}</span>
+        <span><span class="il-q">×${i.qty}</span> ${i.name}</span>
+        ${c}
+      </div>`;
+    }).join('');
+
+    const idx = STATUS_FLOW.indexOf(o.status);
+    const canAdvance = idx >= 0 && idx < STATUS_FLOW.length - 1;
+
+    return `<tr class="${isNew ? 'is-new' : ''}">
+      <td>
+        <span class="ref-code">${o.ref}</span>
+        <span class="cust-sub">${o.date}</span>
+        ${isNew ? '<span class="status-pill sp-pending" style="margin-top:4px;font-size:.6rem;padding:3px 8px">🆕 NEW</span>' : ''}
+      </td>
+      <td><span class="cust-name">${o.customer}</span>
+          <span class="cust-sub">${o.city}</span></td>
+      <td><span class="cust-sub" style="color:var(--ink);font-weight:600">${o.phone}</span>
+          <span class="cust-sub">${o.email}</span></td>
+      <td style="max-width:200px">${o.address}${o.notes ? `<span class="cust-sub" style="color:var(--purple-deep)">📝 ${o.notes}</span>` : ''}</td>
+      <td style="max-width:250px">${items}</td>
+      <td><strong style="color:var(--pink-deep)">${R(o.total)}</strong>
+          <span class="cust-sub">${(o.method || 'card').toUpperCase()}</span></td>
+      <td><span class="status-pill sp-${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>
+        <div class="act-row">
+          ${o.status === 'Pending' ? `
+            <button class="act act-accept" onclick="setOrderStatus('${o.ref}','Accepted')">✓ Accept</button>
+            <button class="act act-reject" onclick="setOrderStatus('${o.ref}','Cancelled')">✕ Reject</button>
+          ` : ''}
+          ${canAdvance && o.status !== 'Pending' ? `
+            <button class="act act-next" onclick="advanceOrder('${o.ref}')">▶ ${STATUS_FLOW[idx + 1]}</button>
+          ` : ''}
+          ${o.status === 'Cancelled' ? `
+            <button class="act act-view" onclick="setOrderStatus('${o.ref}','Pending')">↺ Restore</button>
+          ` : ''}
+          ${o.status === 'Completed' ? `<span style="font-size:.75rem;color:#16a34a;font-weight:700">🎉 Done</span>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setOrderStatus(ref, status){
+  const o = allOrders.find(x => x.ref === ref);
+  if (!o) return;
+  o.status = status;
+  newOrderRefs.delete(ref);
+  saveOrders();
+  renderDashboard();
+
+  // Notify the customer's index.html tab INSTANTLY
+  broadcast('order_updated', { ref, status });
+
+  toast(`📋 ${ref} → ${status}`, status === 'Cancelled' ? 'pink' : 'teal');
+}
+
+function advanceOrder(ref){
+  const o = allOrders.find(x => x.ref === ref);
+  if (!o) return;
+  const idx = STATUS_FLOW.indexOf(o.status);
+  if (idx < STATUS_FLOW.length - 1){
+    o.status = STATUS_FLOW[idx + 1];
+    saveOrders();
+    renderDashboard();
+    broadcast('order_updated', { ref, status: o.status });
+    toast(`✅ ${ref} is now "${o.status}"`, 'teal');
+  }
+}
+
+function renderChart(){
+  const wrap = $('revenue-chart');
+  const totals = {};
+  Object.keys(CAT_EMOJIS).forEach(c => totals[c] = 0);
+
+  allOrders.filter(o => o.status !== 'Cancelled').forEach(o => {
+    o.items.forEach(i => { totals[i.cat] = (totals[i.cat] || 0) + i.unitPrice * i.qty; });
+  });
+
+  const entries = Object.entries(totals).filter(([,v]) => v > 0);
+  const data = entries.length ? entries : Object.entries(totals).slice(0,5);
+  const max = Math.max(...data.map(d => d[1]), 1);
+
+  const colours = [
+    'linear-gradient(180deg,#ec4899,#be185d)',
+    'linear-gradient(180deg,#14b8a6,#0f766e)',
+    'linear-gradient(180deg,#a855f7,#7e22ce)',
+    'linear-gradient(180deg,#eab308,#ca8a04)',
+    'linear-gradient(180deg,#f97316,#c2410c)',
+    'linear-gradient(180deg,#3b82f6,#1d4ed8)',
+    'linear-gradient(180deg,#ec4899,#a855f7)',
+    'linear-gradient(180deg,#22d3ee,#0891b2)'
+  ];
+
+  wrap.innerHTML = data.map(([cat, val], i) => {
+    const h = Math.max(6, (val / max) * 100);
+    return `<div class="bar-col">
+      <div class="bar" style="height:${h}%;background:${colours[i % colours.length]};animation-delay:${i*0.08}s">
+        <span class="bar-val">R${val.toFixed(0)}</span>
+      </div>
+      <span class="bar-lbl">${CAT_EMOJIS[cat] || '📦'}<br>${cat}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   MANUAL REFRESH
+   ============================================================ */
+function manualRefresh(){
+  const ico = $('refresh-ico');
+  ico.classList.add('spinning');
+  setTimeout(() => ico.classList.remove('spinning'), 800);
+  allOrders = loadOrders();
+  broadcast('request_sync');
+  renderDashboard();
+  toast('🔄 Orders refreshed', 'teal');
+}
+
+/* ============================================================
+   CROSS-TAB SYNC (fallback if BroadcastChannel unavailable)
+   ============================================================ */
+window.addEventListener('storage', e => {
+  if (e.key === STORAGE_KEY){
+    allOrders = loadOrders();
+    renderDashboard();
+    toast('🔄 Orders synced', 'teal');
+  }
+});
+window.addEventListener('focus', () => {
+  const prev = allOrders.length;
+  allOrders = loadOrders();
+  if (allOrders.length !== prev){
+    renderDashboard();
+  }
+});
+// Light poll — 3s refresh, only re-renders if signatures differ
+let __lastSig = '';
+setInterval(() => {
+  const fresh = loadOrders();
+  const sig = JSON.stringify(fresh.map(o => o.ref + o.status));
+  if (sig !== __lastSig){
+    __lastSig = sig;
+    allOrders = fresh;
+    renderDashboard();
+  }
+}, 3000);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(function init(){
+  initBroadcast();
+  checkGate();
+  allOrders = loadOrders();
+  renderDashboard();
+
+  // Ask the customer site tabs to broadcast their current state
+  setTimeout(() => broadcast('request_sync'), 200);
+
+  console.log('%c📊 Chella Designs — Seller Dashboard',
+    'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
+  console.log('%c⚡ Real-time sync active — orders appear instantly from index.html',
+    'font-size:12px;color:#14b8a6;font-weight:bold');
+})();
+</script>
+</body>
+</html>
