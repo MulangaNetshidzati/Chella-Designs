@@ -6,6 +6,9 @@
 <title>Seller Dashboard | Chella Designs</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
 <style>
 :root{
   --pink:#ec4899;--pink-soft:#f9a8d4;--pink-deep:#be185d;
@@ -47,7 +50,7 @@ img{max-width:100%;display:block}
 @keyframes newRow{0%{background:#fef3c7}100%{background:#fffafc}}
 @keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
 
-/* ACCESS DENIED REDIRECT SCREEN (brief, shows for <1s before redirect) */
+/* ACCESS GATE */
 #redirect-screen{
   position:fixed;inset:0;background:rgba(255,255,255,.98);
   backdrop-filter:blur(10px);z-index:9999;
@@ -66,7 +69,6 @@ img{max-width:100%;display:block}
   border-top-color:#ef4444;border-radius:50%;animation:spin .8s linear infinite;
 }
 
-/* HEADER */
 header{
   position:sticky;top:0;z-index:900;
   background:rgba(255,255,255,.92);backdrop-filter:blur(18px);
@@ -89,11 +91,15 @@ header{
   padding:7px 15px;border-radius:50px;font-size:.72rem;font-weight:700;
   letter-spacing:.06em;box-shadow:0 6px 14px rgba(234,179,8,.25);
 }
+.dash-badge.offline{background:linear-gradient(135deg,#fee2e2,#fecaca);color:#991b1b}
+.dash-badge.connecting{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3}
 .live-dot{
   width:9px;height:9px;border-radius:50%;background:#22c55e;
   box-shadow:0 0 0 0 rgba(34,197,94,.6);
   animation:pulseLive 1.8s ease-in-out infinite;
 }
+.dash-badge.offline .live-dot{background:#ef4444;animation:none}
+.dash-badge.connecting .live-dot{background:#6366f1}
 @keyframes pulseLive{
   0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
   60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
@@ -112,15 +118,7 @@ header{
   font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;
   border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite;
 }
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:11px 22px;border-radius:50px;font-weight:600;font-size:.85rem;
-  transition:.3s;
-}
-.btn-pink{background:var(--grad-pink);color:#fff;box-shadow:0 8px 20px rgba(236,72,153,.32)}
-.btn-pink:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(236,72,153,.46)}
 
-/* MAIN */
 main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
 .section-head{text-align:center;margin-bottom:34px}
 .section-head h2{font-size:clamp(1.9rem,4vw,2.6rem);display:inline-block}
@@ -227,6 +225,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .toast.pink{background:var(--grad-pink)}
 .toast.teal{background:var(--grad-teal)}
 .toast.gold{background:var(--grad-gold);color:#3a2c00}
+.toast.error{background:linear-gradient(135deg,#dc2626,#991b1b)}
 .toast.out{animation:fadeOutDown .35s forwards}
 
 .flash-banner{
@@ -249,9 +248,6 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 </head>
 <body>
 
-<!-- ============================================================
-     ACCESS DENIED — briefly shown before redirect to index.html
-     ============================================================ -->
 <div id="redirect-screen">
   <div class="rlock">🔒</div>
   <h2>Admin Access Required</h2>
@@ -280,8 +276,8 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
       </div>
     </div>
 
-    <div class="dash-badge">
-      <span class="live-dot"></span> LIVE • Connected
+    <div class="dash-badge connecting" id="dash-badge">
+      <span class="live-dot"></span> <span id="dash-badge-text">Connecting…</span>
     </div>
 
     <div class="nav-actions">
@@ -309,14 +305,8 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
       <table class="dash">
         <thead>
           <tr>
-            <th>Reference</th>
-            <th>Customer</th>
-            <th>Contact</th>
-            <th>Delivery Address</th>
-            <th>Items Ordered</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Reference</th><th>Customer</th><th>Contact</th><th>Delivery Address</th>
+            <th>Items Ordered</th><th>Total</th><th>Status</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="dashboard-orders"></tbody>
@@ -334,10 +324,11 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 
 <script>
 /* ============================================================
-   SHARED KEYS — MUST MATCH index.html
+   CONFIG
    ============================================================ */
-const STORAGE_KEY     = 'chella_orders_v4';
-const CHANNEL_NAME    = 'chella_orders_channel_v4';
+const SUPABASE_URL  = 'https://YOUR-PROJECT.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOi...YOUR-ANON-KEY';
+
 const ADMIN_KEY_STORE = 'chella_admin_key_v4';
 const SESSION_FLAG    = 'chella_dash_session';
 const STATUS_FLOW     = ['Pending','Accepted','Printing','Shipped','Completed'];
@@ -349,46 +340,25 @@ const CAT_EMOJIS = {
 
 /* ============================================================
    ACCESS CONTROL
-   ------------------------------------------------------------
-   The dashboard NEVER auto-logs in from a shared storage.
-   Access is granted only when:
-     (a) THIS tab already has a valid session (sessionStorage), OR
-     (b) the URL contains a ?key= matching the admin key that
-         index.html stored in THIS browser's localStorage.
-   Otherwise: redirect straight to index.html — no login state.
    ============================================================ */
 function checkAccess(){
-  // 1) Already authenticated THIS tab?
-  try {
-    if (sessionStorage.getItem(SESSION_FLAG) === '1') return true;
-  } catch(e){}
-
-  // 2) Valid ?key= from the admin link?
+  try { if (sessionStorage.getItem(SESSION_FLAG) === '1') return true; } catch(e){}
   let urlKey = null;
   try { urlKey = new URLSearchParams(location.search).get('key'); } catch(e){}
   let storedKey = null;
   try { storedKey = localStorage.getItem(ADMIN_KEY_STORE); } catch(e){}
-
   if (urlKey && storedKey && urlKey === storedKey){
     try { sessionStorage.setItem(SESSION_FLAG, '1'); } catch(e){}
-    // Strip the key from the URL bar so it can't be copy-pasted elsewhere
     try { history.replaceState(null, '', location.pathname); } catch(e){}
     return true;
   }
-
   return false;
 }
-
-// Hard gate — redirect immediately if not authorised
 if (!checkAccess()){
   const rs = document.getElementById('redirect-screen');
   if (rs) rs.classList.add('show');
-  setTimeout(() => {
-    try { window.location.replace('index.html'); }
-    catch(e){ window.location.href = 'index.html'; }
-  }, 900);
+  setTimeout(() => { try { window.location.replace('index.html'); } catch(e){ window.location.href = 'index.html'; } }, 900);
 }
-
 function logout(){
   try { sessionStorage.removeItem(SESSION_FLAG); } catch(e){}
   window.location.replace('index.html');
@@ -397,13 +367,45 @@ function logout(){
 /* ============================================================
    STATE
    ============================================================ */
+let sb = null;
 let allOrders = [];
 let selectedStatusFilter = 'all';
 let newOrderRefs = new Set();
-let bc = null;
+let cloudReady = false;
 
 const R = n => 'R' + Number(n).toFixed(2).replace(/\.00$/,'');
 const $ = id => document.getElementById(id);
+
+function waitForSupabase(){
+  return new Promise(resolve => {
+    if (window.supabase && typeof window.supabase.createClient === 'function'){
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      resolve(sb);
+      return;
+    }
+    let tries = 0;
+    const iv = setInterval(() => {
+      tries++;
+      if (window.supabase && typeof window.supabase.createClient === 'function'){
+        clearInterval(iv);
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        resolve(sb);
+      } else if (tries > 60){
+        clearInterval(iv);
+        resolve(null);
+      }
+    }, 100);
+  });
+}
+
+function setBadge(state, text){
+  const b = $('dash-badge');
+  const t = $('dash-badge-text');
+  if (!b || !t) return;
+  b.classList.remove('offline','connecting');
+  if (state) b.classList.add(state);
+  t.innerText = text;
+}
 
 /* ============================================================
    TOASTS
@@ -418,34 +420,35 @@ function toast(msg, type='pink'){
 }
 
 /* ============================================================
-   BROADCAST CHANNEL
+   CLOUD DATA
    ============================================================ */
-try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){ console.warn('BroadcastChannel unavailable'); }
+function safeJsonParse(s, fb){ try { return JSON.parse(s); } catch(e){ return fb; } }
 
-function initBroadcast(){
-  if (!bc) return;
-  bc.onmessage = e => {
-    const { type, payload } = e.data || {};
-    if (type === 'order_created'){
-      allOrders = loadOrders();
-      if (payload && payload.ref) newOrderRefs.add(payload.ref);
-      renderDashboard();
-      flashNewOrder(payload);
-      toast('🎉 New order received! ' + (payload?.ref || ''), 'gold');
-    } else if (type === 'order_updated' || type === 'request_sync'){
-      allOrders = loadOrders();
-      renderDashboard();
-    }
-  };
+async function loadOrders(){
+  if (!sb) return [];
+  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
+  if (error){ console.error('loadOrders:', error); setBadge('offline','Cloud offline'); return []; }
+  setBadge(null, 'LIVE • Connected');
+  return (data || []).map(o => ({
+    id: o.id, ref: o.ref, customer: o.customer, email: o.email, phone: o.phone,
+    city: o.city, address: o.address, notes: o.notes,
+    items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+    subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
+    discount: Number(o.discount) || 0, total: Number(o.total) || 0,
+    status: o.status, method: o.method,
+    placedBy: o.placed_by || o.email, date: o.date, createdAt: o.created_at
+  }));
 }
-function broadcast(type, payload){
-  if (bc){
-    try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){}
-  }
+
+async function updateOrderStatusInCloud(ref, status){
+  if (!sb) return false;
+  const { error } = await sb.from('orders').update({ status }).eq('ref', ref);
+  if (error){ console.error('updateOrderStatus:', error); return false; }
+  return true;
 }
 
 /* ============================================================
-   NEW-ORDER FLASH BANNER
+   FLASH BANNER
    ============================================================ */
 let flashTimer = null;
 function flashNewOrder(order){
@@ -458,22 +461,6 @@ function flashNewOrder(order){
   banner.classList.add('show');
   clearTimeout(flashTimer);
   flashTimer = setTimeout(() => banner.classList.remove('show'), 5000);
-}
-
-/* ============================================================
-   STORAGE
-   ============================================================ */
-function loadOrders(){
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch(e){ return []; }
-}
-function saveOrders(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
-  catch(e){ console.warn('Could not save orders', e); }
 }
 
 /* ============================================================
@@ -562,7 +549,7 @@ function renderTable(){
 
   tbody.innerHTML = list.map(o => {
     const isNew = newOrderRefs.has(o.ref);
-    const items = o.items.map(i => {
+    const items = (o.items || []).map(i => {
       let c = '';
       if (i.custom){
         const bits = [];
@@ -615,27 +602,22 @@ function renderTable(){
   }).join('');
 }
 
-function setOrderStatus(ref, status){
+async function setOrderStatus(ref, status){
+  const ok = await updateOrderStatusInCloud(ref, status);
+  if (!ok){ toast('❌ Cloud update failed', 'error'); return; }
   const o = allOrders.find(x => x.ref === ref);
-  if (!o) return;
-  o.status = status;
+  if (o) o.status = status;
   newOrderRefs.delete(ref);
-  saveOrders();
   renderDashboard();
-  broadcast('order_updated', { ref, status });
   toast(`📋 ${ref} → ${status}`, status === 'Cancelled' ? 'pink' : 'teal');
 }
 
-function advanceOrder(ref){
+async function advanceOrder(ref){
   const o = allOrders.find(x => x.ref === ref);
   if (!o) return;
   const idx = STATUS_FLOW.indexOf(o.status);
   if (idx < STATUS_FLOW.length - 1){
-    o.status = STATUS_FLOW[idx + 1];
-    saveOrders();
-    renderDashboard();
-    broadcast('order_updated', { ref, status: o.status });
-    toast(`✅ ${ref} is now "${o.status}"`, 'teal');
+    await setOrderStatus(ref, STATUS_FLOW[idx + 1]);
   }
 }
 
@@ -645,7 +627,7 @@ function renderChart(){
   Object.keys(CAT_EMOJIS).forEach(c => totals[c] = 0);
 
   allOrders.filter(o => o.status !== 'Cancelled').forEach(o => {
-    o.items.forEach(i => { totals[i.cat] = (totals[i.cat] || 0) + i.unitPrice * i.qty; });
+    (o.items || []).forEach(i => { totals[i.cat] = (totals[i.cat] || 0) + i.unitPrice * i.qty; });
   });
 
   const entries = Object.entries(totals).filter(([,v]) => v > 0);
@@ -674,64 +656,78 @@ function renderChart(){
   }).join('');
 }
 
-/* ============================================================
-   MANUAL REFRESH
-   ============================================================ */
-function manualRefresh(){
+async function manualRefresh(){
   const ico = $('refresh-ico');
   if (ico){ ico.classList.add('spinning'); setTimeout(() => ico.classList.remove('spinning'), 800); }
-  allOrders = loadOrders();
-  broadcast('request_sync');
+  allOrders = await loadOrders();
   renderDashboard();
-  toast('🔄 Orders refreshed', 'teal');
+  toast('🔄 Orders refreshed from cloud', 'teal');
 }
-
-/* ============================================================
-   CROSS-TAB SYNC (fallback if BroadcastChannel unavailable)
-   ============================================================ */
-window.addEventListener('storage', e => {
-  if (e.key === STORAGE_KEY){
-    allOrders = loadOrders();
-    renderDashboard();
-    toast('🔄 Orders synced', 'teal');
-  }
-});
-window.addEventListener('focus', () => {
-  const prev = allOrders.length;
-  allOrders = loadOrders();
-  if (allOrders.length !== prev) renderDashboard();
-});
-let __lastSig = '';
-setInterval(() => {
-  const fresh = loadOrders();
-  const sig = JSON.stringify(fresh.map(o => o.ref + o.status));
-  if (sig !== __lastSig){
-    __lastSig = sig;
-    allOrders = fresh;
-    renderDashboard();
-  }
-}, 3000);
 
 /* ============================================================
    INIT
    ============================================================ */
-(function init(){
-  // If we got this far, checkAccess() already passed at the top of the script.
-  // Only proceed if authorised — otherwise the redirect is already in motion.
+(async function init(){
   if (!checkAccess()) return;
 
-  initBroadcast();
-  allOrders = loadOrders();
+  setBadge('connecting', 'Connecting…');
+  const client = await waitForSupabase();
+  if (!client){
+    setBadge('offline', 'Cloud offline');
+    toast('⚠️ Could not connect to cloud', 'error');
+    return;
+  }
+
+  cloudReady = true;
+  allOrders = await loadOrders();
   renderDashboard();
 
-  setTimeout(() => broadcast('request_sync'), 200);
+  /* Real-time subscription — new orders appear INSTANTLY across all devices */
+  sb.channel('dashboard-live')
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        payload => {
+          if (payload.eventType === 'INSERT'){
+            const o = payload.new;
+            if (allOrders.some(x => x.ref === o.ref)) return;
+            const parsed = {
+              id: o.id, ref: o.ref, customer: o.customer, email: o.email, phone: o.phone,
+              city: o.city, address: o.address, notes: o.notes,
+              items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+              subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
+              discount: Number(o.discount) || 0, total: Number(o.total) || 0,
+              status: o.status, method: o.method,
+              placedBy: o.placed_by || o.email, date: o.date, createdAt: o.created_at
+            };
+            allOrders.unshift(parsed);
+            newOrderRefs.add(parsed.ref);
+            renderDashboard();
+            flashNewOrder(parsed);
+            toast('🎉 New order received! ' + parsed.ref, 'gold');
+          }
+          if (payload.eventType === 'UPDATE'){
+            const idx = allOrders.findIndex(x => x.ref === payload.new.ref);
+            if (idx >= 0){
+              allOrders[idx] = {
+                ...allOrders[idx],
+                status: payload.new.status,
+                items: typeof payload.new.items === 'string' ? safeJsonParse(payload.new.items, []) : (payload.new.items || []),
+                total: Number(payload.new.total) || allOrders[idx].total
+              };
+              renderDashboard();
+            }
+          }
+          if (payload.eventType === 'DELETE'){
+            allOrders = allOrders.filter(x => x.ref !== payload.old.ref);
+            renderDashboard();
+          }
+        })
+    .subscribe();
 
-  console.log('%c📊 Chella Designs — Seller Dashboard',
+  console.log('%c📊 Chella Designs — Cloud Dashboard',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
-  console.log('%c⚡ Real-time sync active — orders appear instantly from index.html',
+  console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
-  console.log('%c🔐 Access granted via one-time admin link — no auto-login on fresh browsers',
-    'font-size:12px;color:#ec4899;font-weight:bold');
 })();
 </script>
 </body>
