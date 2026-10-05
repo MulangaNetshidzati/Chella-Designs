@@ -6,7 +6,6 @@
 <title>Chella Designs | Create • Customise • Inspire</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
-<!-- Google Maps (optional — replace key to enable live address autocomplete) -->
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_PLACEHOLDER_REPLACE_ME&libraries=places&language=en&region=ZA"
   async defer
@@ -14,7 +13,6 @@
   onerror="console.warn('Google Maps failed — using offline address suggestions.');">
 </script>
 
-<!-- Supabase client (loaded async so the page renders instantly) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
 <style>
@@ -419,14 +417,12 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .track-result{margin-top:22px;padding:22px;border-radius:18px;background:linear-gradient(135deg,#fff0f7,#f5f3ff);border:1.5px solid var(--pink-soft);animation:fadeUp .5s both;font-size:.88rem;}
 .track-result h4{margin-bottom:10px;color:var(--pink-deep)}
 
-/* Auth form scroll when signup is tall */
 #auth-container.signup-mode{max-height:none}
 .auth-scroll{max-height:75vh;overflow-y:auto;padding-right:6px;margin-right:-6px}
 .auth-scroll::-webkit-scrollbar{width:6px}
 .auth-scroll::-webkit-scrollbar-thumb{background:var(--pink-soft);border-radius:50px}
 .auth-scroll::-webkit-scrollbar-track{background:transparent}
 
-/* Back button for signup mode */
 .auth-back-btn{
   display:inline-flex;align-items:center;gap:8px;
   padding:8px 16px 8px 12px;border-radius:50px;
@@ -465,7 +461,6 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .form-group.invalid input,
 .form-group.invalid textarea{border-color:#fca5a5;background:#fff5f5}
 
-/* Cloud status pill */
 .cloud-status{
   position:fixed;bottom:20px;right:20px;z-index:800;
   display:flex;align-items:center;gap:8px;
@@ -610,7 +605,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
 </div>
 
-<!-- Cloud connection indicator -->
 <div class="cloud-status" id="cloud-status">
   <span class="cs-dot"></span>
   <span id="cloud-status-text">Connecting…</span>
@@ -981,7 +975,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </section>
 
-<!-- PROFILE / AUTH -->
 <section id="profile" class="section">
   <div class="section-head">
     <h2>My <span>Account</span></h2>
@@ -994,7 +987,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
       <p class="fc-sub" id="auth-sub">Login to view your orders and saved details.</p>
       <form onsubmit="handleAuth(event)" autocomplete="off" novalidate>
 
-        <!-- LOGIN-ONLY FIELDS -->
         <div id="login-fields">
           <div class="form-group">
             <label>Email Address</label>
@@ -1008,10 +1000,8 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
           </div>
         </div>
 
-        <!-- SIGNUP-ONLY FIELDS -->
         <div id="signup-fields" style="display:none">
 
-          <!-- BACK BUTTON -->
           <div class="auth-back-row">
             <button type="button" class="auth-back-btn" onclick="backToLogin()" aria-label="Back to login">
               <span class="ab-arrow">←</span> Back to Login
@@ -1269,7 +1259,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </footer>
 
-<!-- FILTER DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 <aside class="drawer" id="filter-drawer">
   <div class="drawer-head">
@@ -1315,7 +1304,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </aside>
 
-<!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="product-modal">
   <div class="modal-box wide">
     <div class="modal-head">
@@ -1435,15 +1423,15 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 <script>
 /* ============================================================
-   CONFIG — replace with your real Supabase credentials
+   YOUR SUPABASE CREDENTIALS
    ============================================================ */
-const SUPABASE_URL  = 'https://YOUR-PROJECT.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOi...YOUR-ANON-KEY';
+const SUPABASE_URL  = 'https://uasoggnjhuipsglhxfzx.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhc29nZ25qaHVpcHNnbGh4Znp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMDYxNDQsImV4cCI6MjEwNjc4MjE0NH0.QZxKLyCTLaTpzy3gaPiOa3DUJIsQOtlRs_LGk_mws_o';
 
 /* ============================================================
    CONSTANTS
    ============================================================ */
-const USER_KEY       = 'chella_user_session';   // per-tab session (sessionStorage)
+const USER_KEY       = 'chella_user_session';
 const SECTION_KEY    = 'chella_section_session';
 const CART_KEY       = 'chella_cart_session';
 const ADMIN_EMAIL    = 'admin@chelladesigns.co.za';
@@ -1460,7 +1448,7 @@ const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 /* ============================================================
-   SUPABASE CLIENT — initialised once, waiting for CDN
+   SUPABASE CLIENT
    ============================================================ */
 let sb = null;
 function waitForSupabase(){
@@ -1496,7 +1484,7 @@ function setCloudStatus(state, text){
 }
 
 /* ============================================================
-   BROADCAST CHANNEL — same-tab cross-window notifications
+   BROADCAST CHANNEL
    ============================================================ */
 let bc = null;
 try { bc = new BroadcastChannel('chella_orders_channel_v4'); } catch(e){}
@@ -1688,7 +1676,7 @@ function purgeOldLocalData(){
 }
 
 /* ============================================================
-   CLOUD DATA LAYER — orders
+   CLOUD DATA — orders
    ============================================================ */
 async function loadOrders(){
   if (!sb) return [];
@@ -1758,7 +1746,7 @@ async function insertOrder(order){
 }
 
 /* ============================================================
-   CLOUD DATA LAYER — accounts
+   CLOUD DATA — accounts
    ============================================================ */
 async function findAccount(email){
   if (!sb) return null;
@@ -1816,7 +1804,7 @@ async function updateAccount(email, patch){
 }
 
 /* ============================================================
-   SESSION STORAGE (per-tab)
+   SESSION STORAGE
    ============================================================ */
 function saveUser(){
   try {
@@ -2654,7 +2642,6 @@ async function handleAuth(e){
   const originalText = submitBtn.innerText;
 
   if (isLoginMode){
-    /* ================ LOGIN ================ */
     const email = $('auth-email-login').value.trim();
     const pw    = $('auth-password-login').value;
 
@@ -2700,7 +2687,6 @@ async function handleAuth(e){
     $('auth-password-login').value = '';
 
   } else {
-    /* ================ SIGN UP ================ */
     const firstName = $('auth-firstname').value.trim();
     const surname   = $('auth-surname').value.trim();
     const email     = $('auth-email-signup').value.trim();
@@ -2931,7 +2917,6 @@ function logout(){
   const savedSection = loadSection();
   showSection(savedSection, { skipPersist:true });
 
-  /* Bind UI events */
   document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => {
       if (e.target === m){ m.classList.remove('active'); document.body.style.overflow = ''; }
@@ -2958,7 +2943,6 @@ function logout(){
     if (e.target.classList.contains('f-cat')) updateFilterBadge();
   });
 
-  /* Connect to cloud */
   setCloudStatus(null, 'Connecting…');
   const client = await waitForSupabase();
   if (!client){
@@ -2975,7 +2959,6 @@ function logout(){
   checkAuthState();
   toast('☁️ Connected to Chella cloud', 'teal');
 
-  /* Real-time subscription — new/updated orders arrive instantly */
   sb.channel('orders-live')
     .on('postgres_changes',
         { event: '*', schema: 'public', table: 'orders' },
