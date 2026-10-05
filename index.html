@@ -414,10 +414,41 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 .track-result{margin-top:22px;padding:22px;border-radius:18px;background:linear-gradient(135deg,#fff0f7,#f5f3ff);border:1.5px solid var(--pink-soft);animation:fadeUp .5s both;font-size:.88rem;}
 .track-result h4{margin-bottom:10px;color:var(--pink-deep)}
 
+/* Auth form scroll when signup is tall */
+#auth-container.signup-mode{max-height:none}
+.auth-scroll{max-height:75vh;overflow-y:auto;padding-right:6px;margin-right:-6px}
+.auth-scroll::-webkit-scrollbar{width:6px}
+.auth-scroll::-webkit-scrollbar-thumb{background:var(--pink-soft);border-radius:50px}
+.auth-scroll::-webkit-scrollbar-track{background:transparent}
+
+/* Signup section divider */
+.signup-section-title{
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:10px;
+}
+.signup-section-title::after{
+  content:'';flex:1;height:1px;background:var(--line);
+}
+
+/* Password strength + match hint */
+.pw-hint{font-size:.72rem;margin-top:5px;color:var(--muted)}
+.pw-hint.good{color:#16a34a}
+.pw-hint.warn{color:#d97706}
+.pw-hint.bad{color:#dc2626}
+
+/* Field errors */
+.field-error{
+  font-size:.72rem;color:#dc2626;margin-top:5px;display:none;
+}
+.field-error.show{display:block}
+.form-group.invalid input,
+.form-group.invalid textarea{border-color:#fca5a5;background:#fff5f5}
+
 .toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
 .toast{background:var(--ink);color:#fff;padding:13px 26px;border-radius:50px;font-size:.85rem;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;animation:toastIn .45s cubic-bezier(.34,1.56,.64,1) both;white-space:nowrap;}
 .toast.pink{background:var(--grad-pink)}
 .toast.teal{background:var(--grad-teal)}
+.toast.error{background:linear-gradient(135deg,#dc2626,#991b1b)}
 @keyframes toastIn{from{opacity:0;transform:translateY(26px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 .toast.out{animation:toastOut .35s forwards}
 @keyframes toastOut{to{opacity:0;transform:translateY(-16px) scale(.94)}}
@@ -567,7 +598,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
           <span class="nav-ico">✉️</span><span>Contact</span></a></li>
         <li><a class="nav-link" data-nav="profile" id="nav-profile" onclick="showSection('profile')">
           <span class="nav-ico">👤</span><span id="nav-profile-text">Account</span></a></li>
-        <!-- Dashboard link — href set dynamically in checkAuthState() with ?key= -->
         <li id="nav-dash-li" style="display:none">
           <a class="nav-link dash-link" href="dashboard.html" target="_blank" rel="noopener">
             <span class="nav-ico">📊</span><span>Dashboard</span>
@@ -907,6 +937,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </section>
 
+<!-- ============================ PROFILE / AUTH ============================ -->
 <section id="profile" class="section">
   <div class="section-head">
     <h2>My <span>Account</span></h2>
@@ -914,30 +945,113 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 
   <div id="auth-container" class="form-card">
-    <h3 id="auth-title">👋 Welcome Back</h3>
-    <p class="fc-sub" id="auth-sub">Login to view your orders and saved details.</p>
-    <form onsubmit="handleAuth(event)">
-      <div class="form-group" id="name-group" style="display:none">
-        <label>Full Name</label>
-        <input type="text" id="auth-name" placeholder="Jane Doe">
-      </div>
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" required id="auth-email" placeholder="you@email.com">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" required id="auth-password" placeholder="••••••••">
-      </div>
-      <button type="submit" class="btn btn-pink btn-block" id="auth-submit-btn" style="padding:15px">Login</button>
-    </form>
-    <p class="auth-switch">
-      <span id="auth-toggle-text">Don't have an account?</span>
-      <a onclick="toggleAuthMode()" id="auth-toggle-link">Sign Up</a>
-    </p>
-    <p class="auth-switch" style="font-size:.75rem;margin-top:10px">
-      💡 Admin demo: <strong>admin@chelladesigns.co.za</strong>
-    </p>
+    <div class="auth-scroll">
+      <h3 id="auth-title">👋 Welcome Back</h3>
+      <p class="fc-sub" id="auth-sub">Login to view your orders and saved details.</p>
+      <form onsubmit="handleAuth(event)" autocomplete="off" novalidate>
+
+        <!-- LOGIN-ONLY FIELDS -->
+        <div id="login-fields">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="auth-email-login" placeholder="you@email.com" autocomplete="email">
+            <div class="field-error" id="err-login-email">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="auth-password-login" placeholder="••••••••" autocomplete="current-password">
+            <div class="field-error" id="err-login-pass">Please enter your password.</div>
+          </div>
+        </div>
+
+        <!-- SIGNUP-ONLY FIELDS -->
+        <div id="signup-fields" style="display:none">
+          <div class="signup-section-title">Personal Details</div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" id="auth-firstname" placeholder="Jane" autocomplete="given-name">
+              <div class="field-error" id="err-firstname">First name is required.</div>
+            </div>
+            <div class="form-group">
+              <label>Surname *</label>
+              <input type="text" id="auth-surname" placeholder="Doe" autocomplete="family-name">
+              <div class="field-error" id="err-surname">Surname is required.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="auth-email-signup" placeholder="you@email.com" autocomplete="email">
+            <div class="field-error" id="err-signup-email">Please enter a valid email address.</div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Password * <span style="font-weight:500;color:var(--muted);font-size:.68rem">(min 6 chars)</span></label>
+              <input type="password" id="auth-password-signup" placeholder="••••••••" autocomplete="new-password" oninput="updatePwHint()">
+              <div class="pw-hint" id="pw-hint">Password must be at least 6 characters.</div>
+            </div>
+            <div class="form-group">
+              <label>Confirm Password *</label>
+              <input type="password" id="auth-confirm" placeholder="••••••••" autocomplete="new-password" oninput="updatePwHint()">
+              <div class="pw-hint" id="pw-match-hint">Passwords must match.</div>
+            </div>
+          </div>
+
+          <div class="signup-section-title">Contact Details</div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" id="auth-phone" placeholder="083 123 4567" autocomplete="tel">
+              <div class="field-error" id="err-phone">Phone number is required.</div>
+            </div>
+            <div class="form-group">
+              <label>Alternative Phone</label>
+              <input type="tel" id="auth-altphone" placeholder="021 555 0199" autocomplete="tel">
+            </div>
+          </div>
+
+          <div class="signup-section-title">Addresses <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.68rem">(optional)</span></div>
+
+          <div class="form-group">
+            <label>Home Address</label>
+            <textarea id="auth-home-address" rows="2" placeholder="123 Main Road, Suburb, City, Postal Code"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Business Address</label>
+            <textarea id="auth-business-address" rows="2" placeholder="456 Business Ave, Suburb, City, Postal Code"></textarea>
+          </div>
+
+          <div class="signup-section-title">Payment <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.68rem">(optional)</span></div>
+
+          <div class="form-group">
+            <label>Card on File (simulated)</label>
+            <input type="text" id="auth-card-details" placeholder="**** **** **** 1234" maxlength="19" inputmode="numeric" oninput="formatSignupCard(this)">
+          </div>
+
+          <div class="switch-row" style="margin-top:22px;margin-bottom:6px">
+            <span style="font-size:.8rem">📬 I agree to the <a onclick="showSection('terms')" style="color:var(--pink-deep);font-weight:700;text-decoration:underline">Terms &amp; Conditions</a></span>
+            <label class="switch"><input type="checkbox" id="auth-terms"><span class="slider"></span></label>
+          </div>
+          <div class="field-error" id="err-terms" style="margin-top:6px;margin-bottom:12px">You must accept the Terms &amp; Conditions.</div>
+        </div>
+
+        <button type="submit" class="btn btn-pink btn-block" id="auth-submit-btn" style="padding:15px;margin-top:12px">
+          Login
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        <span id="auth-toggle-text">Don't have an account?</span>
+        <a onclick="toggleAuthMode()" id="auth-toggle-link">Sign Up</a>
+      </p>
+      <p class="auth-switch" style="font-size:.75rem;margin-top:10px" id="admin-hint">
+        💡 Admin demo: <strong>admin@chelladesigns.co.za</strong> / <strong>admin123</strong>
+      </p>
+    </div>
   </div>
 
   <div id="user-info" style="display:none">
@@ -1266,14 +1380,16 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 <script>
 /* ============================================================
-   SHARED KEYS — must match dashboard.html EXACTLY
+   SHARED KEYS
    ============================================================ */
 const STORAGE_KEY       = 'chella_orders_v4';
-const USER_KEY          = 'chella_user_v4';        // sessionStorage (per-tab)
-const SECTION_KEY       = 'chella_section_v4';     // sessionStorage (per-tab)
-const CART_KEY          = 'chella_cart_v4';        // sessionStorage (per-tab)
+const ACCOUNTS_KEY      = 'chella_accounts_v4';   // ← account registry (persistent)
+const USER_KEY          = 'chella_user_v4';        // ← session (per-tab)
+const SECTION_KEY       = 'chella_section_v4';
+const CART_KEY          = 'chella_cart_v4';
 const CHANNEL_NAME      = 'chella_orders_channel_v4';
 const ADMIN_EMAIL       = 'admin@chelladesigns.co.za';
+const ADMIN_PASSWORD    = 'admin123';
 const ADMIN_KEY_STORE   = 'chella_admin_key_v4';
 const OLD_STORAGE_KEYS  = ['chella_orders_v3','chella_orders_v2','chella_user_v3','chella_user_v2'];
 const VALID_SECTIONS    = ['home','shop','cart','paygate','tracking','profile','contact','terms'];
@@ -1282,15 +1398,68 @@ const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 /* ============================================================
+   ACCOUNTS
+   ------------------------------------------------------------
+   Real account registry persisted in localStorage so that
+   logins validate against actual signups. New visitors
+   start with only the admin account seeded.
+   ============================================================ */
+function loadAccounts(){
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : {};
+  } catch(e){ return {}; }
+}
+function saveAccounts(accounts){
+  try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); }
+  catch(e){ console.warn('Could not save accounts', e); }
+}
+function emailKey(email){ return String(email || '').trim().toLowerCase(); }
+
+function findAccount(email){
+  const accounts = loadAccounts();
+  return accounts[emailKey(email)] || null;
+}
+function upsertAccount(account){
+  const accounts = loadAccounts();
+  accounts[emailKey(account.email)] = account;
+  saveAccounts(accounts);
+}
+function isEmailTaken(email){
+  return !!findAccount(email);
+}
+
+/* Seed the admin account ONCE — never overwrite if user already exists */
+function seedAdminAccount(){
+  const accounts = loadAccounts();
+  if (!accounts[emailKey(ADMIN_EMAIL)]){
+    accounts[emailKey(ADMIN_EMAIL)] = {
+      name: 'Michelle',
+      surname: 'Adams',
+      email: ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
+      phone: '083 413 5617',
+      altPhone: '021 555 0199',
+      homeAddress: '123 Main Road, Cape Town, 8001',
+      businessAddress: '456 Business Ave, Johannesburg, 2001',
+      cardDetails: '**** **** **** 4242',
+      createdAt: Date.now(),
+      isAdmin: true
+    };
+    saveAccounts(accounts);
+  }
+}
+
+/* ============================================================
    BROADCAST CHANNEL
    ============================================================ */
 let bc = null;
-try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){ console.warn('BroadcastChannel unavailable'); }
+try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e){}
 
 function broadcast(type, payload){
-  if (bc){
-    try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){}
-  }
+  if (bc){ try { bc.postMessage({ type, payload, ts: Date.now() }); } catch(e){} }
 }
 function initBroadcast(){
   if (!bc) return;
@@ -1302,12 +1471,8 @@ function initBroadcast(){
       if (currentUser) checkAuthState();
       if (type === 'order_updated'){
         const ref = (payload && payload.ref) || '';
-        if (ref && $('tracking-ref').value.trim().toUpperCase() === ref){
-          trackOrder();
-        }
-        if ($('tracking').classList.contains('active')){
-          toast('📦 Order status updated', 'teal');
-        }
+        if (ref && $('tracking-ref').value.trim().toUpperCase() === ref) trackOrder();
+        if ($('tracking').classList.contains('active')) toast('📦 Order status updated', 'teal');
       }
     }
   };
@@ -1315,12 +1480,6 @@ function initBroadcast(){
 
 /* ============================================================
    ADMIN ACCESS KEY
-   ------------------------------------------------------------
-   A stable per-browser key stored in localStorage. Only the
-   admin flow can produce a link containing it. When the dashboard
-   is opened with a matching ?key=, it grants access. A fresh
-   browser that opens dashboard.html with no key (or wrong key)
-   gets redirected to index.html — no auto-login.
    ============================================================ */
 function getOrCreateAdminKey(){
   let k = null;
@@ -1487,23 +1646,16 @@ function toggleNav(){ $('main-nav').classList.toggle('open'); }
    ============================================================ */
 function purgeOldData(){
   OLD_STORAGE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
-  // Kill any previously-persisted customer login (used to live in localStorage)
   try { localStorage.removeItem('chella_user_v4'); } catch(e){}
   try { localStorage.removeItem('chella_user_v3'); } catch(e){}
   try { localStorage.removeItem('chella_user_v2'); } catch(e){}
 }
-
-/* Orders live in localStorage (shared across tabs so the dashboard can read them) */
 function saveOrders(){
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
-  } catch(quotaErr){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
+  catch(quotaErr){
     const trimmed = allOrders.map((o, i) => {
       if (i < 3) return o;
-      return {
-        ...o,
-        items: o.items.map(it => it.custom ? { ...it, custom: { ...it.custom, image: null } } : it)
-      };
+      return { ...o, items: o.items.map(it => it.custom ? { ...it, custom: { ...it.custom, image: null } } : it) };
     });
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed)); } catch(e){}
     allOrders = trimmed;
@@ -1517,8 +1669,6 @@ function loadOrders(){
     return Array.isArray(parsed) ? parsed : [];
   } catch(e){ return []; }
 }
-
-/* Customer session is PER-TAB only (sessionStorage) */
 function saveUser(){
   try {
     if (currentUser) sessionStorage.setItem(USER_KEY, JSON.stringify(currentUser));
@@ -1531,8 +1681,6 @@ function loadUser(){
     return raw ? JSON.parse(raw) : null;
   } catch(e){ return null; }
 }
-
-/* Section + cart are PER-TAB only */
 function saveSection(id){ try { sessionStorage.setItem(SECTION_KEY, id); } catch(e){} }
 function loadSection(){ try { return sessionStorage.getItem(SECTION_KEY) || 'home'; } catch(e){ return 'home'; } }
 function saveCart(){ try { sessionStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e){} }
@@ -2046,6 +2194,10 @@ function updateCardVisual(){
   $('cv-name').innerText = nm ? nm.toUpperCase() : 'YOUR NAME';
   $('cv-exp').innerText = $('pay-exp').value || 'MM/YY';
 }
+function formatSignupCard(el){
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v ? v.replace(/(.{4})/g,'$1 ').trim() : '';
+}
 
 function processPayment(){
   if (!cart.length){ showAlert('Empty Cart','Your cart is empty.','🛒'); return; }
@@ -2269,46 +2421,208 @@ function refreshOrderHistory(){
 }
 
 /* ============================================================
-   AUTH
+   AUTH — REAL VALIDATION AGAINST STORED ACCOUNTS
    ============================================================ */
+function setFieldError(id, show){
+  const el = $(id);
+  if (!el) return;
+  el.classList.toggle('show', show);
+  const input = el.previousElementSibling;
+  if (input && input.parentElement){
+    input.parentElement.classList.toggle('invalid', show);
+  }
+}
+function clearFieldErrors(){
+  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.form-group.invalid').forEach(e => e.classList.remove('invalid'));
+}
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+}
+function updatePwHint(){
+  const pw = $('auth-password-signup').value;
+  const cf = $('auth-confirm').value;
+  const pwHint = $('pw-hint');
+  const matchHint = $('pw-match-hint');
+
+  if (!pw){
+    pwHint.className = 'pw-hint';
+    pwHint.innerText = 'Password must be at least 6 characters.';
+  } else if (pw.length < 6){
+    pwHint.className = 'pw-hint bad';
+    pwHint.innerText = `Too short — ${6 - pw.length} more character${6 - pw.length === 1 ? '' : 's'} needed.`;
+  } else if (pw.length < 10){
+    pwHint.className = 'pw-hint warn';
+    pwHint.innerText = 'Okay — a longer password is stronger.';
+  } else {
+    pwHint.className = 'pw-hint good';
+    pwHint.innerText = '✓ Strong password';
+  }
+
+  if (!cf){
+    matchHint.className = 'pw-hint';
+    matchHint.innerText = 'Passwords must match.';
+  } else if (cf !== pw){
+    matchHint.className = 'pw-hint bad';
+    matchHint.innerText = '✕ Passwords do not match.';
+  } else {
+    matchHint.className = 'pw-hint good';
+    matchHint.innerText = '✓ Passwords match';
+  }
+}
 function toggleAuthMode(){
   isLoginMode = !isLoginMode;
+  clearFieldErrors();
+
   $('auth-title').innerText = isLoginMode ? '👋 Welcome Back' : '✨ Create Account';
   $('auth-sub').innerText = isLoginMode
     ? 'Login to view your orders and saved details.'
-    : 'Sign up to save your details and track orders.';
+    : 'Create your account to save details and track orders.';
   $('auth-submit-btn').innerText = isLoginMode ? 'Login' : 'Create Account';
   $('auth-toggle-text').innerText = isLoginMode ? "Don't have an account?" : 'Already have an account?';
   $('auth-toggle-link').innerText = isLoginMode ? 'Sign Up' : 'Login';
-  $('name-group').style.display = isLoginMode ? 'none' : 'block';
+  $('login-fields').style.display  = isLoginMode ? 'block' : 'none';
+  $('signup-fields').style.display = isLoginMode ? 'none' : 'block';
+  $('admin-hint').style.display    = isLoginMode ? 'block' : 'none';
+  $('auth-container').classList.toggle('signup-mode', !isLoginMode);
 }
+
 function handleAuth(e){
   e.preventDefault();
-  const email = $('auth-email').value.trim();
-  const name  = $('auth-name').value.trim();
+  clearFieldErrors();
+
   if (isLoginMode){
+    /* -------------------- LOGIN -------------------- */
+    const email = $('auth-email-login').value.trim();
+    const pw    = $('auth-password-login').value;
+
+    let hasError = false;
+    if (!isValidEmail(email)){ setFieldError('err-login-email', true); hasError = true; }
+    if (!pw){ setFieldError('err-login-pass', true); hasError = true; }
+    if (hasError) return;
+
+    const account = findAccount(email);
+
+    if (!account){
+      showAlert('Account Not Found',
+        'No account exists with that email address. Please sign up first.', '❓');
+      toast('❌ No account found for that email', 'error');
+      return;
+    }
+    if (account.password !== pw){
+      showAlert('Incorrect Password',
+        'The password you entered is incorrect. Please try again.', '🔒');
+      toast('❌ Incorrect password', 'error');
+      return;
+    }
+
+    /* Success — hydrate current user from stored account */
     currentUser = {
-      name: email === ADMIN_EMAIL ? 'Michelle' : 'Valued',
-      surname: email === ADMIN_EMAIL ? 'Adams' : 'Customer',
-      email: email,
-      phone: '083 413 5617',
-      altPhone: '021 555 0199',
-      homeAddress: '123 Main Road, Cape Town, 8001',
-      businessAddress: '456 Business Ave, Johannesburg, 2001',
-      cardDetails: '**** **** **** 4242'
+      name: account.name,
+      surname: account.surname,
+      email: account.email,
+      phone: account.phone || '',
+      altPhone: account.altPhone || '',
+      homeAddress: account.homeAddress || '',
+      businessAddress: account.businessAddress || '',
+      cardDetails: account.cardDetails || '',
+      isAdmin: !!account.isAdmin
     };
-    toast('👋 Welcome back to Chella Designs!', 'pink');
+    saveUser();
+    checkAuthState();
+    renderOrderHistory();
+    toast(`👋 Welcome back, ${currentUser.name}!`, 'pink');
+    $('auth-password-login').value = '';
+
   } else {
-    currentUser = {
-      name: name || 'New', surname: '', email: email,
-      phone: '', altPhone: '', homeAddress: '', businessAddress: '', cardDetails: ''
+    /* -------------------- SIGN UP -------------------- */
+    const firstName = $('auth-firstname').value.trim();
+    const surname   = $('auth-surname').value.trim();
+    const email     = $('auth-email-signup').value.trim();
+    const pw        = $('auth-password-signup').value;
+    const cf        = $('auth-confirm').value;
+    const phone     = $('auth-phone').value.trim();
+    const altPhone  = $('auth-altphone').value.trim();
+    const homeAddr  = $('auth-home-address').value.trim();
+    const bizAddr   = $('auth-business-address').value.trim();
+    const cardDet   = $('auth-card-details').value.trim();
+    const accepted  = $('auth-terms').checked;
+
+    let hasError = false;
+    if (!firstName){ setFieldError('err-firstname', true); hasError = true; }
+    if (!surname){   setFieldError('err-surname', true);   hasError = true; }
+    if (!isValidEmail(email)){ setFieldError('err-signup-email', true); hasError = true; }
+    if (!phone){     setFieldError('err-phone', true);     hasError = true; }
+    if (!accepted){  setFieldError('err-terms', true);     hasError = true; }
+    if (hasError){ toast('⚠️ Please fix the highlighted fields', 'error'); return; }
+
+    if (pw.length < 6){
+      $('pw-hint').className = 'pw-hint bad';
+      $('pw-hint').innerText = 'Password must be at least 6 characters.';
+      toast('❌ Password too short', 'error');
+      return;
+    }
+    if (pw !== cf){
+      $('pw-match-hint').className = 'pw-hint bad';
+      $('pw-match-hint').innerText = '✕ Passwords do not match.';
+      toast('❌ Passwords do not match', 'error');
+      return;
+    }
+    if (isEmailTaken(email)){
+      setFieldError('err-signup-email', true);
+      $('err-signup-email').innerText = 'That email is already registered. Please login instead.';
+      showAlert('Email Already Registered',
+        'An account with that email already exists. Try logging in instead.', '📧');
+      toast('❌ Email already registered', 'error');
+      return;
+    }
+
+    /* Create the account */
+    const account = {
+      name: firstName,
+      surname: surname,
+      email: email,
+      password: pw,
+      phone: phone,
+      altPhone: altPhone,
+      homeAddress: homeAddr,
+      businessAddress: bizAddr,
+      cardDetails: cardDet,
+      createdAt: Date.now(),
+      isAdmin: false
     };
-    toast('🎉 Account created successfully!', 'teal');
+    upsertAccount(account);
+
+    /* Auto-login the new user */
+    currentUser = {
+      name: account.name,
+      surname: account.surname,
+      email: account.email,
+      phone: account.phone,
+      altPhone: account.altPhone,
+      homeAddress: account.homeAddress,
+      businessAddress: account.businessAddress,
+      cardDetails: account.cardDetails,
+      isAdmin: false
+    };
+    saveUser();
+    checkAuthState();
+    renderOrderHistory();
+    toast('🎉 Account created — welcome to Chella Designs!', 'teal');
+
+    /* Clear signup form */
+    ['auth-firstname','auth-surname','auth-email-signup','auth-password-signup',
+     'auth-confirm','auth-phone','auth-altphone','auth-home-address',
+     'auth-business-address','auth-card-details'].forEach(id => {
+      const el = $(id); if (el) el.value = '';
+    });
+    $('auth-terms').checked = false;
+    updatePwHint();
+    isLoginMode = true;
+    toggleAuthMode();
   }
-  saveUser();
-  checkAuthState();
-  renderOrderHistory();
 }
+
 function checkAuthState(){
   const auth = $('auth-container');
   const info = $('user-info');
@@ -2324,21 +2638,20 @@ function checkAuthState(){
     $('prof-name').value = currentUser.name;
     $('prof-surname').value = currentUser.surname;
     $('prof-email').value = currentUser.email;
-    $('prof-phone').value = currentUser.phone;
-    $('prof-alt-phone').value = currentUser.altPhone;
-    $('prof-home-address').value = currentUser.homeAddress;
-    $('prof-business-address').value = currentUser.businessAddress;
-    $('prof-card-details').value = currentUser.cardDetails;
+    $('prof-phone').value = currentUser.phone || '';
+    $('prof-alt-phone').value = currentUser.altPhone || '';
+    $('prof-home-address').value = currentUser.homeAddress || '';
+    $('prof-business-address').value = currentUser.businessAddress || '';
+    $('prof-card-details').value = currentUser.cardDetails || '';
     document.querySelectorAll('#profile-form input, #profile-form textarea')
       .forEach(el => el.disabled = true);
     $('save-profile-btn').style.display = 'none';
     $('edit-profile-btn').innerText = '✏️ Edit Profile';
 
-    const isAdmin = currentUser.email === ADMIN_EMAIL;
+    const isAdmin = currentUser.email === ADMIN_EMAIL || currentUser.isAdmin === true;
     $('nav-dash-li').style.display = isAdmin ? 'block' : 'none';
     $('admin-banner').style.display = isAdmin ? 'flex' : 'none';
 
-    // Attach the admin key to the Dashboard links so a fresh tab can open it.
     if (isAdmin){
       const key = getOrCreateAdminKey();
       const dashHref = 'dashboard.html?key=' + encodeURIComponent(key);
@@ -2397,13 +2710,24 @@ function toggleProfileEdit(){
 }
 function saveProfile(e){
   e.preventDefault();
-  currentUser.name = $('prof-name').value;
-  currentUser.surname = $('prof-surname').value;
-  currentUser.phone = $('prof-phone').value;
-  currentUser.altPhone = $('prof-alt-phone').value;
-  currentUser.homeAddress = $('prof-home-address').value;
-  currentUser.businessAddress = $('prof-business-address').value;
-  currentUser.cardDetails = $('prof-card-details').value;
+  const updated = {
+    name: $('prof-name').value.trim(),
+    surname: $('prof-surname').value.trim(),
+    email: currentUser.email,       // email is the primary key — not editable here
+    phone: $('prof-phone').value.trim(),
+    altPhone: $('prof-alt-phone').value.trim(),
+    homeAddress: $('prof-home-address').value.trim(),
+    businessAddress: $('prof-business-address').value.trim(),
+    cardDetails: $('prof-card-details').value.trim()
+  };
+  /* Update in-memory user */
+  Object.assign(currentUser, updated);
+  /* Persist to the account registry */
+  const account = findAccount(currentUser.email);
+  if (account){
+    Object.assign(account, updated);
+    upsertAccount(account);
+  }
   saveUser();
   checkAuthState();
   toast('💾 Profile updated successfully', 'teal');
@@ -2418,7 +2742,7 @@ function logout(){
 }
 
 /* ============================================================
-   CROSS-TAB SYNC (fallback if BroadcastChannel unavailable)
+   CROSS-TAB SYNC
    ============================================================ */
 window.addEventListener('storage', e => {
   if (e.key === STORAGE_KEY){
@@ -2449,6 +2773,7 @@ setInterval(() => {
    ============================================================ */
 (function init(){
   purgeOldData();
+  seedAdminAccount();       // ← seeds admin ONCE — never overwrites
   initBroadcast();
 
   buildCarousel();
@@ -2497,10 +2822,10 @@ setInterval(() => {
 
   console.log('%c🎨 Chella Designs — Customer Site',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
-  console.log('%c📊 Dashboard: dashboard.html?key=… — orders broadcast instantly',
-    'font-size:12px;color:#eab308;font-weight:bold');
-  console.log('%c🔐 Customer sessions are per-tab (sessionStorage) — no auto-login on new tabs',
+  console.log('%c🔐 Real account validation active — login checks against stored accounts',
     'font-size:12px;color:#14b8a6;font-weight:bold');
+  console.log('%c👤 Admin: admin@chelladesigns.co.za / admin123',
+    'font-size:12px;color:#eab308;font-weight:bold');
 })();
 </script>
 </body>
