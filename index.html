@@ -6,13 +6,6 @@
 <title>Chella Designs | Create • Customise • Inspire</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_PLACEHOLDER_REPLACE_ME&libraries=places&language=en&region=ZA"
-  async defer
-  onload="initAddressAutocomplete()"
-  onerror="console.warn('Google Maps failed — using offline address suggestions.');">
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
 <style>
@@ -353,16 +346,7 @@ input[type=range]{flex:1;accent-color:var(--pink);height:6px}
 
 .address-wrap{position:relative}
 .address-wrap .pin-ico{position:absolute;left:16px;top:14px;font-size:1.05rem;pointer-events:none;z-index:2;}
-.address-wrap input,.address-wrap textarea{padding-left:44px !important}
-.address-wrap .addr-hint{position:absolute;right:14px;top:14px;font-size:.68rem;font-weight:600;color:var(--teal-deep);background:#e0f7f5;padding:3px 10px;border-radius:50px;pointer-events:none;transition:.3s;}
-.address-wrap .addr-hint.hidden{opacity:0}
-.address-wrap.loading .addr-hint{background:#fef3c7;color:#92400e}
-.pac-container{border-radius:14px !important;box-shadow:0 16px 40px rgba(0,0,0,.18) !important;border:none !important;font-family:'Poppins',sans-serif !important;margin-top:6px;overflow:hidden;}
-.pac-item{padding:10px 14px !important;font-size:.86rem !important;cursor:pointer;border-top:1px solid var(--line) !important;}
-.pac-item:hover{background:#fff7fb !important}
-.pac-item-query{font-weight:600 !important;color:var(--ink) !important}
-.pac-matched{color:var(--pink-deep) !important;font-weight:700 !important}
-.pac-icon{margin-right:8px !important}
+.address-wrap input{padding-left:44px !important}
 
 .history-section{margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto}
 .history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
@@ -873,33 +857,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 </head>
 <body>
 
-<datalist id="sa-areas">
-  <option value="Sandton"></option><option value="Rosebank"></option><option value="Randburg"></option>
-  <option value="Midrand"></option><option value="Centurion"></option><option value="Soweto"></option>
-  <option value="Roodepoort"></option><option value="Krugersdorp"></option><option value="Benoni"></option>
-  <option value="Boksburg"></option><option value="Germiston"></option><option value="Kempton Park"></option>
-  <option value="Vereeniging"></option><option value="Pretoria Central"></option><option value="Cape Town CBD"></option>
-  <option value="Sea Point"></option><option value="Camps Bay"></option><option value="Green Point"></option>
-  <option value="Woodstock"></option><option value="Observatory"></option><option value="Claremont"></option>
-  <option value="Bellville"></option><option value="Milnerton"></option><option value="Somerset West"></option>
-  <option value="Stellenbosch"></option><option value="Paarl"></option><option value="Hermanus"></option>
-  <option value="George"></option><option value="Knysna"></option><option value="Mossel Bay"></option>
-  <option value="Oudtshoorn"></option><option value="Durban CBD"></option><option value="Umhlanga"></option>
-  <option value="Ballito"></option><option value="Pietermaritzburg"></option><option value="Port Shepstone"></option>
-  <option value="Newcastle"></option><option value="Port Elizabeth"></option><option value="East London"></option>
-  <option value="Mthatha"></option><option value="Queenstown"></option><option value="Grahamstown"></option>
-  <option value="Bloemfontein"></option><option value="Welkom"></option><option value="Kimberley"></option>
-  <option value="Potchefstroom"></option><option value="Rustenburg"></option><option value="Polokwane"></option>
-  <option value="Tzaneen"></option><option value="Nelspruit"></option>
-</datalist>
-<datalist id="sa-cities">
-  <option value="Cape Town"></option><option value="Johannesburg"></option><option value="Durban"></option>
-  <option value="Pretoria"></option><option value="Port Elizabeth"></option><option value="Bloemfontein"></option>
-  <option value="East London"></option><option value="Polokwane"></option><option value="Nelspruit"></option>
-  <option value="Kimberley"></option><option value="Pietermaritzburg"></option><option value="Sandton"></option>
-  <option value="Centurion"></option><option value="Stellenbosch"></option><option value="George"></option>
-</datalist>
-
 <div class="bg-blobs">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
 </div>
@@ -1184,22 +1141,22 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
             </div>
 
             <div class="form-group" style="grid-column:1/-1">
-              <label>Delivery Address * <span style="font-weight:500;color:var(--muted);font-size:.7rem">— start typing, suggestions appear</span></label>
-              <div class="address-wrap" id="addr-wrap">
+              <label>Delivery Address *</label>
+              <div class="address-wrap">
                 <span class="pin-ico">📍</span>
-                <input type="text" id="co-address" required placeholder="e.g. 12 Rivonia Road, Sandton"
-                       list="sa-areas" autocomplete="off" spellcheck="false" oninput="markAddressTyping()">
-                <span class="addr-hint" id="addr-hint">🔎 Type to search</span>
+                <input type="text" id="co-address" required
+                       placeholder="e.g. 12 Rivonia Road, Sandton, 2196"
+                       autocomplete="street-address" spellcheck="false">
               </div>
             </div>
 
             <div class="form-group">
               <label>City / Town *</label>
-              <input type="text" id="co-city" required placeholder="Cape Town" list="sa-cities" autocomplete="off">
+              <input type="text" id="co-city" required placeholder="Cape Town" autocomplete="address-level2">
             </div>
             <div class="form-group">
               <label>Postal Code</label>
-              <input type="text" id="co-postal" placeholder="8001" maxlength="4" inputmode="numeric">
+              <input type="text" id="co-postal" placeholder="8001" maxlength="4" inputmode="numeric" autocomplete="postal-code">
             </div>
             <div class="form-group" style="grid-column:1/-1">
               <label>Order Notes (optional)</label>
@@ -2069,60 +2026,6 @@ function getOrCreateAdminKey(){
     try { localStorage.setItem(ADMIN_KEY_STORE, k); } catch(e){}
   }
   return k;
-}
-
-/* ============================================================
-   GOOGLE MAPS AUTOCOMPLETE
-   ============================================================ */
-function initAddressAutocomplete(){
-  if (!window.google || !google.maps || !google.maps.places) return;
-  const input = document.getElementById('co-address');
-  const hint  = document.getElementById('addr-hint');
-  if (!input || !hint) return;
-  input.removeAttribute('list');
-  hint.innerText = '🌍 Google Maps';
-  hint.style.background = 'linear-gradient(135deg,#e0f7f5,#c7f9e5)';
-  hint.style.color = '#0f766e';
-
-  const ac = new google.maps.places.Autocomplete(input, {
-    types: ['address'],
-    componentRestrictions: { country: 'za' },
-    fields: ['address_components','formatted_address','geometry']
-  });
-  ac.addListener('place_changed', () => {
-    const place = ac.getPlace();
-    if (!place || !place.address_components) return;
-    let city = '', postal = '';
-    for (const c of place.address_components){
-      if (c.types.includes('locality')) city = c.long_name;
-      if (!city && c.types.includes('administrative_area_level_2')) city = c.long_name;
-      if (!city && c.types.includes('administrative_area_level_1')) city = c.long_name;
-      if (c.types.includes('postal_code')) postal = c.long_name;
-    }
-    if (city)   document.getElementById('co-city').value = city;
-    if (postal) document.getElementById('co-postal').value = postal;
-    if (place.formatted_address) input.value = place.formatted_address;
-    hint.innerText = '✓ Verified';
-    hint.style.background = '#dcfce7';
-    hint.style.color = '#166534';
-    toast('📍 Address verified via Google Maps', 'teal');
-  });
-}
-function markAddressTyping(){
-  const wrap = document.getElementById('addr-wrap');
-  const hint = document.getElementById('addr-hint');
-  if (!wrap || !hint) return;
-  if (window.google && google.maps && google.maps.places) return;
-  const v = document.getElementById('co-address').value.trim();
-  if (v.length > 3){
-    wrap.classList.add('loading'); hint.innerText = 'Searching'; hint.classList.remove('hidden');
-    clearTimeout(window.__addrHintTimer);
-    window.__addrHintTimer = setTimeout(() => {
-      wrap.classList.remove('loading'); hint.innerText = '🔎 Keep typing';
-    }, 700);
-  } else {
-    hint.innerText = '🔎 Type to search'; wrap.classList.remove('loading');
-  }
 }
 
 /* ============================================================
@@ -3934,7 +3837,7 @@ function logout(){
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
-  console.log('%c🎁 Gift Boxes + 📚 Exam Care packages added',
+  console.log('%c📍 Address field: plain text (no Google Maps)',
     'font-size:12px;color:#eab308;font-weight:bold');
 })();
 </script>
