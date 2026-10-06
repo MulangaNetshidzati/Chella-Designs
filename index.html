@@ -568,7 +568,6 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   margin-left:4px;letter-spacing:0;
 }
 
-/* --- Reviews modal: proper scrolling structure --- */
 .review-modal .modal-box{
   max-width:760px;
   max-height:92vh;
@@ -788,6 +787,28 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   border-radius:16px;
   box-shadow:0 30px 80px rgba(0,0,0,.6);
 }
+
+/* ============================================================
+   OTP MODAL STYLES
+   ============================================================ */
+#otp-input{
+  transition:border-color .3s, box-shadow .3s;
+}
+#otp-input:focus{
+  outline:none;
+  border-color:var(--pink) !important;
+  background:#fff !important;
+  box-shadow:0 0 0 4px rgba(236,72,153,.12);
+}
+.otp-resend{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:14px;padding:8px 16px;border-radius:50px;
+  background:#fff0f7;color:var(--pink-deep);
+  font-size:.75rem;font-weight:700;cursor:pointer;
+  transition:.3s;border:none;font-family:'Poppins';
+}
+.otp-resend:hover{background:var(--grad-pink);color:#fff;transform:translateY(-2px)}
+.otp-resend:disabled{opacity:.5;pointer-events:none}
 
 @media(max-width:1024px){
   .cart-layout,.pay-layout{grid-template-columns:1fr}
@@ -1767,6 +1788,46 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </div>
 
+<!-- ============================ OTP VERIFICATION MODAL ============================ -->
+<div class="modal-overlay" id="otp-modal">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-head" style="justify-content:center;">
+      <h3 style="font-size:1.15rem;">🔐 Verify Your Email</h3>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="color:var(--muted);font-size:.88rem;margin-bottom:20px;">
+        We've sent a 6-digit code to <strong id="otp-email-display" style="color:var(--pink-deep);"></strong>.
+        Enter it below to finish creating your account.
+      </p>
+
+      <input type="text"
+             id="otp-input"
+             maxlength="6"
+             inputmode="numeric"
+             pattern="[0-9]*"
+             placeholder="123456"
+             autocomplete="one-time-code"
+             style="width:100%;padding:16px;border:1.5px solid var(--line);border-radius:14px;
+                    font-size:2rem;letter-spacing:1rem;text-align:center;
+                    font-family:'Courier New',monospace;font-weight:700;
+                    color:var(--pink-deep);background:#fcfcfd;"
+             oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)">
+
+      <p style="font-size:.78rem;color:var(--muted);margin-top:14px;">
+        ⏰ The code expires in 5 minutes
+      </p>
+
+      <button type="button" class="otp-resend" id="otp-resend-btn" onclick="resendOtp()">
+        📧 Didn't get it? Resend code
+      </button>
+    </div>
+    <div class="modal-foot" style="justify-content:center;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="cancelOtp()">Cancel</button>
+      <button class="btn btn-pink" style="flex:1.4;" onclick="submitOtp()">Verify →</button>
+    </div>
+  </div>
+</div>
+
 <div class="pay-overlay" id="pay-overlay">
   <div class="pay-loader"></div>
   <p id="pay-overlay-text">Processing your payment securely…</p>
@@ -1799,6 +1860,125 @@ const VALID_SECTIONS = ['home','shop','cart','paygate','tracking','profile','con
 
 const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 75;
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
+
+/* ============================================================
+   OTP — Email verification via Edge Function
+   ============================================================ */
+async function sendOtp(email){
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`
+      },
+      body: JSON.stringify({ action: 'send', email: email })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success){
+      throw new Error(data.error || 'Failed to send code');
+    }
+    return { ok: true, message: data.message, expiresIn: data.expires_in };
+  } catch (err) {
+    console.error('sendOtp:', err);
+    return { ok: false, error: err.message };
+  }
+}
+
+async function verifyOtp(email, code){
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`
+      },
+      body: JSON.stringify({ action: 'verify', email: email, code: code })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success){
+      throw new Error(data.error || 'Invalid or expired code');
+    }
+    return { ok: true, message: data.message };
+  } catch (err) {
+    console.error('verifyOtp:', err);
+    return { ok: false, error: err.message };
+  }
+}
+
+/* ============================================================
+   OTP MODAL CONTROLLER
+   ============================================================ */
+let _otpResolve = null;
+let _otpCurrentEmail = '';
+
+function promptForOtp(email){
+  return new Promise(resolve => {
+    _otpResolve = resolve;
+    _otpCurrentEmail = email;
+    document.getElementById('otp-email-display').innerText = email;
+    document.getElementById('otp-input').value = '';
+    document.getElementById('otp-resend-btn').disabled = false;
+    document.getElementById('otp-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('otp-input').focus(), 250);
+  });
+}
+
+function cancelOtp(){
+  document.getElementById('otp-modal').classList.remove('active');
+  document.body.style.overflow = '';
+  if (_otpResolve){ _otpResolve(null); _otpResolve = null; }
+  _otpCurrentEmail = '';
+}
+
+function submitOtp(){
+  const code = document.getElementById('otp-input').value.trim();
+  if (code.length !== 6){
+    toast('⚠️ Please enter the 6-digit code', 'error');
+    return;
+  }
+  document.getElementById('otp-modal').classList.remove('active');
+  document.body.style.overflow = '';
+  if (_otpResolve){ _otpResolve(code); _otpResolve = null; }
+}
+
+async function resendOtp(){
+  if (!_otpCurrentEmail) return;
+  const btn = document.getElementById('otp-resend-btn');
+  btn.disabled = true;
+  btn.innerText = '📧 Sending…';
+
+  const result = await sendOtp(_otpCurrentEmail);
+
+  if (result.ok){
+    toast('📧 New code sent — check your inbox', 'teal');
+    document.getElementById('otp-input').value = '';
+    document.getElementById('otp-input').focus();
+    let secs = 30;
+    const iv = setInterval(() => {
+      secs--;
+      btn.innerText = `⏳ Resend in ${secs}s`;
+      if (secs <= 0){
+        clearInterval(iv);
+        btn.disabled = false;
+        btn.innerText = '📧 Didn\'t get it? Resend code';
+      }
+    }, 1000);
+  } else {
+    toast('❌ ' + (result.error || 'Failed to resend'), 'error');
+    btn.disabled = false;
+    btn.innerText = '📧 Didn\'t get it? Resend code';
+  }
+}
+
+/* Allow Enter key inside OTP input */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('otp-modal')?.classList.contains('active')){
+    e.preventDefault();
+    submitOtp();
+  }
+});
 
 /* ============================================================
    SUPABASE CLIENT
@@ -2236,7 +2416,6 @@ async function openReviews(productId){
   document.getElementById('reviews-modal').classList.add('active');
   document.body.style.overflow = 'hidden';
 
-  /* Scroll modal box to top smoothly */
   const modalBox = document.querySelector('#reviews-modal .modal-box');
   if (modalBox) modalBox.scrollTop = 0;
 
@@ -3387,7 +3566,7 @@ async function handleAuth(e){
     }
 
     submitBtn.disabled = true;
-    submitBtn.innerText = 'Creating account…';
+    submitBtn.innerText = 'Checking…';
 
     const existing = await findAccount(email);
     if (existing){
@@ -3400,6 +3579,40 @@ async function handleAuth(e){
       return;
     }
 
+    /* ---- Send OTP ---- */
+    submitBtn.innerText = 'Sending code…';
+    const otpResult = await sendOtp(email);
+    if (!otpResult.ok){
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalText;
+      showAlert('Could Not Send Code', otpResult.error || 'Please try again.', '⚠️');
+      toast('❌ ' + (otpResult.error || 'Failed to send code'), 'error');
+      return;
+    }
+
+    /* ---- Ask for code ---- */
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalText;
+    const code = await promptForOtp(email);
+    if (!code){
+      toast('↩️ Signup cancelled', 'error');
+      return;
+    }
+
+    /* ---- Verify ---- */
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Verifying…';
+    const verifyResult = await verifyOtp(email, code);
+    if (!verifyResult.ok){
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalText;
+      showAlert('Invalid Code', verifyResult.error || 'The code is wrong or has expired.', '🔒');
+      toast('❌ ' + (verifyResult.error || 'Invalid code'), 'error');
+      return;
+    }
+
+    /* ---- Create the account ---- */
+    submitBtn.innerText = 'Creating account…';
     const newAccount = {
       name: firstName, surname: surname, email: email,
       password: pw, phone: phone, altPhone: altPhone,
@@ -3427,7 +3640,7 @@ async function handleAuth(e){
     saveUser();
     checkAuthState();
     renderOrderHistory();
-    toast('🎉 Account created — welcome to Chella Designs!', 'teal');
+    toast('🎉 Account verified & created — welcome to Chella Designs!', 'teal');
 
     ['auth-firstname','auth-surname','auth-email-signup','auth-password-signup',
      'auth-confirm','auth-phone','auth-altphone','auth-home-address',
@@ -3599,7 +3812,6 @@ function logout(){
     if (e.target.classList.contains('f-cat')) updateFilterBadge();
   });
 
-  /* Smooth scroll for internal anchor navigation */
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {
       const id = link.getAttribute('href').slice(1);
@@ -3689,14 +3901,15 @@ function logout(){
         })
     .subscribe();
 
-  console.log('%c🎨 Chella Designs — Cloud-connected with reviews',
+  console.log('%c🎨 Chella Designs — Cloud + OTP + Reviews',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
-  console.log('%c⭐ Reviews enabled — full-width button on every product card',
+  console.log('%c🔐 OTP via Edge Function + Resend',
     'font-size:12px;color:#eab308;font-weight:bold');
+  console.log('%c⭐ Reviews with photos',
+    'font-size:12px;color:#a855f7;font-weight:bold');
 })();
 </script>
 </body>
 </html>
-        
