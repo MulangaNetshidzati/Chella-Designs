@@ -187,6 +187,18 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .empty-state{text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-state .big{font-size:3.4rem;display:block;margin-bottom:14px;animation:floaty 3s ease-in-out infinite}
 
+/* Premium card styling for Gift Boxes & Exam Care */
+.premium-card{
+  border: 2px solid transparent !important;
+  background: linear-gradient(#fff, #fff) padding-box,
+              linear-gradient(135deg, #ec4899, #a855f7, #eab308) border-box !important;
+  box-shadow: 0 14px 34px rgba(236,72,153,.18) !important;
+}
+.premium-card:hover{
+  box-shadow: 0 24px 52px rgba(236,72,153,.32) !important;
+}
+.premium-card .p-img{font-size:5rem !important}
+
 .drawer-overlay{position:fixed;inset:0;background:rgba(21,18,28,.5);backdrop-filter:blur(4px);z-index:1200;opacity:0;visibility:hidden;transition:.35s;}
 .drawer-overlay.open{opacity:1;visibility:visible}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(390px,92vw);z-index:1300;background:#fff;box-shadow:-20px 0 60px rgba(0,0,0,.2);transform:translateX(105%);transition:transform .45s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;}
@@ -946,11 +958,11 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
         <span class="script">Chella Designs</span>
         <span class="sub">PERSONALISED GIFTS &amp; PRINTABLES</span>
       </h1>
-      <p class="lead">Mugs, cake toppers, key rings, mouse pads, t-shirts, stickers and more —
+      <p class="lead">Mugs, cake toppers, key rings, mouse pads, t-shirts, stickers, gift boxes and more —
         all customised with your names, photos and favourite colours. Made with love in South Africa. 💖</p>
       <div class="hero-stats">
-        <div><strong>27+</strong><span>Products</span></div>
-        <div><strong>8</strong><span>Categories</span></div>
+        <div><strong>30+</strong><span>Products</span></div>
+        <div><strong>10</strong><span>Categories</span></div>
         <div><strong>100%</strong><span>Customisable</span></div>
         <div><strong>48h</strong><span>Turnaround</span></div>
       </div>
@@ -1509,7 +1521,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
           <span class="b2" style="color:#5eead4">DESIGNS</span>
         </div>
       </div>
-      <p>Personalised mugs, cake toppers, key rings, mouse pads, t-shirts and more. Create • Customise • Inspire.</p>
+      <p>Personalised mugs, cake toppers, key rings, mouse pads, t-shirts, gift boxes and more. Create • Customise • Inspire.</p>
     </div>
     <div class="foot-col">
       <h4>Quick Links</h4>
@@ -1557,9 +1569,9 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
     <div class="f-group">
       <h4>Maximum Price</h4>
       <div class="range-row">
-        <input type="range" id="price-range" min="3" max="120" value="120" step="1"
+        <input type="range" id="price-range" min="3" max="1200" value="1200" step="1"
                oninput="document.getElementById('price-range-val').innerText='R'+this.value">
-        <span class="range-val" id="price-range-val">R120</span>
+        <span class="range-val" id="price-range-val">R1200</span>
       </div>
     </div>
     <div class="f-group">
@@ -2124,7 +2136,9 @@ const CATS = {
   'Stickers':        { emoji:'✨', grad:'linear-gradient(135deg,#ffe9d6,#ffd0a8)', accent:'#ea7317', blurb:'Glossy vinyl stickers in three handy sizes — perfect for anything.' },
   'Colouring Books': { emoji:'🎨', grad:'linear-gradient(135deg,#e6ecff,#c7d5ff)', accent:'#4f6ef7', blurb:'Keep little hands busy with our personalised colouring books.' },
   'Smarties Shaker': { emoji:'🍬', grad:'linear-gradient(135deg,#ffe0ec,#ffc2dd)', accent:'#db2777', blurb:'A sweet little shaker filled with everyone\'s favourite chocolates.' },
-  'T-Shirts':        { emoji:'👕', grad:'linear-gradient(135deg,#e8fff0,#c2f0d8)', accent:'#16a34a', blurb:'Soft, comfy tees printed with your own text or photo.' }
+  'T-Shirts':        { emoji:'👕', grad:'linear-gradient(135deg,#e8fff0,#c2f0d8)', accent:'#16a34a', blurb:'Soft, comfy tees printed with your own text or photo.' },
+  'Gift Boxes':      { emoji:'🎁', grad:'linear-gradient(135deg,#fce7f3,#fde68a)', accent:'#ec4899', blurb:'Beautifully curated gift boxes — Standard, Premium and Luxury. Each one packed with love.' },
+  'Exam Care':       { emoji:'📚', grad:'linear-gradient(135deg,#e0e7ff,#c7d2fe)', accent:'#4f46e5', blurb:'Everything a student needs to survive exam season — snacks, stationery and pick-me-ups.' }
 };
 const CUSTOM_CATS = ['Mugs','Key Rings','Mouse Pads','T-Shirts'];
 const COLORS = [
@@ -2164,7 +2178,17 @@ const PRODUCTS = [
   { id:24, cat:'Smarties Shaker', name:'Smarties Shaker', price:20, emoji:'🍬' },
   { id:25, cat:'T-Shirts', name:'Small Design T-Shirt', price:50, emoji:'👕' },
   { id:26, cat:'T-Shirts', name:'Medium Design T-Shirt', price:90, emoji:'👚' },
-  { id:27, cat:'T-Shirts', name:'Large Design T-Shirt', price:120, emoji:'🧥' }
+  { id:27, cat:'T-Shirts', name:'Large Design T-Shirt', price:120, emoji:'🧥' },
+  // ---- GIFT BOXES ----
+  { id:28, cat:'Gift Boxes', name:'Standard Gift Box', price:250, emoji:'🎁',
+    contents:'Face mask • Perfume 30ml • Candle • Chocolate slab • Hand lotion • Scrub • Lip gloss' },
+  { id:29, cat:'Gift Boxes', name:'Premium Gift Box', price:500, emoji:'💝',
+    contents:'2x Face mask • Perfume 30ml • Candle • Chocolate • Hand lotion • Notebook • Pen • Scrub • Lip gloss • Cup • Scrunchie' },
+  { id:30, cat:'Gift Boxes', name:'Luxury Gift Box', price:1000, emoji:'👑',
+    contents:'Mouse pad • A4 puzzle • Chocolate • Blanket • 3x Face mask • 2x Perfume • Candle • Morning slippers • Scrub • Notebook • Pen • Lip gloss • Campaign glass • Brush • Alice band' },
+  // ---- EXAM CARE ----
+  { id:31, cat:'Exam Care', name:'Exam Care Package', price:500, emoji:'📚',
+    contents:'Enegade/Switch • Maynards gummies • 2x Chocolate slab/bar • 2x Bioplus • Coffee sachet • Bottle • Exam pad • Ren set • Highlighter • Sticky notes • Crisps • Bubble gum' }
 ];
 PRODUCTS.forEach(p => { p.custom = CUSTOM_CATS.includes(p.cat); });
 
@@ -2758,7 +2782,7 @@ function getFilteredProducts(){
   if (activeCategory !== 'All') list = list.filter(p => p.cat === activeCategory);
   const cats = [...document.querySelectorAll('.f-cat:checked')].map(c => c.value);
   if (cats.length) list = list.filter(p => cats.includes(p.cat));
-  const maxPrice = Number($('price-range')?.value ?? 120);
+  const maxPrice = Number($('price-range')?.value ?? 1200);
   list = list.filter(p => p.price <= maxPrice);
   if ($('custom-only')?.checked) list = list.filter(p => p.custom);
   if ($('budget-only')?.checked) list = list.filter(p => p.price < 50);
@@ -2785,7 +2809,7 @@ function renderProducts(){
   list.forEach((p, i) => {
     const meta = CATS[p.cat];
     const card = document.createElement('div');
-    card.className = 'product-card';
+    card.className = 'product-card' + ((p.cat === 'Gift Boxes' || p.cat === 'Exam Care') ? ' premium-card' : '');
     card.style.animationDelay = (i * 0.035) + 's';
     card.onclick = () => openProductModal(p.id);
     card.innerHTML = `
@@ -2796,6 +2820,7 @@ function renderProducts(){
       <div class="p-body">
         <span class="p-cat">${p.cat}</span>
         <h4>${p.name}</h4>
+        ${p.contents ? `<div style="font-size:.72rem;color:var(--muted);line-height:1.4;margin:4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">🎁 ${p.contents}</div>` : ''}
         <div id="p-stars-${p.id}" class="p-stars" style="margin-bottom:4px">
           <span style="font-size:.72rem;color:var(--muted)">Loading…</span>
         </div>
@@ -2831,7 +2856,7 @@ function closeDrawer(){ $('filter-drawer').classList.remove('open'); $('drawer-o
 function applyFilters(){ renderProducts(); closeDrawer(); updateFilterBadge(); toast('✨ Filters applied', 'pink'); }
 function resetFilters(){
   document.querySelectorAll('.f-cat').forEach(c => c.checked = false);
-  $('price-range').value = 120; $('price-range-val').innerText = 'R120';
+  $('price-range').value = 1200; $('price-range-val').innerText = 'R1200';
   $('custom-only').checked = false; $('budget-only').checked = false;
   $('sort-select').value = 'default';
   activeCategory = 'All'; renderChips(); updateFilterBadge();
@@ -2839,7 +2864,7 @@ function resetFilters(){
 function updateFilterBadge(){
   let n = 0;
   n += document.querySelectorAll('.f-cat:checked').length;
-  if (Number($('price-range').value) < 120) n++;
+  if (Number($('price-range').value) < 1200) n++;
   if ($('custom-only').checked) n++;
   if ($('budget-only').checked) n++;
   if ($('sort-select').value !== 'default') n++;
@@ -2861,7 +2886,11 @@ function openProductModal(id){
   $('pm-title').innerText = p.name;
   $('pm-cat').innerText = p.cat;
   $('pm-name').innerText = p.name;
-  $('pm-desc').innerText = meta.blurb;
+  if (p.contents){
+    $('pm-desc').innerHTML = `<strong style="color:var(--pink-deep);display:block;margin-bottom:6px">📦 What's inside:</strong>${p.contents}`;
+  } else {
+    $('pm-desc').innerText = meta.blurb;
+  }
   $('pm-preview-emo').innerText = p.emoji;
   $('pm-preview').style.background = '#ffffff';
   $('pm-preview-img').style.display = 'none';
@@ -3901,14 +3930,12 @@ function logout(){
         })
     .subscribe();
 
-  console.log('%c🎨 Chella Designs — Cloud + OTP + Reviews',
+  console.log('%c🎨 Chella Designs — Cloud + OTP + Reviews + Gift Boxes',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
-  console.log('%c🔐 OTP via Edge Function + Resend',
+  console.log('%c🎁 Gift Boxes + 📚 Exam Care packages added',
     'font-size:12px;color:#eab308;font-weight:bold');
-  console.log('%c⭐ Reviews with photos',
-    'font-size:12px;color:#a855f7;font-weight:bold');
 })();
 </script>
 </body>
