@@ -31,9 +31,9 @@
   --grad-gold:linear-gradient(135deg,#eab308,#f97316);
   --grad-rainbow:linear-gradient(120deg,#ec4899,#a855f7,#14b8a6,#eab308,#f97316);
 }
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}
 html{scroll-behavior:smooth}
-body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden;scroll-behavior:smooth}
 h1,h2,h3,h4{font-family:'Playfair Display',serif;line-height:1.2}
 .script{font-family:'Dancing Script',cursive}
 a{text-decoration:none;color:inherit;cursor:pointer}
@@ -171,7 +171,15 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .p-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
 .p-body .p-cat{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);font-weight:600}
 .p-body h4{font-size:1.06rem;font-family:'Poppins';font-weight:600}
-.p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:6px}
+.p-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:auto;
+  padding-top:6px;
+  flex-wrap:wrap;
+}
 .p-price{font-size:1.25rem;font-weight:700;color:var(--pink-deep);font-family:'Playfair Display'}
 .p-price small{font-size:.62rem;color:var(--muted);font-weight:500;display:block;letter-spacing:.06em}
 .p-open{width:40px;height:40px;border-radius:50%;background:#fff0f7;color:var(--pink-deep);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:.3s;}
@@ -533,10 +541,14 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
    ============================================================ */
 .rev-btn{
   display:inline-flex;align-items:center;gap:5px;
-  padding:6px 12px;border-radius:50px;
+  padding:7px 14px;border-radius:50px;
   background:#fff;border:1.5px solid var(--line);
-  font-size:.7rem;font-weight:700;color:var(--muted);
+  font-size:.72rem;font-weight:700;color:var(--muted);
   transition:.28s;cursor:pointer;
+  flex:0 0 auto;
+  white-space:nowrap;
+  position:relative;
+  z-index:2;
 }
 .rev-btn .rb-star{color:var(--gold-deep);font-size:.85rem}
 .rev-btn:hover{
@@ -556,13 +568,37 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   margin-left:4px;letter-spacing:0;
 }
 
-.review-modal .modal-box{max-width:760px}
+/* --- Reviews modal: proper scrolling structure --- */
+.review-modal .modal-box{
+  max-width:760px;
+  max-height:92vh;
+  overflow-y:auto !important;
+  overflow-x:hidden;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+.review-modal .modal-box::-webkit-scrollbar{width:8px}
+.review-modal .modal-box::-webkit-scrollbar-thumb{background:var(--pink-soft);border-radius:50px}
+.review-modal .modal-box::-webkit-scrollbar-track{background:transparent}
+
+.review-modal .modal-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
 
 .rm-head{
   display:flex;align-items:center;gap:16px;
   padding:20px 26px 16px;
   border-bottom:1px solid var(--line);
   background:linear-gradient(135deg,#fff0f7,#f5f3ff);
+  position:sticky;
+  top:60px;
+  z-index:4;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
 .rm-prod-icon{
   width:60px;height:60px;border-radius:18px;
@@ -609,8 +645,9 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 .rm-list{
   padding:18px 26px;
-  max-height:280px;
+  max-height:340px;
   overflow-y:auto;
+  scroll-behavior:smooth;
   display:flex;flex-direction:column;gap:14px;
 }
 .rm-list::-webkit-scrollbar{width:6px}
@@ -662,6 +699,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 
 .rm-form{
   padding:22px 26px;
+  padding-bottom:28px;
   border-top:2px dashed var(--line);
   background:linear-gradient(135deg,#fffafd,#f5f3ff);
 }
@@ -685,6 +723,13 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 .rm-form-row textarea:focus{
   outline:none;border-color:var(--pink);background:#fff;
   box-shadow:0 0 0 4px rgba(236,72,153,.10);
+}
+.review-modal #rm-submit-btn{
+  position:relative;
+  z-index:3;
+  margin-top:4px;
+  min-height:48px;
+  font-size:.95rem;
 }
 
 .rm-star-picker{
@@ -789,6 +834,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   .rm-avg{border-right:none;padding-right:0;padding-bottom:10px;border-bottom:1px solid var(--line);width:100%}
   .rev-img{max-width:100%}
   .rm-list{max-height:340px}
+  .rm-head{top:60px}
 }
 </style>
 </head>
@@ -1621,7 +1667,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </div>
 
-<!-- REVIEWS MODAL -->
+<!-- ============================ REVIEWS MODAL ============================ -->
 <div class="modal-overlay review-modal" id="reviews-modal">
   <div class="modal-box wide">
     <div class="modal-head">
@@ -2011,24 +2057,13 @@ async function loadOrders(){
     if (error){ console.error('loadOrders:', error); setCloudStatus('offline','Cloud offline'); return []; }
     setCloudStatus('ok','Cloud connected');
     return (data || []).map(o => ({
-      id: o.id,
-      ref: o.ref,
-      customer: o.customer,
-      email: o.email,
-      phone: o.phone,
-      city: o.city,
-      address: o.address,
-      notes: o.notes,
+      id: o.id, ref: o.ref, customer: o.customer, email: o.email,
+      phone: o.phone, city: o.city, address: o.address, notes: o.notes,
       items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
-      subtotal: Number(o.subtotal) || 0,
-      delivery: Number(o.delivery) || 0,
-      discount: Number(o.discount) || 0,
-      total: Number(o.total) || 0,
-      status: o.status,
-      method: o.method,
-      placedBy: o.placed_by || o.email,
-      date: o.date,
-      createdAt: o.created_at
+      subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
+      discount: Number(o.discount) || 0, total: Number(o.total) || 0,
+      status: o.status, method: o.method, placedBy: o.placed_by || o.email,
+      date: o.date, createdAt: o.created_at
     }));
   } catch(e){
     console.error('loadOrders exception:', e);
@@ -2061,8 +2096,7 @@ async function findAccount(email){
   if (!sb) return null;
   try {
     const { data, error } = await sb
-      .from('accounts')
-      .select('*')
+      .from('accounts').select('*')
       .eq('email', String(email || '').toLowerCase())
       .maybeSingle();
     if (error){ console.error('findAccount:', error); return null; }
@@ -2084,43 +2118,35 @@ async function upsertAccount(account){
     is_admin: account.isAdmin || false
   };
   const { data, error } = await sb
-    .from('accounts')
-    .upsert(payload, { onConflict: 'email' })
-    .select()
-    .single();
+    .from('accounts').upsert(payload, { onConflict: 'email' })
+    .select().single();
   if (error){ console.error('upsertAccount:', error); return null; }
   return data;
 }
 async function updateAccount(email, patch){
   if (!sb) return null;
   const payload = {
-    first_name: patch.name,
-    surname: patch.surname,
-    phone: patch.phone,
-    alt_phone: patch.altPhone,
-    home_address: patch.homeAddress,
-    business_address: patch.businessAddress,
+    first_name: patch.name, surname: patch.surname,
+    phone: patch.phone, alt_phone: patch.altPhone,
+    home_address: patch.homeAddress, business_address: patch.businessAddress,
     card_details: patch.cardDetails
   };
   const { data, error } = await sb
-    .from('accounts')
-    .update(payload)
+    .from('accounts').update(payload)
     .eq('email', email.toLowerCase())
-    .select()
-    .single();
+    .select().single();
   if (error){ console.error('updateAccount:', error); return null; }
   return data;
 }
 
 /* ============================================================
-   REVIEWS — cloud data layer
+   REVIEWS — cloud
    ============================================================ */
 async function fetchReviewsForProduct(productId){
   if (!sb) return [];
   try {
     const { data, error } = await sb
-      .from('reviews')
-      .select('*')
+      .from('reviews').select('*')
       .eq('product_id', productId)
       .order('created_at', { ascending:false });
     if (error){ console.error('fetchReviews:', error); return []; }
@@ -2130,20 +2156,14 @@ async function fetchReviewsForProduct(productId){
 async function fetchAllReviews(){
   if (!sb) return [];
   try {
-    const { data, error } = await sb
-      .from('reviews')
-      .select('id, product_id, rating');
+    const { data, error } = await sb.from('reviews').select('id, product_id, rating');
     if (error){ console.error('fetchAllReviews:', error); return []; }
     return data || [];
   } catch(e){ return []; }
 }
 async function insertReview(review){
   if (!sb) return null;
-  const { data, error } = await sb
-    .from('reviews')
-    .insert(review)
-    .select()
-    .single();
+  const { data, error } = await sb.from('reviews').insert(review).select().single();
   if (error){ console.error('insertReview:', error); return null; }
   return data;
 }
@@ -2155,7 +2175,6 @@ function starString(rating){
   const r = Math.round(Number(rating) || 0);
   return '★'.repeat(r) + '☆'.repeat(5 - r);
 }
-
 function renderProductStars(productId, reviews){
   const el = document.getElementById('p-stars-' + productId);
   if (!el) return;
@@ -2165,12 +2184,9 @@ function renderProductStars(productId, reviews){
   }
   const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
   el.innerHTML = `
-    <span style="color:var(--gold-deep);letter-spacing:.02em">
-      ${starString(avg)}
-    </span>
+    <span style="color:var(--gold-deep);letter-spacing:.02em">${starString(avg)}</span>
     <span class="p-count">${avg.toFixed(1)} (${reviews.length})</span>`;
 }
-
 async function refreshAllProductStars(){
   const all = await fetchAllReviews();
   const grouped = {};
@@ -2188,7 +2204,7 @@ async function refreshAllProductStars(){
 }
 
 /* ============================================================
-   REVIEW MODAL
+   REVIEWS MODAL
    ============================================================ */
 async function openReviews(productId){
   const p = PRODUCTS.find(x => x.id === productId);
@@ -2219,6 +2235,10 @@ async function openReviews(productId){
     </div>`;
   document.getElementById('reviews-modal').classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  /* Scroll modal box to top smoothly */
+  const modalBox = document.querySelector('#reviews-modal .modal-box');
+  if (modalBox) modalBox.scrollTop = 0;
 
   const reviews = await fetchReviewsForProduct(productId);
   cachedReviews[productId] = reviews;
@@ -2416,7 +2436,9 @@ async function submitReview(event){
   document.getElementById('rm-star-picker').querySelectorAll('.rm-star').forEach(s => s.classList.remove('active'));
   document.getElementById('rm-rating-label').innerText = 'Tap a star';
   document.getElementById('rm-rating-label').style.color = 'var(--muted)';
-  document.getElementById('rm-list').scrollTop = 0;
+
+  const listEl = document.getElementById('rm-list');
+  if (listEl) listEl.scrollTo({ top:0, behavior:'smooth' });
 
   broadcast('review_created', { productId: activeReviewProduct.id });
 }
@@ -2598,10 +2620,16 @@ function renderProducts(){
         <div id="p-stars-${p.id}" class="p-stars" style="margin-bottom:4px">
           <span style="font-size:.72rem;color:var(--muted)">Loading…</span>
         </div>
-        <div class="p-foot">
-          <div class="p-price">${R(p.price)}<small>incl. base</small></div>
-          <button class="rev-btn" data-rev-for="${p.id}" onclick="event.stopPropagation();openReviews(${p.id})" title="Read & write reviews">
-            <span class="rb-star">⭐</span> Reviews
+        <div class="p-foot" style="flex-direction:column;align-items:stretch;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div class="p-price">${R(p.price)}<small>incl. base</small></div>
+            <div class="p-open">→</div>
+          </div>
+          <button class="rev-btn" data-rev-for="${p.id}"
+                  style="width:100%;justify-content:center;"
+                  onclick="event.stopPropagation();openReviews(${p.id})"
+                  title="Read & write reviews">
+            <span class="rb-star">⭐</span> Read &amp; Write Reviews
           </button>
         </div>
       </div>`;
@@ -3373,16 +3401,10 @@ async function handleAuth(e){
     }
 
     const newAccount = {
-      name: firstName,
-      surname: surname,
-      email: email,
-      password: pw,
-      phone: phone,
-      altPhone: altPhone,
-      homeAddress: homeAddr,
-      businessAddress: bizAddr,
-      cardDetails: cardDet,
-      isAdmin: false
+      name: firstName, surname: surname, email: email,
+      password: pw, phone: phone, altPhone: altPhone,
+      homeAddress: homeAddr, businessAddress: bizAddr,
+      cardDetails: cardDet, isAdmin: false
     };
 
     const created = await upsertAccount(newAccount);
@@ -3397,15 +3419,10 @@ async function handleAuth(e){
     }
 
     currentUser = {
-      name: created.first_name,
-      surname: created.surname,
-      email: created.email,
-      phone: created.phone || '',
-      altPhone: created.alt_phone || '',
-      homeAddress: created.home_address || '',
-      businessAddress: created.business_address || '',
-      cardDetails: created.card_details || '',
-      isAdmin: !!created.is_admin
+      name: created.first_name, surname: created.surname, email: created.email,
+      phone: created.phone || '', altPhone: created.alt_phone || '',
+      homeAddress: created.home_address || '', businessAddress: created.business_address || '',
+      cardDetails: created.card_details || '', isAdmin: !!created.is_admin
     };
     saveUser();
     checkAuthState();
@@ -3582,6 +3599,19 @@ function logout(){
     if (e.target.classList.contains('f-cat')) updateFilterBadge();
   });
 
+  /* Smooth scroll for internal anchor navigation */
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const id = link.getAttribute('href').slice(1);
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (target){
+        e.preventDefault();
+        target.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    });
+  });
+
   setCloudStatus(null, 'Connecting…');
   const client = await waitForSupabase();
   if (!client){
@@ -3663,7 +3693,10 @@ function logout(){
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
+  console.log('%c⭐ Reviews enabled — full-width button on every product card',
+    'font-size:12px;color:#eab308;font-weight:bold');
 })();
 </script>
 </body>
 </html>
+        
