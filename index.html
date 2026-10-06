@@ -528,6 +528,222 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 .applepay-panel .ap-btn:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(0,0,0,.35)}
 .applepay-panel .ap-legal{margin-top:22px;font-size:.72rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px;}
 
+/* ============================================================
+   PRODUCT REVIEWS
+   ============================================================ */
+.rev-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:50px;
+  background:#fff;border:1.5px solid var(--line);
+  font-size:.7rem;font-weight:700;color:var(--muted);
+  transition:.28s;cursor:pointer;
+}
+.rev-btn .rb-star{color:var(--gold-deep);font-size:.85rem}
+.rev-btn:hover{
+  background:var(--grad-gold);color:#3a2c00;border-color:transparent;
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(234,179,8,.35);
+}
+.rev-btn.has-reviews{color:var(--gold-deep);border-color:var(--gold)}
+
+.p-stars{
+  display:inline-flex;align-items:center;gap:2px;
+  font-size:.8rem;color:var(--gold-deep);letter-spacing:.02em;
+}
+.p-stars .empty{color:#d1d5db}
+.p-stars .p-count{
+  font-size:.7rem;color:var(--muted);font-weight:600;
+  margin-left:4px;letter-spacing:0;
+}
+
+.review-modal .modal-box{max-width:760px}
+
+.rm-head{
+  display:flex;align-items:center;gap:16px;
+  padding:20px 26px 16px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(135deg,#fff0f7,#f5f3ff);
+}
+.rm-prod-icon{
+  width:60px;height:60px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.9rem;flex:0 0 auto;
+  box-shadow:inset 0 -6px 14px rgba(0,0,0,.06);
+}
+.rm-prod-info{flex:1;min-width:0}
+.rm-prod-info h3{font-size:1.05rem;margin-bottom:2px}
+.rm-prod-info .rm-cat{
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal-deep);font-weight:700;
+}
+
+.rm-summary{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 26px;
+  background:#fcfcfd;
+  border-bottom:1px solid var(--line);
+}
+.rm-avg{
+  text-align:center;flex:0 0 auto;
+  padding-right:16px;
+  border-right:1px solid var(--line);
+}
+.rm-avg .rm-avg-num{
+  font-size:2.4rem;font-weight:800;font-family:'Playfair Display';
+  color:var(--pink-deep);line-height:1;
+}
+.rm-avg .rm-avg-stars{font-size:1rem;color:var(--gold-deep);margin-top:2px}
+.rm-avg .rm-avg-total{font-size:.68rem;color:var(--muted);font-weight:600;letter-spacing:.06em;margin-top:2px}
+
+.rm-bars{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.rm-bar-row{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--muted)}
+.rm-bar-row .rm-bar-lbl{width:38px;flex:0 0 auto;font-weight:700;color:var(--ink)}
+.rm-bar-track{
+  flex:1;height:7px;background:#f1e6ee;border-radius:50px;overflow:hidden;
+}
+.rm-bar-fill{
+  height:100%;background:var(--grad-gold);border-radius:50px;
+  transition:width .8s cubic-bezier(.22,1,.36,1);
+}
+.rm-bar-row .rm-bar-count{width:26px;text-align:right;font-weight:600;flex:0 0 auto}
+
+.rm-list{
+  padding:18px 26px;
+  max-height:280px;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;
+}
+.rm-list::-webkit-scrollbar{width:6px}
+.rm-list::-webkit-scrollbar-thumb{background:var(--pink-soft);border-radius:50px}
+.rm-list::-webkit-scrollbar-track{background:transparent}
+
+.rm-empty{
+  text-align:center;padding:34px 20px;color:var(--muted);
+}
+.rm-empty .rm-empty-ico{
+  font-size:2.6rem;display:block;margin-bottom:8px;
+  animation:floaty 3s ease-in-out infinite;
+}
+.rm-empty h4{font-size:1rem;color:var(--ink);margin-bottom:4px}
+.rm-empty p{font-size:.82rem}
+
+.rev-card{
+  display:flex;gap:14px;padding:14px;
+  background:#fff;border:1px solid var(--line);
+  border-radius:16px;transition:.3s;
+  animation:fadeUp .4s both;
+}
+.rev-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.rev-avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--grad-pink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1rem;font-family:'Playfair Display';
+  flex:0 0 auto;
+}
+.rev-body{flex:1;min-width:0}
+.rev-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:5px;
+}
+.rev-name{font-weight:700;font-size:.86rem;color:var(--ink)}
+.rev-stars{font-size:.85rem;color:var(--gold-deep);letter-spacing:.04em}
+.rev-date{font-size:.68rem;color:var(--muted);margin-left:auto;font-weight:600}
+.rev-comment{
+  font-size:.85rem;color:#4b5563;line-height:1.55;
+  margin-bottom:8px;word-break:break-word;
+}
+.rev-img{
+  max-width:200px;border-radius:12px;
+  border:2px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.1);
+  cursor:pointer;transition:.3s;
+}
+.rev-img:hover{transform:scale(1.03);box-shadow:0 12px 26px rgba(0,0,0,.16)}
+
+.rm-form{
+  padding:22px 26px;
+  border-top:2px dashed var(--line);
+  background:linear-gradient(135deg,#fffafd,#f5f3ff);
+}
+.rm-form h4{
+  font-size:1rem;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.rm-form-row{margin-bottom:16px}
+.rm-form-row label{
+  display:block;font-size:.76rem;font-weight:700;
+  color:var(--ink);margin-bottom:7px;letter-spacing:.03em;
+}
+.rm-form-row input[type=text],
+.rm-form-row textarea{
+  width:100%;padding:12px 16px;
+  border:1.5px solid var(--line);border-radius:14px;
+  font-size:.88rem;background:#fff;transition:.3s;
+  font-family:'Poppins',sans-serif;
+}
+.rm-form-row input:focus,
+.rm-form-row textarea:focus{
+  outline:none;border-color:var(--pink);background:#fff;
+  box-shadow:0 0 0 4px rgba(236,72,153,.10);
+}
+
+.rm-star-picker{
+  display:flex;gap:6px;align-items:center;
+}
+.rm-star{
+  font-size:2rem;cursor:pointer;line-height:1;
+  color:#d1d5db;transition:.2s;
+  user-select:none;
+}
+.rm-star:hover{transform:scale(1.18)}
+.rm-star.active{color:var(--gold-deep);text-shadow:0 2px 8px rgba(234,179,8,.4)}
+.rm-rating-label{
+  font-size:.78rem;color:var(--muted);font-weight:600;
+  margin-left:10px;
+}
+
+.rm-upload{
+  border:2px dashed var(--pink-soft);border-radius:14px;
+  padding:16px;text-align:center;cursor:pointer;
+  background:#fff;transition:.3s;
+}
+.rm-upload:hover{background:#fff0f7;border-color:var(--pink)}
+.rm-upload .rm-up-ico{font-size:1.6rem;display:block;margin-bottom:4px}
+.rm-upload .rm-up-txt{font-size:.8rem;color:var(--muted)}
+.rm-upload .rm-up-txt strong{color:var(--pink-deep)}
+.rm-img-preview{
+  display:flex;align-items:center;gap:12px;
+  margin-top:10px;padding:10px;
+  background:#f5f3ff;border-radius:14px;
+}
+.rm-img-preview img{
+  width:60px;height:60px;object-fit:cover;
+  border-radius:10px;border:2px solid #fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+.rm-img-preview .rm-up-meta{flex:1;text-align:left;font-size:.78rem}
+.rm-img-preview .rm-up-meta strong{display:block;color:var(--purple-deep)}
+.rm-img-remove{
+  width:30px;height:30px;border-radius:50%;
+  background:#fff0f3;color:#e11d48;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;transition:.3s;
+}
+.rm-img-remove:hover{background:#e11d48;color:#fff;transform:rotate(90deg)}
+
+.rev-lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.9);
+  z-index:4000;display:none;
+  align-items:center;justify-content:center;
+  padding:30px;cursor:zoom-out;
+}
+.rev-lightbox.show{display:flex;animation:fadeUp .3s}
+.rev-lightbox img{
+  max-width:100%;max-height:100%;
+  border-radius:16px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+
 @media(max-width:1024px){
   .cart-layout,.pay-layout{grid-template-columns:1fr}
   .summary-card{position:static}
@@ -569,6 +785,10 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   .tstep{font-size:.54rem}
   .tstep .tdot{width:22px;height:22px;font-size:.6rem}
   .cloud-status{right:12px;bottom:12px;font-size:.65rem;padding:7px 12px}
+  .rm-summary{flex-direction:column;gap:12px;text-align:center}
+  .rm-avg{border-right:none;padding-right:0;padding-bottom:10px;border-bottom:1px solid var(--line);width:100%}
+  .rev-img{max-width:100%}
+  .rm-list{max-height:340px}
 }
 </style>
 </head>
@@ -1401,6 +1621,93 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </div>
 
+<!-- REVIEWS MODAL -->
+<div class="modal-overlay review-modal" id="reviews-modal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <h3>⭐ Customer Reviews</h3>
+      <button class="modal-close" onclick="closeReviews()">✕</button>
+    </div>
+
+    <div class="rm-head">
+      <div class="rm-prod-icon" id="rm-prod-icon" style="background:#fff;">☕</div>
+      <div class="rm-prod-info">
+        <h3 id="rm-prod-name">Product Name</h3>
+        <span class="rm-cat" id="rm-prod-cat">Category</span>
+      </div>
+    </div>
+
+    <div class="rm-summary">
+      <div class="rm-avg">
+        <div class="rm-avg-num" id="rm-avg-num">0.0</div>
+        <div class="rm-avg-stars" id="rm-avg-stars">☆☆☆☆☆</div>
+        <div class="rm-avg-total" id="rm-avg-total">0 reviews</div>
+      </div>
+      <div class="rm-bars" id="rm-bars"></div>
+    </div>
+
+    <div class="rm-list" id="rm-list">
+      <div class="rm-empty">
+        <span class="rm-empty-ico">📭</span>
+        <h4>No reviews yet</h4>
+        <p>Be the first to leave one!</p>
+      </div>
+    </div>
+
+    <div class="rm-form">
+      <h4>✍️ Write a Review</h4>
+
+      <div class="rm-form-row">
+        <label>Your Name *</label>
+        <input type="text" id="rm-name" placeholder="e.g. Jane D." maxlength="40" autocomplete="name">
+      </div>
+
+      <div class="rm-form-row">
+        <label>Your Rating *</label>
+        <div class="rm-star-picker" id="rm-star-picker">
+          <span class="rm-star" data-val="1">★</span>
+          <span class="rm-star" data-val="2">★</span>
+          <span class="rm-star" data-val="3">★</span>
+          <span class="rm-star" data-val="4">★</span>
+          <span class="rm-star" data-val="5">★</span>
+          <span class="rm-rating-label" id="rm-rating-label">Tap a star</span>
+        </div>
+      </div>
+
+      <div class="rm-form-row">
+        <label>Your Review (optional)</label>
+        <textarea id="rm-comment" rows="3" maxlength="500" placeholder="Tell others what you thought of this product…"></textarea>
+      </div>
+
+      <div class="rm-form-row">
+        <label>Add a Photo (optional)</label>
+        <div class="rm-upload" onclick="document.getElementById('rm-image').click()">
+          <span class="rm-up-ico">📸</span>
+          <div class="rm-up-txt">Click to upload <strong>PNG / JPG</strong><br>
+            <span style="font-size:.7rem">Max 5MB • auto-compressed</span></div>
+        </div>
+        <input type="file" id="rm-image" accept="image/*" style="display:none" onchange="handleReviewImage(event)">
+        <div class="rm-img-preview" id="rm-img-preview" style="display:none">
+          <img id="rm-img-thumb" alt="preview">
+          <div class="rm-up-meta">
+            <strong id="rm-img-name">photo.jpg</strong>
+            <span>Ready to upload</span>
+          </div>
+          <button class="rm-img-remove" onclick="removeReviewImage(event)">✕</button>
+        </div>
+      </div>
+
+      <button class="btn btn-pink btn-block" id="rm-submit-btn" style="padding:14px" onclick="submitReview(event)">
+        📤 Submit Review
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="rev-lightbox" id="rev-lightbox" onclick="closeLightbox()">
+  <img id="rev-lightbox-img" alt="">
+</div>
+
 <div class="modal-overlay" id="alert-modal">
   <div class="modal-box alert-box">
     <div class="modal-body">
@@ -1506,6 +1813,9 @@ function initBroadcast(){
       if (document.getElementById('tracking').classList.contains('active')){
         toast('📦 Order status updated', 'teal');
       }
+    }
+    if (type === 'review_created'){
+      refreshAllProductStars();
     }
   };
 }
@@ -1648,6 +1958,12 @@ let payMethod = 'card';
 let currentSection = 'home';
 let cloudReady = false;
 
+let activeReviewProduct = null;
+let pendingReviewImage  = null;
+let pendingReviewImageName = '';
+let selectedRating = 0;
+let cachedReviews = {};
+
 /* ============================================================
    HELPERS
    ============================================================ */
@@ -1675,8 +1991,15 @@ function purgeOldLocalData(){
   OLD_LOCAL_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e){} });
 }
 
+function safeJsonParse(s, fallback){ try { return JSON.parse(s); } catch(e){ return fallback; } }
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+
 /* ============================================================
-   CLOUD DATA — orders
+   CLOUD — orders
    ============================================================ */
 async function loadOrders(){
   if (!sb) return [];
@@ -1713,9 +2036,6 @@ async function loadOrders(){
     return [];
   }
 }
-function safeJsonParse(s, fallback){
-  try { return JSON.parse(s); } catch(e){ return fallback; }
-}
 async function refreshOrdersFromCloud(){
   allOrders = await loadOrders();
   renderOrderHistory();
@@ -1723,22 +2043,11 @@ async function refreshOrdersFromCloud(){
 async function insertOrder(order){
   if (!sb) return null;
   const payload = {
-    ref: order.ref,
-    customer: order.customer,
-    email: order.email,
-    phone: order.phone,
-    city: order.city,
-    address: order.address,
-    notes: order.notes,
-    items: order.items,
-    subtotal: order.subtotal,
-    delivery: order.delivery,
-    discount: order.discount,
-    total: order.total,
-    status: order.status,
-    method: order.method,
-    placed_by: order.placedBy,
-    date: order.date
+    ref: order.ref, customer: order.customer, email: order.email,
+    phone: order.phone, city: order.city, address: order.address, notes: order.notes,
+    items: order.items, subtotal: order.subtotal, delivery: order.delivery,
+    discount: order.discount, total: order.total, status: order.status,
+    method: order.method, placed_by: order.placedBy, date: order.date
   };
   const { data, error } = await sb.from('orders').insert(payload).select().single();
   if (error){ console.error('insertOrder:', error); return null; }
@@ -1746,7 +2055,7 @@ async function insertOrder(order){
 }
 
 /* ============================================================
-   CLOUD DATA — accounts
+   CLOUD — accounts
    ============================================================ */
 async function findAccount(email){
   if (!sb) return null;
@@ -1801,6 +2110,330 @@ async function updateAccount(email, patch){
     .single();
   if (error){ console.error('updateAccount:', error); return null; }
   return data;
+}
+
+/* ============================================================
+   REVIEWS — cloud data layer
+   ============================================================ */
+async function fetchReviewsForProduct(productId){
+  if (!sb) return [];
+  try {
+    const { data, error } = await sb
+      .from('reviews')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending:false });
+    if (error){ console.error('fetchReviews:', error); return []; }
+    return data || [];
+  } catch(e){ console.error('fetchReviews exception:', e); return []; }
+}
+async function fetchAllReviews(){
+  if (!sb) return [];
+  try {
+    const { data, error } = await sb
+      .from('reviews')
+      .select('id, product_id, rating');
+    if (error){ console.error('fetchAllReviews:', error); return []; }
+    return data || [];
+  } catch(e){ return []; }
+}
+async function insertReview(review){
+  if (!sb) return null;
+  const { data, error } = await sb
+    .from('reviews')
+    .insert(review)
+    .select()
+    .single();
+  if (error){ console.error('insertReview:', error); return null; }
+  return data;
+}
+
+/* ============================================================
+   STARS
+   ============================================================ */
+function starString(rating){
+  const r = Math.round(Number(rating) || 0);
+  return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+function renderProductStars(productId, reviews){
+  const el = document.getElementById('p-stars-' + productId);
+  if (!el) return;
+  if (!reviews.length){
+    el.innerHTML = `<span style="font-size:.72rem;color:var(--muted)">No reviews yet</span>`;
+    return;
+  }
+  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  el.innerHTML = `
+    <span style="color:var(--gold-deep);letter-spacing:.02em">
+      ${starString(avg)}
+    </span>
+    <span class="p-count">${avg.toFixed(1)} (${reviews.length})</span>`;
+}
+
+async function refreshAllProductStars(){
+  const all = await fetchAllReviews();
+  const grouped = {};
+  all.forEach(r => {
+    if (!grouped[r.product_id]) grouped[r.product_id] = [];
+    grouped[r.product_id].push(r);
+  });
+  PRODUCTS.forEach(p => {
+    renderProductStars(p.id, grouped[p.id] || []);
+    const btn = document.querySelector(`[data-rev-for="${p.id}"]`);
+    if (btn && (grouped[p.id] || []).length){
+      btn.classList.add('has-reviews');
+    }
+  });
+}
+
+/* ============================================================
+   REVIEW MODAL
+   ============================================================ */
+async function openReviews(productId){
+  const p = PRODUCTS.find(x => x.id === productId);
+  if (!p) return;
+  activeReviewProduct = p;
+
+  selectedRating = 0;
+  pendingReviewImage = null;
+  pendingReviewImageName = '';
+  document.getElementById('rm-name').value = currentUser ? (currentUser.name || '') : '';
+  document.getElementById('rm-comment').value = '';
+  document.getElementById('rm-image').value = '';
+  document.getElementById('rm-img-preview').style.display = 'none';
+  document.getElementById('rm-star-picker').querySelectorAll('.rm-star').forEach(s => s.classList.remove('active'));
+  document.getElementById('rm-rating-label').innerText = 'Tap a star';
+  document.getElementById('rm-rating-label').style.color = 'var(--muted)';
+
+  const meta = CATS[p.cat];
+  document.getElementById('rm-prod-icon').innerText = p.emoji;
+  document.getElementById('rm-prod-icon').style.background = meta.grad;
+  document.getElementById('rm-prod-name').innerText = p.name;
+  document.getElementById('rm-prod-cat').innerText = p.cat;
+
+  document.getElementById('rm-list').innerHTML = `
+    <div class="rm-empty">
+      <span class="rm-empty-ico">⏳</span>
+      <h4>Loading reviews…</h4>
+    </div>`;
+  document.getElementById('reviews-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  const reviews = await fetchReviewsForProduct(productId);
+  cachedReviews[productId] = reviews;
+  renderReviewsSummary(reviews);
+  renderReviewsList(reviews);
+  renderProductStars(productId, reviews);
+}
+
+function closeReviews(){
+  document.getElementById('reviews-modal').classList.remove('active');
+  document.body.style.overflow = '';
+  activeReviewProduct = null;
+}
+
+function renderReviewsSummary(reviews){
+  const total = reviews.length;
+  if (!total){
+    document.getElementById('rm-avg-num').innerText = '0.0';
+    document.getElementById('rm-avg-stars').innerText = '☆☆☆☆☆';
+    document.getElementById('rm-avg-total').innerText = 'No reviews yet';
+    document.getElementById('rm-bars').innerHTML = `
+      <div class="rm-bar-row">
+        <span class="rm-bar-lbl">—</span>
+        <div class="rm-bar-track"><div class="rm-bar-fill" style="width:0%"></div></div>
+        <span class="rm-bar-count">0</span>
+      </div>`;
+    return;
+  }
+  const sum = reviews.reduce((s, r) => s + r.rating, 0);
+  const avg = sum / total;
+  document.getElementById('rm-avg-num').innerText = avg.toFixed(1);
+  document.getElementById('rm-avg-stars').innerText = starString(avg);
+  document.getElementById('rm-avg-total').innerText = `${total} review${total !== 1 ? 's' : ''}`;
+
+  const counts = { 5:0, 4:0, 3:0, 2:0, 1:0 };
+  reviews.forEach(r => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
+
+  document.getElementById('rm-bars').innerHTML = [5,4,3,2,1].map(star => {
+    const c = counts[star] || 0;
+    const pct = (c / total) * 100;
+    return `<div class="rm-bar-row">
+      <span class="rm-bar-lbl">${star}★</span>
+      <div class="rm-bar-track"><div class="rm-bar-fill" style="width:${pct}%"></div></div>
+      <span class="rm-bar-count">${c}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderReviewsList(reviews){
+  const list = document.getElementById('rm-list');
+  if (!reviews.length){
+    list.innerHTML = `
+      <div class="rm-empty">
+        <span class="rm-empty-ico">📭</span>
+        <h4>No reviews yet</h4>
+        <p>Be the first to leave one!</p>
+      </div>`;
+    return;
+  }
+  list.innerHTML = reviews.map(r => {
+    const initials = (r.reviewer_name || 'Anonymous')
+      .split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const dateStr = r.created_at
+      ? new Date(r.created_at).toLocaleDateString('en-ZA', { day:'numeric', month:'short', year:'numeric' })
+      : '';
+    const imgHtml = r.image
+      ? `<img class="rev-img" src="${r.image}" alt="review photo" onclick="openLightbox(event, '${r.id}')">`
+      : '';
+    const commentHtml = r.comment
+      ? `<p class="rev-comment">${escapeHtml(r.comment)}</p>`
+      : '';
+    return `<div class="rev-card" data-rev-id="${r.id}">
+      <div class="rev-avatar">${initials || '★'}</div>
+      <div class="rev-body">
+        <div class="rev-head">
+          <span class="rev-name">${escapeHtml(r.reviewer_name || 'Anonymous')}</span>
+          <span class="rev-stars">${starString(r.rating)}</span>
+          <span class="rev-date">${dateStr}</span>
+        </div>
+        ${commentHtml}
+        ${imgHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Star picker */
+document.addEventListener('click', e => {
+  const star = e.target.closest('.rm-star');
+  if (!star) return;
+  const val = Number(star.dataset.val);
+  selectedRating = val;
+  const picker = document.getElementById('rm-star-picker');
+  picker.querySelectorAll('.rm-star').forEach(s => {
+    s.classList.toggle('active', Number(s.dataset.val) <= val);
+  });
+  const label = document.getElementById('rm-rating-label');
+  const labels = { 1:'Poor 😕', 2:'Fair 🙂', 3:'Good 😊', 4:'Great 😍', 5:'Excellent 🤩' };
+  label.innerText = labels[val];
+  label.style.color = 'var(--gold-deep)';
+});
+
+/* Review image upload */
+async function handleReviewImage(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024){
+    showAlert('File Too Large', 'Please choose an image smaller than 5MB.', '⚠️');
+    e.target.value = '';
+    return;
+  }
+  try {
+    const compressed = await compressImage(file);
+    pendingReviewImage = compressed;
+    pendingReviewImageName = file.name;
+    document.getElementById('rm-img-thumb').src = compressed;
+    document.getElementById('rm-img-name').innerText = file.name;
+    document.getElementById('rm-img-preview').style.display = 'flex';
+    toast('📸 Photo added — click Submit Review', 'teal');
+  } catch(err){
+    showAlert('Upload Failed', 'Could not process that image. Try another file.', '⚠️');
+  }
+}
+function removeReviewImage(e){
+  if (e) e.stopPropagation();
+  pendingReviewImage = null;
+  pendingReviewImageName = '';
+  document.getElementById('rm-img-preview').style.display = 'none';
+  document.getElementById('rm-image').value = '';
+}
+
+/* Submit review */
+async function submitReview(event){
+  if (event) event.preventDefault();
+  if (!activeReviewProduct){ return; }
+
+  const name    = document.getElementById('rm-name').value.trim();
+  const comment = document.getElementById('rm-comment').value.trim();
+
+  if (!name){
+    showAlert('Name Required', 'Please enter your name so others know who reviewed this.', '📝');
+    document.getElementById('rm-name').focus();
+    return;
+  }
+  if (!selectedRating){
+    showAlert('Rating Required', 'Please tap a star to choose your rating.', '⭐');
+    return;
+  }
+  if (!sb){
+    showAlert('Cloud Offline', 'Cannot submit — no connection to the cloud.', '⚠️');
+    return;
+  }
+
+  const btn = document.getElementById('rm-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block"></span> Submitting…';
+
+  const payload = {
+    product_id:     activeReviewProduct.id,
+    product_name:   activeReviewProduct.name,
+    reviewer_name:  name,
+    reviewer_email: currentUser ? currentUser.email : null,
+    rating:         selectedRating,
+    comment:        comment || null,
+    image:          pendingReviewImage || null
+  };
+
+  const created = await insertReview(payload);
+
+  btn.disabled = false;
+  btn.innerText = '📤 Submit Review';
+
+  if (!created){
+    showAlert('Could Not Submit', 'Something went wrong saving your review. Please check your connection and try again.', '⚠️');
+    return;
+  }
+
+  toast('🎉 Thank you! Your review was posted.', 'teal');
+
+  const list = cachedReviews[activeReviewProduct.id] || [];
+  list.unshift(created);
+  cachedReviews[activeReviewProduct.id] = list;
+  renderReviewsSummary(list);
+  renderReviewsList(list);
+  renderProductStars(activeReviewProduct.id, list);
+  const btn2 = document.querySelector(`[data-rev-for="${activeReviewProduct.id}"]`);
+  if (btn2) btn2.classList.add('has-reviews');
+
+  document.getElementById('rm-comment').value = '';
+  document.getElementById('rm-image').value = '';
+  document.getElementById('rm-img-preview').style.display = 'none';
+  pendingReviewImage = null;
+  pendingReviewImageName = '';
+  selectedRating = 0;
+  document.getElementById('rm-star-picker').querySelectorAll('.rm-star').forEach(s => s.classList.remove('active'));
+  document.getElementById('rm-rating-label').innerText = 'Tap a star';
+  document.getElementById('rm-rating-label').style.color = 'var(--muted)';
+  document.getElementById('rm-list').scrollTop = 0;
+
+  broadcast('review_created', { productId: activeReviewProduct.id });
+}
+
+/* Lightbox */
+function openLightbox(event, reviewId){
+  if (event) event.stopPropagation();
+  const card = document.querySelector(`[data-rev-id="${reviewId}"]`);
+  if (!card) return;
+  const img = card.querySelector('.rev-img');
+  if (!img) return;
+  document.getElementById('rev-lightbox-img').src = img.src;
+  document.getElementById('rev-lightbox').classList.add('show');
+}
+function closeLightbox(){
+  document.getElementById('rev-lightbox').classList.remove('show');
+  setTimeout(() => { document.getElementById('rev-lightbox-img').src = ''; }, 300);
 }
 
 /* ============================================================
@@ -1962,9 +2595,14 @@ function renderProducts(){
       <div class="p-body">
         <span class="p-cat">${p.cat}</span>
         <h4>${p.name}</h4>
+        <div id="p-stars-${p.id}" class="p-stars" style="margin-bottom:4px">
+          <span style="font-size:.72rem;color:var(--muted)">Loading…</span>
+        </div>
         <div class="p-foot">
           <div class="p-price">${R(p.price)}<small>incl. base</small></div>
-          <div class="p-open">→</div>
+          <button class="rev-btn" data-rev-for="${p.id}" onclick="event.stopPropagation();openReviews(${p.id})" title="Read & write reviews">
+            <span class="rb-star">⭐</span> Reviews
+          </button>
         </div>
       </div>`;
     grid.appendChild(card);
@@ -2926,6 +3564,7 @@ function logout(){
     if (e.key === 'Escape'){
       document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
       closeDrawer();
+      closeLightbox();
       document.body.style.overflow = '';
     }
   });
@@ -2958,6 +3597,8 @@ function logout(){
   renderOrderHistory();
   checkAuthState();
   toast('☁️ Connected to Chella cloud', 'teal');
+
+  refreshAllProductStars();
 
   sb.channel('orders-live')
     .on('postgres_changes',
@@ -3001,7 +3642,24 @@ function logout(){
         })
     .subscribe();
 
-  console.log('%c🎨 Chella Designs — Cloud-connected',
+  sb.channel('reviews-live')
+    .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'reviews' },
+        payload => {
+          const r = payload.new;
+          const pid = r.product_id;
+          if (!cachedReviews[pid]) cachedReviews[pid] = [];
+          if (cachedReviews[pid].some(x => x.id === r.id)) return;
+          cachedReviews[pid].unshift(r);
+          renderProductStars(pid, cachedReviews[pid]);
+          if (activeReviewProduct && activeReviewProduct.id === pid){
+            renderReviewsSummary(cachedReviews[pid]);
+            renderReviewsList(cachedReviews[pid]);
+          }
+        })
+    .subscribe();
+
+  console.log('%c🎨 Chella Designs — Cloud-connected with reviews',
     'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:8px 16px;border-radius:8px');
   console.log('%c☁️ Supabase: ' + SUPABASE_URL,
     'font-size:12px;color:#14b8a6;font-weight:bold');
