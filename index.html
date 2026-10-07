@@ -963,6 +963,74 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 .fireworks-content .btn-okay:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 26px 54px rgba(236,72,153,.65)}
 .fireworks-content .btn-okay:active{transform:scale(.97)}
 
+/* ============================================================
+   FLOATING CART BUTTON
+   ============================================================ */
+.floating-cart{
+  position:fixed;
+  bottom:28px;
+  left:28px;
+  z-index:2500;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:var(--grad-pink);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 16px 40px rgba(236,72,153,.5);
+  cursor:pointer;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s, opacity .3s, visibility .3s;
+  transform:scale(0);
+  opacity:0;
+  visibility:hidden;
+  border:3px solid #fff;
+  animation:floatCart 3s ease-in-out infinite;
+}
+.floating-cart.show{
+  transform:scale(1);
+  opacity:1;
+  visibility:visible;
+}
+.floating-cart:hover{
+  transform:scale(1.12) translateY(-4px);
+  box-shadow:0 24px 54px rgba(236,72,153,.65);
+}
+.floating-cart svg{
+  width:28px;
+  height:28px;
+  stroke:#fff;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.floating-cart .fc-badge{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:26px;
+  height:26px;
+  border-radius:50%;
+  background:#fff;
+  color:var(--pink-deep);
+  font-size:.78rem;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  border:2px solid var(--pink);
+}
+.floating-cart .fc-badge.pop{
+  animation:pop .45s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes floatCart{
+  0%,100%{transform:scale(1) translateY(0)}
+  50%{transform:scale(1) translateY(-6px)}
+}
+
 @media(max-width:1024px){
   .cart-layout,.pay-layout{grid-template-columns:1fr}
   .summary-card{position:static}
@@ -1010,6 +1078,9 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   .rev-img{max-width:100%}
   .rm-list{max-height:340px}
   .rm-head{top:60px}
+  .floating-cart{width:56px;height:56px;bottom:20px;left:20px}
+  .floating-cart svg{width:24px;height:24px}
+  .floating-cart .fc-badge{min-width:22px;height:22px;font-size:.7rem}
 }
 </style>
 </head>
@@ -1035,6 +1106,12 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
 <div class="cloud-status" id="cloud-status">
   <span class="cs-dot"></span>
   <span id="cloud-status-text">Connecting…</span>
+</div>
+
+<!-- FLOATING CART -->
+<div class="floating-cart" id="floating-cart" onclick="showSection('cart')">
+  <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M3 3h2l2.4 11.3a2 2 0 002 1.7h7.7a2 2 0 002-1.6L21 7H6"/></svg>
+  <span class="fc-badge" id="floating-cart-badge">0</span>
 </div>
 
 <header>
@@ -1188,7 +1265,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
         <input type="text" id="promo-input" placeholder="Promo code">
         <button onclick="applyPromo()">Apply</button>
       </div>
-      <p class="promo-hint">Try <strong>CHELLA10</strong> for 10% off</p>
+      <p class="promo-hint">Try <strong>CHELLA10</strong> for 10% off (new customers only)</p>
       <button class="btn btn-pink btn-block" style="padding:16px" onclick="goToPaygate()">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         Proceed to PayGate
@@ -1443,6 +1520,12 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
             <input type="password" id="auth-password-login" placeholder="••••••••" autocomplete="current-password">
             <div class="field-error" id="err-login-pass">Please enter your password.</div>
           </div>
+          <!-- FORGOT PASSWORD BUTTON -->
+          <div style="text-align:right;margin-top:-8px;margin-bottom:14px">
+            <a onclick="forgotPassword()" style="font-size:.78rem;color:var(--pink-deep);font-weight:700;text-decoration:underline;cursor:pointer">
+              Forgot Password?
+            </a>
+          </div>
         </div>
 
         <div id="signup-fields" style="display:none">
@@ -1634,6 +1717,35 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </section>
 
+<!-- REFUND SECTION -->
+<section id="refund" class="section">
+  <div class="section-head">
+    <h2>Refund <span>Policy</span></h2>
+    <div class="underline"></div>
+    <p>Everything you need to know about refunds at Chella Designs</p>
+  </div>
+  <div class="form-card wide" style="max-width:860px">
+    <h3 style="text-align:left">1. Eligibility for Refunds</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Due to the personalised nature of our products, refunds are only issued if the item is defective, damaged during delivery, or if we made an error with your order. We do not offer refunds for change of mind or incorrect information supplied by the customer.</p>
+    <h3 style="text-align:left">2. How to Request a Refund</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">To request a refund, please email us at <strong>info@chelladesigns.co.za</strong> within 7 days of receiving your order. Include your order reference number, a description of the issue, and clear photographs of the problem.</p>
+    <h3 style="text-align:left">3. Processing Time</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Once your refund request is approved, we will process the refund within 5–10 business days. The refund will be made to the original payment method used for the purchase.</p>
+    <h3 style="text-align:left">4. Damaged or Defective Items</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">If your item arrives damaged or is defective, please contact us immediately. We will arrange for a replacement or a full refund, including any delivery charges, at no extra cost to you.</p>
+    <h3 style="text-align:left">5. Non-Refundable Items</h3>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Gift cards, personalised items with customer-supplied errors, and items marked as final sale are not eligible for refunds.</p>
+    <h3 style="text-align:left">6. Contact Us</h3>
+    <p style="color:var(--muted);font-size:.9rem">For any refund-related questions, please contact us at <strong>083 413 5617</strong> or email <strong>info@chelladesigns.co.za</strong>.</p>
+    <div style="margin-top:30px;text-align:center">
+      <button class="btn btn-pink" onclick="showSection('contact')">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 6l10 7 10-7"/></svg>
+        Contact Support
+      </button>
+    </div>
+  </div>
+</section>
+
 <section id="terms" class="section">
   <div class="section-head">
     <h2>Terms &amp; <span>Conditions</span></h2>
@@ -1649,7 +1761,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
     <h3 style="text-align:left">4. Delivery</h3>
     <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Delivery times vary based on location and customisation. Tracking details are provided upon dispatch.</p>
     <h3 style="text-align:left">5. Refunds &amp; Returns</h3>
-    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Due to the personalised nature of our products, returns are not accepted unless the item is defective.</p>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:22px">Due to the personalised nature of our products, returns are not accepted unless the item is defective. For full details, please see our <a onclick="showSection('refund')" style="color:var(--pink-deep);font-weight:700;text-decoration:underline">Refund Policy</a>.</p>
     <h3 style="text-align:left">6. Privacy Policy</h3>
     <p style="color:var(--muted);font-size:.9rem">Your personal information is used solely for order fulfilment and will never be shared with third parties.</p>
   </div>
@@ -1684,6 +1796,7 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
         <li><a onclick="showSection('contact')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.1-1.1a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg> 083 413 5617</a></li>
         <li><a onclick="showSection('contact')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 6l10 7 10-7"/></svg> info@chelladesigns.co.za</a></li>
         <li><a onclick="showSection('terms')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg> Terms &amp; Conditions</a></li>
+        <li><a onclick="showSection('refund')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9 9 0 00-9 9"/><path d="M3 3v6h6"/></svg> Refund Policy</a></li>
         <li><a onclick="showSection('contact')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Mon–Fri 09:00–17:00</a></li>
       </ul>
     </div>
@@ -1700,7 +1813,8 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
   <div class="foot-bottom">
     &copy; 2026 Chella Designs. All rights reserved. | Made in South Africa |
-    <a onclick="showSection('terms')">Terms &amp; Conditions</a>
+    <a onclick="showSection('terms')">Terms &amp; Conditions</a> |
+    <a onclick="showSection('refund')">Refund Policy</a>
   </div>
 </footer>
 
@@ -1942,6 +2056,32 @@ footer .social-link:hover{background:var(--grad-pink);border-color:transparent;c
   </div>
 </div>
 
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgot-modal">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-head" style="justify-content:center;">
+      <h3 style="font-size:1.15rem;display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        Reset Your Password
+      </h3>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px;">
+        Enter the email address associated with your account and we'll send you a reset link.
+      </p>
+      <input type="email" id="forgot-email" placeholder="you@email.com"
+             style="width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;
+                    font-size:.9rem;background:#fcfcfd;text-align:center;">
+      <div class="field-error" id="err-forgot-email" style="margin-top:8px;">Please enter a valid email address.</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:14px;">We'll email you a link to reset your password.</p>
+    </div>
+    <div class="modal-foot" style="justify-content:center;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeForgotModal()">Cancel</button>
+      <button class="btn btn-pink" style="flex:1.4;" onclick="sendPasswordReset()">Send Reset Link</button>
+    </div>
+  </div>
+</div>
+
 <!-- OTP VERIFICATION MODAL -->
 <div class="modal-overlay" id="otp-modal">
   <div class="modal-box" style="max-width:440px;">
@@ -2035,7 +2175,7 @@ const OLD_LOCAL_KEYS = [
   'chella_accounts_v4','chella_cart_v4','chella_section_v4',
   'chella_accounts','chella_orders'
 ];
-const VALID_SECTIONS = ['home','shop','cart','paygate','tracking','profile','contact','terms'];
+const VALID_SECTIONS = ['home','shop','cart','paygate','tracking','profile','contact','terms','refund'];
 
 const FEE_TEXT = 15, FEE_IMAGE = 25, FEE_PREMIUM = 10, DELIVERY = 60, EXPRESS = 75;
 const STATUS_FLOW = ['Pending','Accepted','Printing','Shipped','Completed'];
@@ -2094,7 +2234,8 @@ const ICONS = {
   download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>',
   sun:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>',
   icecream:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8a4 4 0 118 0l-3 13h-2z"/><path d="M6 8a6 6 0 0112 0"/></svg>',
-  paw:     '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="10" r="2"/><circle cx="10" cy="6" r="2"/><circle cx="14" cy="6" r="2"/><circle cx="18" cy="10" r="2"/><path d="M12 12c-3 0-6 2-6 5s2 3 3 3h6c1 0 3 0 3-3s-3-5-6-5z"/></svg>'
+  paw:     '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="10" r="2"/><circle cx="10" cy="6" r="2"/><circle cx="14" cy="6" r="2"/><circle cx="18" cy="10" r="2"/><path d="M12 12c-3 0-6 2-6 5s2 3 3 3h6c1 0 3 0 3-3s-3-5-6-5z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>'
 };
 
 function icon(name){ return ICONS[name] || ICONS.info; }
@@ -2214,12 +2355,57 @@ async function resendOtp(){
   }
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('otp-modal')?.classList.contains('active')){
-    e.preventDefault();
-    submitOtp();
+/* ============================================================
+   FORGOT PASSWORD
+   ============================================================ */
+function forgotPassword(){
+  document.getElementById('forgot-email').value = '';
+  document.getElementById('err-forgot-email').classList.remove('show');
+  document.getElementById('forgot-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('forgot-email').focus(), 250);
+}
+
+function closeForgotModal(){
+  document.getElementById('forgot-modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+async function sendPasswordReset(){
+  const email = document.getElementById('forgot-email').value.trim();
+  const errEl = document.getElementById('err-forgot-email');
+
+  if (!isValidEmail(email)){
+    errEl.classList.add('show');
+    return;
   }
-});
+  errEl.classList.remove('show');
+
+  if (!sb){
+    showAlert('Cloud Offline', 'Cannot send reset email — no connection to the cloud.', 'warn');
+    return;
+  }
+
+  const account = await findAccount(email);
+  if (!account){
+    showAlert('Account Not Found', 'No account exists with that email address. Please sign up first.', 'info');
+    return;
+  }
+
+  const btn = document.querySelector('#forgot-modal .btn-pink');
+  const originalText = btn.innerText;
+  btn.disabled = true;
+  btn.innerText = 'Sending…';
+
+  // Simulate sending reset email (in production, use Supabase auth.resetPasswordForEmail)
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerText = originalText;
+    closeForgotModal();
+    showAlert('Reset Link Sent', `We've sent a password reset link to ${email}. Please check your inbox (and spam folder).`, 'mail');
+    toast('Password reset email sent', 'teal');
+  }, 1200);
+}
 
 /* ============================================================
    SUPABASE CLIENT
@@ -3249,10 +3435,35 @@ function updateCartCount(){
   const el = $('cart-count');
   el.innerText = n;
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+
+  // Update floating cart badge
+  const fcBadge = $('floating-cart-badge');
+  if (fcBadge){
+    fcBadge.innerText = n;
+    fcBadge.classList.remove('pop'); void fcBadge.offsetWidth; fcBadge.classList.add('pop');
+  }
+
+  // Show/hide floating cart
+  const floatingCart = $('floating-cart');
+  if (floatingCart){
+    if (n > 0){
+      floatingCart.classList.add('show');
+    } else {
+      floatingCart.classList.remove('show');
+    }
+  }
 }
 function cartSubtotal(){ return cart.reduce((s, i) => s + i.unitPrice * i.qty, 0); }
 function cartDelivery(){ return cart.length ? ($('express-ship')?.checked ? EXPRESS : DELIVERY) : 0; }
-function cartDiscount(){ return promoApplied ? cartSubtotal() * 0.10 : 0; }
+function cartDiscount(){
+  // CHELLA10 only applies to new customers (no previous orders)
+  if (!promoApplied) return 0;
+  if (!currentUser) return 0;
+  const em = currentUser.email.toLowerCase();
+  const hasPreviousOrders = allOrders.some(o => (o.placedBy || o.email || '').toLowerCase() === em);
+  if (hasPreviousOrders) return 0;
+  return cartSubtotal() * 0.10;
+}
 function cartTotal(){ return Math.max(0, cartSubtotal() + cartDelivery() - cartDiscount()); }
 function renderCart(){
   const list = $('cart-list');
@@ -3299,8 +3510,25 @@ function renderCart(){
   $('sum-subtotal').innerText = R(cartSubtotal());
   $('sum-delivery').innerText = R(cartDelivery());
   const dRow = $('sum-discount-row');
-  if (promoApplied){ dRow.style.display = 'flex'; $('sum-discount').innerText = '-' + R(cartDiscount()); }
-  else { dRow.style.display = 'none'; }
+  if (promoApplied){
+    dRow.style.display = 'flex';
+    $('sum-discount').innerText = '-' + R(cartDiscount());
+    // Show note if discount doesn't apply
+    const note = document.querySelector('.promo-hint');
+    if (note){
+      if (!currentUser){
+        note.innerHTML = 'Log in to use <strong>CHELLA10</strong> (new customers only)';
+      } else {
+        const em = currentUser.email.toLowerCase();
+        const hasPreviousOrders = allOrders.some(o => (o.placedBy || o.email || '').toLowerCase() === em);
+        note.innerHTML = hasPreviousOrders
+          ? 'CHELLA10 is only valid for first-time customers'
+          : 'CHELLA10 applied — 10% off!';
+      }
+    }
+  } else {
+    dRow.style.display = 'none';
+  }
   $('sum-total').innerText = R(cartTotal());
 }
 function cartQty(idx, d){
@@ -3316,7 +3544,23 @@ function removeCartItem(idx){
 }
 function applyPromo(){
   const code = $('promo-input').value.trim().toUpperCase();
-  if (code === 'CHELLA10'){ promoApplied = true; renderCart(); toast('CHELLA10 applied — 10% off!', 'teal'); }
+  if (code === 'CHELLA10'){
+    if (!currentUser){
+      showAlert('Login Required', 'Please log in to use the CHELLA10 discount. It is available for new customers only.', 'lock');
+      toast('Please log in to use CHELLA10', 'error');
+      return;
+    }
+    const em = currentUser.email.toLowerCase();
+    const hasPreviousOrders = allOrders.some(o => (o.placedBy || o.email || '').toLowerCase() === em);
+    if (hasPreviousOrders){
+      showAlert('Discount Not Available', 'The CHELLA10 discount is only valid for first-time customers. You already have previous orders.', 'info');
+      toast('CHELLA10 is for new customers only', 'error');
+      return;
+    }
+    promoApplied = true;
+    renderCart();
+    toast('CHELLA10 applied — 10% off!', 'teal');
+  }
   else if (code === ''){ toast('Please enter a promo code', 'error'); }
   else { toast('Invalid promo code', 'error'); }
 }
@@ -3359,7 +3603,7 @@ function renderPaySummary(){
   tot.innerHTML = `
     <div class="sum-row"><span>Subtotal</span><span>${R(cartSubtotal())}</span></div>
     <div class="sum-row"><span>Delivery${$('express-ship')?.checked ? ' (Express)' : ''}</span><span>${R(cartDelivery())}</span></div>
-    ${promoApplied ? `<div class="sum-row"><span>Discount (CHELLA10)</span><span style="color:#16a34a">-${R(cartDiscount())}</span></div>` : ''}
+    ${cartDiscount() > 0 ? `<div class="sum-row"><span>Discount (CHELLA10)</span><span style="color:#16a34a">-${R(cartDiscount())}</span></div>` : ''}
     <div class="sum-total"><span>Total</span><span>${R(cartTotal())}</span></div>`;
   $('pay-btn-amount').innerText = R(cartTotal());
   $('eft-ref').innerText = 'REF-' + Math.floor(100000 + Math.random() * 900000);
@@ -3879,6 +4123,7 @@ async function handleAuth(e){
     renderOrderHistory();
     toast(`Welcome back, ${currentUser.name}!`, 'pink');
     $('auth-password-login').value = '';
+    showSection('home');
 
   } else {
     const firstName = $('auth-firstname').value.trim();
@@ -3996,6 +4241,7 @@ async function handleAuth(e){
     updatePwHint();
     isLoginMode = true;
     toggleAuthMode();
+    showSection('home');
   }
 }
 
@@ -4142,7 +4388,12 @@ function logout(){
       document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
       closeDrawer();
       closeLightbox();
+      closeForgotModal();
       document.body.style.overflow = '';
+    }
+    if (e.key === 'Enter' && document.getElementById('otp-modal')?.classList.contains('active')){
+      e.preventDefault();
+      submitOtp();
     }
   });
   const car = $('home-carousel');
@@ -4243,6 +4494,14 @@ function logout(){
   console.log('%c🍎 Real Apple logo on Apple Pay button',
     'font-size:12px;color:#000;font-weight:bold');
   console.log('%c🎆 Fireworks animation on successful order',
+    'font-size:12px;color:#eab308;font-weight:bold');
+  console.log('%c🔑 Forgot Password button added to login',
+    'font-size:12px;color:#a855f7;font-weight:bold');
+  console.log('%c🛒 Floating cart button added',
+    'font-size:12px;color:#ec4899;font-weight:bold');
+  console.log('%c📋 Refund Policy section added',
+    'font-size:12px;color:#14b8a6;font-weight:bold');
+  console.log('%c💎 CHELLA10 now only applies to new customers',
     'font-size:12px;color:#eab308;font-weight:bold');
 })();
 </script>
