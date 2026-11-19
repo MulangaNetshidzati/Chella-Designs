@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Seller Dashboard | Chella Designs</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-
 <style>
 :root{
   --pink:#ec4899;--pink-soft:#f9a8d4;--pink-deep:#be185d;
@@ -25,12 +23,12 @@
   --grad-rainbow:linear-gradient(120deg,#ec4899,#a855f7,#14b8a6,#eab308,#f97316);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden;min-height:100vh;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;overflow-x:hidden;min-height:100vh;min-height:-webkit-fill-available;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
 h1,h2,h3,h4{font-family:'Playfair Display',serif;line-height:1.2}
 a{text-decoration:none;color:inherit;cursor:pointer}
 button{font-family:'Poppins',sans-serif;cursor:pointer;border:none}
-input,textarea,select{font-family:'Poppins',sans-serif}
+input,textarea,select{font-family:'Poppins',sans-serif;font-size:16px;-webkit-appearance:none;appearance:none}
 img{max-width:100%;display:block}
 
 .bg-blobs{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
@@ -48,128 +46,73 @@ img{max-width:100%;display:block}
 @keyframes growBar{from{height:0 !important;opacity:0}to{opacity:1}}
 @keyframes newRow{0%{background:#fef3c7}100%{background:#fffafc}}
 @keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
+@keyframes pulseLive{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}}
 
-#redirect-screen{
-  position:fixed;inset:0;background:rgba(255,255,255,.98);
-  backdrop-filter:blur(10px);z-index:9999;
-  display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;
-}
+#redirect-screen{position:fixed;inset:0;background:rgba(255,255,255,.98);backdrop-filter:blur(10px);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:20px;text-align:center}
 #redirect-screen.show{display:flex}
-#redirect-screen .rlock{
-  width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#fee2e2,#fecaca);
-  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
-  box-shadow:0 20px 40px rgba(239,68,68,.25);
-}
+#redirect-screen .rlock{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#fee2e2,#fecaca);display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 20px 40px rgba(239,68,68,.25)}
 #redirect-screen h2{font-size:1.4rem;color:#b91c1c}
-#redirect-screen p{font-size:.9rem;color:var(--muted);max-width:380px;text-align:center}
-#redirect-screen .spinner{
-  width:36px;height:36px;border:4px solid #fecaca;
-  border-top-color:#ef4444;border-radius:50%;animation:spin .8s linear infinite;
-}
+#redirect-screen p{font-size:.9rem;color:var(--muted);max-width:380px}
+#redirect-screen .spinner{width:36px;height:36px;border:4px solid #fecaca;border-top-color:#ef4444;border-radius:50%;animation:spin .8s linear infinite}
 
-header{
-  position:sticky;top:0;z-index:900;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);
-}
-.nav-wrap{
-  max-width:1400px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:18px;padding:12px 24px;
-}
-.logo-container{display:flex;align-items:center;gap:12px}
-.logo-img{height:52px;width:52px;object-fit:contain;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(190,24,93,.18);}
-.logo-fallback{height:52px;width:52px;border-radius:50%;display:none;align-items:center;justify-content:center;background:var(--grad-pink);color:#fff;font-family:'Dancing Script',cursive;font-size:1.3rem;font-weight:700;}
+header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+.nav-wrap{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 20px}
+.logo-container{display:flex;align-items:center;gap:10px}
+.logo-img{height:52px;width:52px;object-fit:contain;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(190,24,93,.18)}
+.logo-fallback{height:52px;width:52px;border-radius:50%;display:none;align-items:center;justify-content:center;background:var(--grad-pink);color:#fff;font-family:'Dancing Script',cursive;font-size:1.3rem;font-weight:700}
 .brand-text{display:flex;flex-direction:column;line-height:1}
 .brand-text .b1{font-family:'Dancing Script',cursive;font-size:1.7rem;font-weight:700;background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand-text .b2{font-size:.55rem;letter-spacing:.32em;color:var(--teal-deep);font-weight:600;margin-top:1px}
-.dash-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  background:linear-gradient(135deg,#fef3c7,#fde68a);color:#3a2c00;
-  padding:7px 15px;border-radius:50px;font-size:.72rem;font-weight:700;
-  letter-spacing:.06em;box-shadow:0 6px 14px rgba(234,179,8,.25);
-}
+.dash-badge{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#3a2c00;padding:7px 15px;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.06em;box-shadow:0 6px 14px rgba(234,179,8,.25)}
 .dash-badge.offline{background:linear-gradient(135deg,#fee2e2,#fecaca);color:#991b1b}
 .dash-badge.connecting{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3}
-.live-dot{
-  width:9px;height:9px;border-radius:50%;background:#22c55e;
-  box-shadow:0 0 0 0 rgba(34,197,94,.6);
-  animation:pulseLive 1.8s ease-in-out infinite;
-}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulseLive 1.8s ease-in-out infinite}
 .dash-badge.offline .live-dot{background:#ef4444;animation:none}
 .dash-badge.connecting .live-dot{background:#6366f1}
-@keyframes pulseLive{
-  0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
-  60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
-}
 .nav-actions{display:flex;align-items:center;gap:10px}
-.icon-btn{
-  width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid var(--line);
-  display:flex;align-items:center;justify-content:center;font-size:1.05rem;
-  color:var(--pink-deep);transition:.3s;position:relative;box-shadow:0 6px 16px rgba(190,24,93,.08);
-}
-.icon-btn:hover{background:var(--grad-pink);color:#fff;border-color:transparent;transform:scale(1.08);}
+.icon-btn{width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:var(--pink-deep);transition:.3s;position:relative;box-shadow:0 6px 16px rgba(190,24,93,.08)}
+.icon-btn:hover{background:var(--grad-pink);color:#fff;border-color:transparent;transform:scale(1.08)}
 .icon-btn.spinning{animation:spin .8s linear}
-.notify-dot{
-  position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;
-  background:var(--gold);color:#3a2c00;border-radius:50%;
-  font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;
-  border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite;
-}
+.notify-dot{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;background:var(--gold);color:#3a2c00;border-radius:50%;font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite}
 
-main{max-width:1400px;margin:0 auto;padding:34px 24px 60px}
-.section-head{text-align:center;margin-bottom:34px}
-.section-head h2{font-size:clamp(1.9rem,4vw,2.6rem);display:inline-block}
+main{max-width:1400px;margin:0 auto;padding:30px 20px 60px}
+.section-head{text-align:center;margin-bottom:30px}
+.section-head h2{font-size:clamp(1.8rem,4vw,2.6rem);display:inline-block}
 .section-head h2 span{background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
-.section-head .underline{width:110px;height:5px;border-radius:5px;margin:12px auto 0;background:var(--grad-rainbow);background-size:300% 100%;animation:gradShift 4s linear infinite;}
-.section-head p{color:var(--muted);margin-top:12px;font-size:.95rem}
+.section-head .underline{width:110px;height:5px;border-radius:5px;margin:12px auto 0;background:var(--grad-rainbow);background-size:300% 100%;animation:gradShift 4s linear infinite}
+.section-head p{color:var(--muted);margin-top:12px;font-size:.92rem}
 
-.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
-.stat-card{
-  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
-  padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.35s;
-  animation:fadeUp .5s both;
-}
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:26px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.35s;animation:fadeUp .5s both}
 .stat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
-.stat-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%}
 .stat-card.c1::before{background:var(--grad-pink)}
 .stat-card.c2::before{background:var(--grad-teal)}
 .stat-card.c3::before{background:var(--grad-gold)}
 .stat-card.c4::before{background:linear-gradient(180deg,#a855f7,#7e22ce)}
 .stat-card .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.stat-card .sc-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:#fff0f7;}
+.stat-card .sc-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:#fff0f7}
 .stat-card.c2 .sc-ico{background:#e0f7f5}
 .stat-card.c3 .sc-ico{background:#fef9c3}
 .stat-card.c4 .sc-ico{background:#f3e8ff}
-.stat-card .sc-val{font-size:1.9rem;font-weight:800;font-family:'Playfair Display';color:var(--ink)}
+.stat-card .sc-val{font-size:1.8rem;font-weight:800;font-family:'Playfair Display';color:var(--ink)}
 .stat-card .sc-lbl{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .stat-card .sc-trend{font-size:.72rem;font-weight:700;color:#16a34a;margin-top:6px}
 .stat-card .sc-trend.warn{color:#d97706}
 
 .dash-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
-.dtab{
-  padding:10px 20px;border-radius:50px;background:#fff;border:1.5px solid var(--line);
-  font-size:.8rem;font-weight:600;color:var(--muted);transition:.3s;position:relative;
-}
+.dtab{padding:10px 18px;border-radius:50px;background:#fff;border:1.5px solid var(--line);font-size:.8rem;font-weight:600;color:var(--muted);transition:.3s;position:relative}
 .dtab:hover{border-color:var(--pink-soft);color:var(--pink-deep);transform:translateY(-2px)}
-.dtab.active{background:var(--grad-pink);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(236,72,153,.3);}
+.dtab.active{background:var(--grad-pink);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(236,72,153,.3)}
 .dtab .cnt{background:rgba(0,0,0,.08);border-radius:50px;padding:1px 8px;font-size:.7rem;margin-left:6px}
 .dtab.active .cnt{background:rgba(255,255,255,.28)}
-.dtab .new-dot{
-  position:absolute;top:-3px;right:-3px;width:12px;height:12px;
-  background:var(--gold);border-radius:50%;border:2px solid #fff;
-  animation:pulseGold 1.6s ease-in-out infinite;
-}
+.dtab .new-dot{position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:var(--gold);border-radius:50%;border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite}
 
-.table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
-.table-scroll{overflow-x:auto}
-table.dash{width:100%;border-collapse:collapse;min-width:1000px}
-table.dash th{
-  background:linear-gradient(135deg,#15121c,#3b2a45);color:#fff;
-  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
-  padding:15px 16px;text-align:left;font-weight:600;white-space:nowrap;
-}
-table.dash td{padding:15px 16px;border-bottom:1px solid var(--line);font-size:.83rem;vertical-align:top}
+.table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.dash{width:100%;border-collapse:collapse;min-width:960px}
+table.dash th{background:linear-gradient(135deg,#15121c,#3b2a45);color:#fff;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:15px 16px;text-align:left;font-weight:600;white-space:nowrap}
+table.dash td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:.83rem;vertical-align:top}
 table.dash tbody tr{transition:.25s}
 table.dash tbody tr:hover{background:#fffafc}
 table.dash tbody tr:last-child td{border-bottom:none}
@@ -179,12 +122,8 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .cust-sub{font-size:.74rem;color:var(--muted);display:block}
 .item-line{font-size:.78rem;color:#4b5563;padding:2px 0;display:flex;gap:6px;align-items:flex-start}
 .item-line .il-q{color:var(--pink-deep);font-weight:700}
-.item-line .il-c{color:var(--purple-deep);font-size:.72rem}
 .act-row{display:flex;gap:7px;flex-wrap:wrap}
-.act{
-  padding:7px 13px;border-radius:50px;font-size:.72rem;font-weight:700;transition:.28s;
-  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
-}
+.act{padding:7px 13px;border-radius:50px;font-size:.72rem;font-weight:700;transition:.28s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .act:hover{transform:translateY(-2px)}
 .act-accept{background:#dcfce7;color:#166534}
 .act-accept:hover{background:#16a34a;color:#fff}
@@ -194,7 +133,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .act-next:hover{background:#7e22ce;color:#fff}
 .act-view{background:#e0f7fa;color:#155e75}
 .act-view:hover{background:#0e7490;color:#fff}
-.status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:50px;font-size:.74rem;font-weight:700;letter-spacing:.05em;}
+.status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:50px;font-size:.74rem;font-weight:700;letter-spacing:.05em}
 .sp-pending{background:#fef3c7;color:#92400e}
 .sp-accepted{background:#dbeafe;color:#1e40af}
 .sp-printing{background:#ede9fe;color:#5b21b6}
@@ -202,45 +141,51 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .sp-completed{background:#dcfce7;color:#166534}
 .sp-cancelled{background:#fee2e2;color:#991b1b}
 
-.chart-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);margin-top:24px;}
-.chart-card h3{font-size:1.15rem;margin-bottom:22px;display:flex;align-items:center;gap:9px}
-.bars{display:flex;align-items:flex-end;gap:16px;height:190px;padding:0 4px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
-.bar{width:100%;max-width:56px;border-radius:12px 12px 4px 4px;background:var(--grad-pink);animation:growBar 1s cubic-bezier(.22,1,.36,1) both;position:relative;min-height:6px;transition:.3s;}
+.chart-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-top:24px}
+.chart-card h3{font-size:1.15rem;margin-bottom:22px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.bars{display:flex;align-items:flex-end;gap:14px;height:190px;padding:0 4px;overflow-x:auto}
+.bar-col{flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:56px;border-radius:12px 12px 4px 4px;background:var(--grad-pink);animation:growBar 1s cubic-bezier(.22,1,.36,1) both;position:relative;min-height:6px;transition:.3s}
 .bar:hover{filter:brightness(1.12);transform:scaleY(1.03)}
-.bar .bar-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:800;color:var(--pink-deep);white-space:nowrap;}
+.bar .bar-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:800;color:var(--pink-deep);white-space:nowrap}
 .bar-lbl{font-size:.68rem;color:var(--muted);font-weight:600;text-align:center;line-height:1.2}
 
-.empty-state{text-align:center;padding:70px 20px;color:var(--muted)}
-.empty-state .big{font-size:3.4rem;display:block;margin-bottom:14px;animation:floaty 3s ease-in-out infinite}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
 
-.toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
-.toast{
-  background:var(--ink);color:#fff;padding:13px 26px;border-radius:50px;font-size:.85rem;
-  font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;
-  animation:fadeUp .45s cubic-bezier(.34,1.56,.64,1) both;white-space:nowrap;
-}
+.toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;padding:0 16px}
+.toast{background:var(--ink);color:#fff;padding:13px 24px;border-radius:50px;font-size:.85rem;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;animation:fadeUp .45s cubic-bezier(.34,1.56,.64,1) both;max-width:90vw;text-align:center}
 .toast.pink{background:var(--grad-pink)}
 .toast.teal{background:var(--grad-teal)}
 .toast.gold{background:var(--grad-gold);color:#3a2c00}
 .toast.error{background:linear-gradient(135deg,#dc2626,#991b1b)}
-.toast.out{animation:fadeOutDown .35s forwards}
 
-.flash-banner{
-  position:fixed;top:88px;left:50%;transform:translateX(-50%);
-  background:var(--grad-gold);color:#3a2c00;padding:13px 26px;
-  border-radius:50px;font-size:.88rem;font-weight:700;
-  box-shadow:0 18px 40px rgba(234,179,8,.45);z-index:950;
-  display:none;align-items:center;gap:10px;
-  animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;
-}
+.flash-banner{position:fixed;top:88px;left:50%;transform:translateX(-50%);background:var(--grad-gold);color:#3a2c00;padding:13px 26px;border-radius:50px;font-size:.88rem;font-weight:700;box-shadow:0 18px 40px rgba(234,179,8,.45);z-index:950;display:none;align-items:center;gap:10px;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;max-width:90vw}
 .flash-banner.show{display:flex}
-.flash-banner .fb-emoji{font-size:1.2rem;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+
+/* Admin product modal */
+.admin-modal-overlay{position:fixed;inset:0;background:rgba(21,18,28,.55);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.admin-modal-overlay.active{display:flex}
+.admin-modal-box{background:#fff;border-radius:22px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.admin-modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#fff0f7,#f5f3ff);position:sticky;top:0;z-index:2}
+.admin-modal-head h3{font-size:1.1rem}
+.admin-modal-close{background:none;font-size:1.3rem;color:var(--muted);width:32px;height:32px;border-radius:50%}
+.admin-modal-close:hover{background:#fff;color:var(--pink-deep)}
+.admin-modal-body{padding:20px 22px}
+.admin-modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;background:#fcfcfd;position:sticky;bottom:0}
+.admin-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-form-group{margin-bottom:12px}
+.admin-form-group label{display:block;font-size:.75rem;font-weight:700;margin-bottom:5px;color:var(--ink)}
+.admin-form-group input,.admin-form-group select,.admin-form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;background:#fcfcfd;transition:.3s}
+.admin-form-group input:focus,.admin-form-group select:focus,.admin-form-group textarea:focus{outline:none;border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(236,72,153,.10)}
 
 @media(max-width:700px){
-  main{padding:22px 15px 50px}
+  main{padding:20px 14px 50px}
   .dash-badge{display:none}
-  .stat-card .sc-val{font-size:1.6rem}
+  .stat-card .sc-val{font-size:1.5rem}
+  .admin-form-row{grid-template-columns:1fr}
+  .brand-text .b1{font-size:1.4rem}
+  .logo-img,.logo-fallback{height:44px;width:44px}
+  .nav-wrap{padding:10px 14px}
 }
 </style>
 </head>
@@ -258,28 +203,26 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 </div>
 
 <div class="flash-banner" id="flash-banner">
-  <span class="fb-emoji">🔔</span>
+  <span>🔔</span>
   <span id="flash-text">New order received!</span>
 </div>
 
 <header>
   <div class="nav-wrap">
     <div class="logo-container">
-      <img src="chella-logo.png" alt="Chella Designs" class="logo-img"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+      <img src="chella-logo.png" alt="Chella Designs" class="logo-img" id="dash-logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="logo-fallback">Chella</div>
       <div class="brand-text">
         <span class="b1">Chella</span>
         <span class="b2">DESIGNS</span>
       </div>
     </div>
-
     <div class="dash-badge connecting" id="dash-badge">
       <span class="live-dot"></span> <span id="dash-badge-text">Connecting…</span>
     </div>
-
     <div class="nav-actions">
-      <button class="icon-btn" onclick="manualRefresh()" title="Refresh orders">
+      <button class="icon-btn" onclick="manualRefresh()" title="Refresh">
         <span id="refresh-ico">🔄</span>
         <span class="notify-dot" id="pending-dot" style="display:none">0</span>
       </button>
@@ -292,7 +235,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
   <div class="section-head">
     <h2>Seller <span>Dashboard</span></h2>
     <div class="underline"></div>
-    <p>New customer orders arrive here in <strong>real time</strong>. Accept, print, ship and complete.</p>
+    <p>Manage orders, products, pricing and your site logo — all in real time.</p>
   </div>
 
   <div class="dash-stats" id="dash-stats"></div>
@@ -304,7 +247,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
         <thead>
           <tr>
             <th>Reference</th><th>Customer</th><th>Contact</th><th>Delivery Address</th>
-            <th>Items Ordered</th><th>Total</th><th>Status</th><th>Actions</th>
+            <th>Items</th><th>Total</th><th>Status</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="dashboard-orders"></tbody>
@@ -316,13 +259,113 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
     <h3>📊 Revenue by Category</h3>
     <div class="bars" id="revenue-chart"></div>
   </div>
+
+  <!-- MANAGE SHOP -->
+  <div class="chart-card">
+    <h3>🛍️ Manage Shop Products
+      <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="act act-accept" onclick="openProductEditor()">➕ Add Product</button>
+        <button class="act act-view" onclick="refreshProducts()">🔄 Reload</button>
+      </span>
+    </h3>
+    <div class="table-scroll">
+      <table class="dash">
+        <thead>
+          <tr>
+            <th>Emoji</th><th>Name</th><th>Category</th>
+            <th>Price</th><th>Old Price</th><th>Discount</th>
+            <th>Active</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SITE SETTINGS -->
+  <div class="chart-card">
+    <h3>🎨 Site Settings — Logo</h3>
+    <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center">
+      <div style="text-align:center">
+        <p style="font-size:.75rem;color:var(--muted);margin-bottom:8px">Current Logo</p>
+        <img id="settings-logo-preview" src="chella-logo.png"
+             style="width:110px;height:110px;border-radius:50%;object-fit:contain;background:#fff;box-shadow:0 6px 20px rgba(190,24,93,.18);border:1px solid var(--line)">
+      </div>
+      <div style="flex:1;min-width:240px">
+        <label style="display:block;font-size:.78rem;font-weight:700;margin-bottom:8px">Upload New Logo</label>
+        <input type="file" id="logo-file-input" accept="image/*"
+               style="padding:10px;border:1.5px solid var(--line);border-radius:12px;width:100%;background:#fcfcfd">
+        <button class="act act-next" style="margin-top:12px" onclick="uploadLogo()">⬆ Upload Logo</button>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:8px">PNG/JPG/SVG — square recommended. Updates everywhere instantly.</p>
+      </div>
+    </div>
+  </div>
 </main>
+
+<!-- PRODUCT EDITOR MODAL -->
+<div id="product-modal" class="admin-modal-overlay" onclick="if(event.target===this)closeProductEditor()">
+  <div class="admin-modal-box">
+    <div class="admin-modal-head">
+      <h3 id="pm-title">Add Product</h3>
+      <button class="admin-modal-close" onclick="closeProductEditor()">✕</button>
+    </div>
+    <div class="admin-modal-body">
+      <input type="hidden" id="pm-id">
+      <div class="admin-form-group">
+        <label>Product Name *</label>
+        <input id="pm-name" placeholder="Custom Mug">
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group">
+          <label>Category *</label>
+          <select id="pm-cat">
+            <option>Mugs</option><option>Mouse Pads</option><option>Cake Toppers</option>
+            <option>Key Rings</option><option>Stickers</option><option>Colouring Books</option>
+            <option>Smarties Shaker</option><option>T-Shirts</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label>Emoji</label>
+          <input id="pm-emoji" placeholder="☕" maxlength="4">
+        </div>
+        <div class="admin-form-group">
+          <label>Price (R) *</label>
+          <input id="pm-price" type="number" step="0.01" min="0" placeholder="89.99">
+        </div>
+        <div class="admin-form-group">
+          <label>Old Price (R)</label>
+          <input id="pm-oldprice" type="number" step="0.01" min="0" placeholder="119.99">
+        </div>
+        <div class="admin-form-group">
+          <label>Discount %</label>
+          <input id="pm-discount" type="number" min="0" max="100" placeholder="0">
+        </div>
+        <div class="admin-form-group">
+          <label>Badge</label>
+          <input id="pm-badge" placeholder="Bestseller">
+        </div>
+      </div>
+      <div class="admin-form-group">
+        <label>Description</label>
+        <textarea id="pm-desc" rows="3" placeholder="Beautiful handcrafted mug..."></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+        <input type="checkbox" id="pm-active" checked style="width:18px;height:18px;accent-color:var(--pink)">
+        <label for="pm-active" style="font-size:.82rem;font-weight:600">Active (visible in shop)</label>
+      </div>
+    </div>
+    <div class="admin-modal-foot">
+      <button onclick="closeProductEditor()" class="act act-view" style="flex:1;justify-content:center;padding:12px">Cancel</button>
+      <button onclick="saveProduct()" class="act act-accept" style="flex:1;justify-content:center;padding:12px">💾 Save</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
 /* ============================================================
-   YOUR SUPABASE CREDENTIALS
+   CREDENTIALS
    ============================================================ */
 const SUPABASE_URL  = 'https://uasoggnjhuipsglhxfzx.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhc29nZ25qaHVpcHNnbGh4Znp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMDYxNDQsImV4cCI6MjEwNjc4MjE0NH0.QZxKLyCTLaTpzy3gaPiOa3DUJIsQOtlRs_LGk_mws_o';
@@ -331,10 +374,10 @@ const ADMIN_KEY_STORE = 'chella_admin_key_v4';
 const SESSION_FLAG    = 'chella_dash_session';
 const STATUS_FLOW     = ['Pending','Accepted','Printing','Shipped','Completed'];
 
-const CAT_EMOJIS = {
-  'Mugs':'☕','Mouse Pads':'🖱️','Cake Toppers':'🎂','Key Rings':'🔑',
-  'Stickers':'✨','Colouring Books':'🎨','Smarties Shaker':'🍬','T-Shirts':'👕'
-};
+const $ = id => document.getElementById(id);
+const R = n => 'R' + Number(n).toFixed(2).replace(/\.00$/,'');
+const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeJsonParse = (s, fb) => { try { return JSON.parse(s); } catch(e){ return fb; } };
 
 /* ============================================================
    ACCESS CONTROL
@@ -352,14 +395,16 @@ function checkAccess(){
   }
   return false;
 }
+
 if (!checkAccess()){
-  const rs = document.getElementById('redirect-screen');
+  const rs = $('redirect-screen');
   if (rs) rs.classList.add('show');
-  setTimeout(() => { try { window.location.replace('index.html'); } catch(e){ window.location.href = 'index.html'; } }, 900);
+  setTimeout(() => { try { window.location.replace('landing.html'); } catch(e){ window.location.href = 'landing.html'; } }, 900);
 }
+
 function logout(){
   try { sessionStorage.removeItem(SESSION_FLAG); } catch(e){}
-  window.location.replace('index.html');
+  window.location.replace('landing.html');
 }
 
 /* ============================================================
@@ -367,19 +412,19 @@ function logout(){
    ============================================================ */
 let sb = null;
 let allOrders = [];
+let allProducts = [];
 let selectedStatusFilter = 'all';
 let newOrderRefs = new Set();
 let cloudReady = false;
 
-const R = n => 'R' + Number(n).toFixed(2).replace(/\.00$/,'');
-const $ = id => document.getElementById(id);
-
+/* ============================================================
+   SUPABASE INIT
+   ============================================================ */
 function waitForSupabase(){
   return new Promise(resolve => {
     if (window.supabase && typeof window.supabase.createClient === 'function'){
       sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      resolve(sb);
-      return;
+      return resolve(sb);
     }
     let tries = 0;
     const iv = setInterval(() => {
@@ -389,8 +434,7 @@ function waitForSupabase(){
         sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
         resolve(sb);
       } else if (tries > 60){
-        clearInterval(iv);
-        resolve(null);
+        clearInterval(iv); resolve(null);
       }
     }, 100);
   });
@@ -414,14 +458,12 @@ function toast(msg, type='pink'){
   t.className = 'toast ' + type;
   t.innerHTML = msg;
   wrap.appendChild(t);
-  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(),350); }, 3000);
+  setTimeout(()=>{ t.style.opacity = '0'; t.style.transform = 'translateY(-16px)'; setTimeout(()=>t.remove(),350); }, 3000);
 }
 
 /* ============================================================
-   CLOUD DATA
+   ORDERS
    ============================================================ */
-function safeJsonParse(s, fb){ try { return JSON.parse(s); } catch(e){ return fb; } }
-
 async function loadOrders(){
   if (!sb) return [];
   const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
@@ -453,9 +495,7 @@ function flashNewOrder(order){
   const banner = $('flash-banner');
   const text = $('flash-text');
   if (!banner || !text) return;
-  const name = order?.customer || 'Customer';
-  const total = order?.total ? R(order.total) : '';
-  text.innerText = `New order from ${name} — ${total}`;
+  text.innerText = `New order from ${order?.customer || 'Customer'} — ${order?.total ? R(order.total) : ''}`;
   banner.classList.add('show');
   clearTimeout(flashTimer);
   flashTimer = setTimeout(() => banner.classList.remove('show'), 5000);
@@ -500,8 +540,7 @@ function renderStats(){
     <div class="stat-card c3" style="animation-delay:.15s">
       <div class="sc-top"><span class="sc-lbl">Awaiting Action</span><div class="sc-ico">⏳</div></div>
       <div class="sc-val">${pending}</div>
-      <div class="sc-trend ${pending ? 'warn' : ''}">
-        ${pending ? '⚠ Needs review' : '✓ All caught up'}</div>
+      <div class="sc-trend ${pending ? 'warn' : ''}">${pending ? '⚠ Needs review' : '✓ All caught up'}</div>
     </div>
     <div class="stat-card c4" style="animation-delay:.2s">
       <div class="sc-top"><span class="sc-lbl">Completed</span><div class="sc-ico">✅</div></div>
@@ -522,8 +561,7 @@ function renderTabs(){
   };
   const tabs = [['all','🌐 All'], ...STATUS_FLOW.map(s => [s, s]), ['Cancelled','Cancelled']];
   $('dash-tabs').innerHTML = tabs.map(([key, label]) => `
-    <button class="dtab ${selectedStatusFilter === key ? 'active' : ''}"
-      onclick="setStatusFilter('${key}')">
+    <button class="dtab ${selectedStatusFilter === key ? 'active' : ''}" onclick="setStatusFilter('${key}')">
       ${label}<span class="cnt">${counts[key] ?? 0}</span>
       ${key === 'Pending' && counts.Pending > 0 ? '<span class="new-dot"></span>' : ''}
     </button>`).join('');
@@ -540,46 +578,30 @@ function renderTable(){
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:60px 20px;color:var(--muted)">
       <div style="font-size:3rem;margin-bottom:14px">📭</div>
       <strong style="display:block;font-size:1rem;color:var(--ink);margin-bottom:6px">No orders in this view yet</strong>
-      <span style="font-size:.82rem">New customer orders will appear here automatically.</span>
+      <span style="font-size:.82rem">New customer orders appear here automatically.</span>
     </td></tr>`;
     return;
   }
 
   tbody.innerHTML = list.map(o => {
     const isNew = newOrderRefs.has(o.ref);
-    const items = (o.items || []).map(i => {
-      let c = '';
-      if (i.custom){
-        const bits = [];
-        if (i.custom.text) bits.push(`"${i.custom.text}"`);
-        if (i.custom.image) bits.push('🖼️ img');
-        if (i.custom.colorName) bits.push(i.custom.colorName);
-        c = `<span class="il-c">🎨 ${bits.join(' • ')}</span>`;
-      }
-      return `<div class="item-line">
-        <span>${i.emoji}</span>
-        <span><span class="il-q">×${i.qty}</span> ${i.name}</span>
-        ${c}
-      </div>`;
-    }).join('');
-
+    const items = (o.items || []).map(i =>
+      `<div class="item-line"><span>${i.emoji || '📦'}</span><span><span class="il-q">×${i.qty}</span> ${escapeHtml(i.name)}</span></div>`
+    ).join('');
     const idx = STATUS_FLOW.indexOf(o.status);
     const canAdvance = idx >= 0 && idx < STATUS_FLOW.length - 1;
 
     return `<tr class="${isNew ? 'is-new' : ''}">
       <td>
-        <span class="ref-code">${o.ref}</span>
-        <span class="cust-sub">${o.date}</span>
+        <span class="ref-code">${escapeHtml(o.ref)}</span>
+        <span class="cust-sub">${escapeHtml(o.date || '')}</span>
         ${isNew ? '<span class="status-pill sp-pending" style="margin-top:4px;font-size:.6rem;padding:3px 8px">🆕 NEW</span>' : ''}
       </td>
-      <td><span class="cust-name">${o.customer}</span>
-          <span class="cust-sub">${o.city}</span></td>
-      <td><span class="cust-sub" style="color:var(--ink);font-weight:600">${o.phone}</span>
-          <span class="cust-sub">${o.email}</span></td>
-      <td style="max-width:200px">${o.address}${o.notes ? `<span class="cust-sub" style="color:var(--purple-deep)">📝 ${o.notes}</span>` : ''}</td>
+      <td><span class="cust-name">${escapeHtml(o.customer)}</span><span class="cust-sub">${escapeHtml(o.city)}</span></td>
+      <td><span class="cust-sub" style="color:var(--ink);font-weight:600">${escapeHtml(o.phone)}</span><span class="cust-sub">${escapeHtml(o.email)}</span></td>
+      <td style="max-width:200px">${escapeHtml(o.address)}${o.notes ? `<span class="cust-sub" style="color:var(--purple-deep)">📝 ${escapeHtml(o.notes)}</span>` : ''}</td>
       <td style="max-width:250px">${items}</td>
-      <td><strong style="color:var(--pink-deep)">${R(o.total)}</strong>
-          <span class="cust-sub">${(o.method || 'card').toUpperCase()}</span></td>
+      <td><strong style="color:var(--pink-deep)">${R(o.total)}</strong><span class="cust-sub">${(o.method || 'card').toUpperCase()}</span></td>
       <td><span class="status-pill sp-${o.status.toLowerCase()}">${o.status}</span></td>
       <td>
         <div class="act-row">
@@ -614,24 +636,21 @@ async function advanceOrder(ref){
   const o = allOrders.find(x => x.ref === ref);
   if (!o) return;
   const idx = STATUS_FLOW.indexOf(o.status);
-  if (idx < STATUS_FLOW.length - 1){
-    await setOrderStatus(ref, STATUS_FLOW[idx + 1]);
-  }
+  if (idx < STATUS_FLOW.length - 1) await setOrderStatus(ref, STATUS_FLOW[idx + 1]);
 }
 
 function renderChart(){
   const wrap = $('revenue-chart');
   const totals = {};
-  Object.keys(CAT_EMOJIS).forEach(c => totals[c] = 0);
-
   allOrders.filter(o => o.status !== 'Cancelled').forEach(o => {
     (o.items || []).forEach(i => { totals[i.cat] = (totals[i.cat] || 0) + i.unitPrice * i.qty; });
   });
-
   const entries = Object.entries(totals).filter(([,v]) => v > 0);
-  const data = entries.length ? entries : Object.entries(totals).slice(0,5);
-  const max = Math.max(...data.map(d => d[1]), 1);
-
+  if (!entries.length){
+    wrap.innerHTML = '<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px">No revenue data yet.</p>';
+    return;
+  }
+  const max = Math.max(...entries.map(d => d[1]), 1);
   const colours = [
     'linear-gradient(180deg,#ec4899,#be185d)',
     'linear-gradient(180deg,#14b8a6,#0f766e)',
@@ -642,14 +661,13 @@ function renderChart(){
     'linear-gradient(180deg,#ec4899,#a855f7)',
     'linear-gradient(180deg,#22d3ee,#0891b2)'
   ];
-
-  wrap.innerHTML = data.map(([cat, val], i) => {
+  wrap.innerHTML = entries.map(([cat, val], i) => {
     const h = Math.max(6, (val / max) * 100);
     return `<div class="bar-col">
       <div class="bar" style="height:${h}%;background:${colours[i % colours.length]};animation-delay:${i*0.08}s">
         <span class="bar-val">R${val.toFixed(0)}</span>
       </div>
-      <span class="bar-lbl">${CAT_EMOJIS[cat] || '📦'}<br>${cat}</span>
+      <span class="bar-lbl">${escapeHtml(cat)}</span>
     </div>`;
   }).join('');
 }
@@ -659,7 +677,149 @@ async function manualRefresh(){
   if (ico){ ico.classList.add('spinning'); setTimeout(() => ico.classList.remove('spinning'), 800); }
   allOrders = await loadOrders();
   renderDashboard();
-  toast('🔄 Orders refreshed from cloud', 'teal');
+  await refreshProducts();
+  await loadLogo();
+  toast('🔄 Data refreshed', 'teal');
+}
+
+/* ============================================================
+   PRODUCT MANAGEMENT
+   ============================================================ */
+async function loadProducts(){
+  if (!sb) return [];
+  const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
+  if (error){ console.error(error); return []; }
+  return data || [];
+}
+
+async function refreshProducts(){
+  allProducts = await loadProducts();
+  renderProductTable();
+}
+
+function renderProductTable(){
+  const tb = $('products-tbody');
+  if (!tb) return;
+  if (!allProducts.length){
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">No products yet. Click "Add Product".</td></tr>`;
+    return;
+  }
+  tb.innerHTML = allProducts.map(p => `
+    <tr>
+      <td style="font-size:1.4rem">${p.emoji || '📦'}</td>
+      <td><strong>${escapeHtml(p.name)}</strong><br><span class="cust-sub">${escapeHtml(p.description || '')}</span></td>
+      <td><span class="status-pill sp-accepted">${escapeHtml(p.cat)}</span></td>
+      <td><strong style="color:var(--pink-deep)">R${Number(p.price).toFixed(2)}</strong></td>
+      <td>${p.old_price ? 'R' + Number(p.old_price).toFixed(2) : '—'}</td>
+      <td>${p.discount ? `<span class="status-pill sp-pending">${p.discount}% off</span>` : '—'}</td>
+      <td>${p.active ? '✅' : '🚫'}</td>
+      <td>
+        <div class="act-row">
+          <button class="act act-view" onclick="editProduct('${p.id}')">✏ Edit</button>
+          <button class="act act-reject" onclick="deleteProduct('${p.id}')">🗑 Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openProductEditor(){
+  $('pm-title').innerText = 'Add Product';
+  ['pm-id','pm-name','pm-emoji','pm-price','pm-oldprice','pm-discount','pm-badge','pm-desc'].forEach(id => $(id).value = '');
+  $('pm-active').checked = true;
+  $('pm-cat').value = 'Mugs';
+  $('product-modal').classList.add('active');
+}
+
+function closeProductEditor(){ $('product-modal').classList.remove('active'); }
+
+function editProduct(id){
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  $('pm-title').innerText = 'Edit Product';
+  $('pm-id').value = p.id;
+  $('pm-name').value = p.name || '';
+  $('pm-cat').value = p.cat || 'Mugs';
+  $('pm-emoji').value = p.emoji || '';
+  $('pm-price').value = p.price || 0;
+  $('pm-oldprice').value = p.old_price || '';
+  $('pm-discount').value = p.discount || 0;
+  $('pm-badge').value = p.badge || '';
+  $('pm-desc').value = p.description || '';
+  $('pm-active').checked = !!p.active;
+  $('product-modal').classList.add('active');
+}
+
+async function saveProduct(){
+  const id = $('pm-id').value;
+  const payload = {
+    name: $('pm-name').value.trim(),
+    cat: $('pm-cat').value,
+    emoji: $('pm-emoji').value.trim() || '📦',
+    price: Number($('pm-price').value) || 0,
+    old_price: $('pm-oldprice').value ? Number($('pm-oldprice').value) : null,
+    discount: Number($('pm-discount').value) || 0,
+    badge: $('pm-badge').value.trim() || null,
+    description: $('pm-desc').value.trim() || null,
+    active: $('pm-active').checked,
+    updated_at: new Date().toISOString()
+  };
+  if (!payload.name){ toast('❌ Name is required', 'error'); return; }
+  if (payload.price <= 0){ toast('❌ Price must be > 0', 'error'); return; }
+
+  let res;
+  if (id) res = await sb.from('products').update(payload).eq('id', id);
+  else   res = await sb.from('products').insert(payload);
+
+  if (res.error){ console.error(res.error); toast('❌ Save failed: ' + res.error.message, 'error'); return; }
+  toast(id ? '✅ Product updated' : '✅ Product added', 'teal');
+  closeProductEditor();
+  await refreshProducts();
+}
+
+async function deleteProduct(id){
+  if (!confirm('Delete this product permanently?')) return;
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if (error){ toast('❌ Delete failed', 'error'); return; }
+  toast('🗑 Product deleted', 'pink');
+  await refreshProducts();
+}
+
+/* ============================================================
+   LOGO MANAGEMENT
+   ============================================================ */
+async function loadLogo(){
+  if (!sb) return;
+  const { data } = await sb.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
+  const url = data?.value || 'chella-logo.png';
+  const img = $('settings-logo-preview');
+  if (img) img.src = url;
+  const hdr = $('dash-logo');
+  if (hdr) hdr.src = url;
+}
+
+async function uploadLogo(){
+  const fileInput = $('logo-file-input');
+  const file = fileInput.files[0];
+  if (!file){ toast('❌ Choose an image first', 'error'); return; }
+  if (file.size > 2 * 1024 * 1024){ toast('❌ Max 2MB', 'error'); return; }
+
+  const ext = file.name.split('.').pop();
+  const path = `logo-${Date.now()}.${ext}`;
+
+  const { error: upErr } = await sb.storage.from('site-assets').upload(path, file, { upsert: true });
+  if (upErr){ console.error(upErr); toast('❌ Upload failed: ' + upErr.message, 'error'); return; }
+
+  const { data: pub } = sb.storage.from('site-assets').getPublicUrl(path);
+  const url = pub.publicUrl;
+
+  const { error: dbErr } = await sb.from('site_settings').upsert({
+    key: 'logo_url', value: url, updated_at: new Date().toISOString()
+  });
+  if (dbErr){ toast('❌ Could not save setting', 'error'); return; }
+
+  $('settings-logo-preview').src = url;
+  $('dash-logo').src = url;
+  toast('🎨 Logo updated!', 'gold');
 }
 
 /* ============================================================
@@ -667,6 +827,12 @@ async function manualRefresh(){
    ============================================================ */
 (async function init(){
   if (!checkAccess()) return;
+
+  // Persist admin key so main site can verify (optional)
+  try {
+    const k = new URLSearchParams(location.search).get('key');
+    if (k) localStorage.setItem(ADMIN_KEY_STORE, k);
+  } catch(e){}
 
   setBadge('connecting', 'Connecting…');
   const client = await waitForSupabase();
@@ -679,53 +845,64 @@ async function manualRefresh(){
   cloudReady = true;
   allOrders = await loadOrders();
   renderDashboard();
+  await refreshProducts();
+  await loadLogo();
 
-  sb.channel('dashboard-live')
-    .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'orders' },
-        payload => {
-          if (payload.eventType === 'INSERT'){
-            const o = payload.new;
-            if (allOrders.some(x => x.ref === o.ref)) return;
-            const parsed = {
-              id: o.id, ref: o.ref, customer: o.customer, email: o.email, phone: o.phone,
-              city: o.city, address: o.address, notes: o.notes,
-              items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
-              subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
-              discount: Number(o.discount) || 0, total: Number(o.total) || 0,
-              status: o.status, method: o.method,
-              placedBy: o.placed_by || o.email, date: o.date, createdAt: o.created_at
-            };
-            allOrders.unshift(parsed);
-            newOrderRefs.add(parsed.ref);
-            renderDashboard();
-            flashNewOrder(parsed);
-            toast('🎉 New order received! ' + parsed.ref, 'gold');
-          }
-          if (payload.eventType === 'UPDATE'){
-            const idx = allOrders.findIndex(x => x.ref === payload.new.ref);
-            if (idx >= 0){
-              allOrders[idx] = {
-                ...allOrders[idx],
-                status: payload.new.status,
-                items: typeof payload.new.items === 'string' ? safeJsonParse(payload.new.items, []) : (payload.new.items || []),
-                total: Number(payload.new.total) || allOrders[idx].total
-              };
-              renderDashboard();
-            }
-          }
-          if (payload.eventType === 'DELETE'){
-            allOrders = allOrders.filter(x => x.ref !== payload.old.ref);
+  // Realtime orders
+  try {
+    sb.channel('dashboard-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+        if (payload.eventType === 'INSERT'){
+          const o = payload.new;
+          if (allOrders.some(x => x.ref === o.ref)) return;
+          const parsed = {
+            id: o.id, ref: o.ref, customer: o.customer, email: o.email, phone: o.phone,
+            city: o.city, address: o.address, notes: o.notes,
+            items: typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []),
+            subtotal: Number(o.subtotal) || 0, delivery: Number(o.delivery) || 0,
+            discount: Number(o.discount) || 0, total: Number(o.total) || 0,
+            status: o.status, method: o.method,
+            placedBy: o.placed_by || o.email, date: o.date, createdAt: o.created_at
+          };
+          allOrders.unshift(parsed);
+          newOrderRefs.add(parsed.ref);
+          renderDashboard();
+          flashNewOrder(parsed);
+          toast('🎉 New order received! ' + parsed.ref, 'gold');
+        }
+        if (payload.eventType === 'UPDATE'){
+          const idx = allOrders.findIndex(x => x.ref === payload.new.ref);
+          if (idx >= 0){
+            allOrders[idx] = { ...allOrders[idx], status: payload.new.status };
             renderDashboard();
           }
-        })
-    .subscribe();
+        }
+        if (payload.eventType === 'DELETE'){
+          allOrders = allOrders.filter(x => x.ref !== payload.old.ref);
+          renderDashboard();
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => refreshProducts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => loadLogo())
+      .subscribe();
+  } catch(e){ console.warn('realtime:', e); }
 
-  console.log('%c📊 Chella Designs — Cloud Dashboard',
-    'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
-  console.log('%c☁️ Supabase: ' + SUPABASE_URL,
-    'font-size:12px;color:#14b8a6;font-weight:bold');
+  console.log('%c📊 Chella Designs — Cloud Dashboard', 'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
 })();
+
+/* Expose globals */
+window.manualRefresh = manualRefresh;
+window.logout = logout;
+window.setStatusFilter = setStatusFilter;
+window.setOrderStatus = setOrderStatus;
+window.advanceOrder = advanceOrder;
+window.openProductEditor = openProductEditor;
+window.closeProductEditor = closeProductEditor;
+window.editProduct = editProduct;
+window.saveProduct = saveProduct;
+window.deleteProduct = deleteProduct;
+window.refreshProducts = refreshProducts;
+window.uploadLogo = uploadLogo;
 </script>
 </body>
 </html>
