@@ -48,12 +48,43 @@ img{max-width:100%;display:block}
 @keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
 @keyframes pulseLive{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}}
 
-#redirect-screen{position:fixed;inset:0;background:rgba(255,255,255,.98);backdrop-filter:blur(10px);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:20px;text-align:center}
-#redirect-screen.show{display:flex}
-#redirect-screen .rlock{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#fee2e2,#fecaca);display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 20px 40px rgba(239,68,68,.25)}
-#redirect-screen h2{font-size:1.4rem;color:#b91c1c}
-#redirect-screen p{font-size:.9rem;color:var(--muted);max-width:380px}
-#redirect-screen .spinner{width:36px;height:36px;border:4px solid #fecaca;border-top-color:#ef4444;border-radius:50%;animation:spin .8s linear infinite}
+/* ============ ADMIN LOGIN ============ */
+#login-screen{
+  position:fixed;inset:0;z-index:10000;
+  background:linear-gradient(135deg,#fff0f7 0%,#f5f3ff 45%,#ecfeff 100%);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+#login-screen.show{display:flex}
+.login-card{
+  background:#fff;border-radius:26px;
+  padding:36px 30px;width:100%;max-width:420px;
+  box-shadow:0 30px 80px rgba(126,34,206,.2);
+  border:1px solid var(--line);
+  animation:fadeUp .5s cubic-bezier(.34,1.4,.64,1) both;
+}
+.login-logo{
+  width:70px;height:70px;border-radius:50%;
+  background:var(--grad-pink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto 16px;
+  box-shadow:0 14px 32px rgba(236,72,153,.35);
+}
+.login-card h2{font-size:1.5rem;text-align:center;margin-bottom:6px}
+.login-sub{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:24px}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:.76rem;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.login-field input{width:100%;padding:12px 16px;border:1.5px solid var(--line);border-radius:14px;font-size:16px;background:#fcfcfd;transition:.3s}
+.login-field input:focus{outline:none;border-color:var(--pink);background:#fff;box-shadow:0 0 0 4px rgba(236,72,153,.10)}
+.remember-row{display:flex;align-items:center;gap:9px;font-size:.82rem;color:var(--muted);font-weight:500;margin:10px 0 20px;cursor:pointer;user-select:none}
+.login-btn{width:100%;padding:14px;border-radius:50px;background:var(--grad-pink);color:#fff;font-weight:700;font-size:.95rem;transition:.3s;box-shadow:0 12px 28px rgba(236,72,153,.35)}
+.login-btn:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(236,72,153,.45)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-foot{text-align:center;font-size:.72rem;color:var(--muted);margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+@media(max-width:480px){
+  .login-card{padding:28px 22px}
+  .login-logo{width:60px;height:60px;font-size:1.6rem}
+}
 
 header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 .nav-wrap{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 20px}
@@ -75,7 +106,9 @@ header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdr
 .icon-btn.spinning{animation:spin .8s linear}
 .notify-dot{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;background:var(--gold);color:#3a2c00;border-radius:50%;font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite}
 
-main{max-width:1400px;margin:0 auto;padding:30px 20px 60px}
+main{max-width:1400px;margin:0 auto;padding:30px 20px 60px;display:none} /* Hidden until login */
+main.show{display:block}
+
 .section-head{text-align:center;margin-bottom:30px}
 .section-head h2{font-size:clamp(1.8rem,4vw,2.6rem);display:inline-block}
 .section-head h2 span{background:var(--grad-pink);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -191,11 +224,35 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 </head>
 <body>
 
-<div id="redirect-screen">
-  <div class="rlock">🔒</div>
-  <h2>Admin Access Required</h2>
-  <p>You must open this dashboard through the <strong>admin link</strong> on the main site. Redirecting you now…</p>
-  <div class="spinner"></div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🔐</div>
+    <h2>Admin Login</h2>
+    <p class="login-sub">Sign in to access the Chella Designs dashboard</p>
+
+    <div class="login-field">
+      <label>Email</label>
+      <input id="admin-email" type="email" value="admin@chelladesigns.co.za" placeholder="admin@chelladesigns.co.za" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <div style="position:relative">
+        <input id="admin-password" type="password" placeholder="Enter admin password" autocomplete="current-password" style="padding-right:44px">
+        <button type="button" onclick="togglePw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;font-size:1.1rem;color:var(--muted);padding:4px">👁</button>
+      </div>
+    </div>
+
+    <label class="remember-row">
+      <input type="checkbox" id="admin-remember" style="width:16px;height:16px;accent-color:var(--pink)">
+      <span>Remember me for 30 days</span>
+    </label>
+
+    <button class="login-btn" id="login-btn" onclick="doAdminLogin()">Sign In →</button>
+    <div id="login-error" style="display:none;font-size:.78rem;color:#dc2626;margin-top:12px;text-align:center;padding:10px;background:#fee2e2;border-radius:12px"></div>
+
+    <p class="login-foot">Chella Designs © <span id="login-yr"></span></p>
+  </div>
 </div>
 
 <div class="bg-blobs">
@@ -231,7 +288,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
   </div>
 </header>
 
-<main>
+<main id="main-dashboard">
   <div class="section-head">
     <h2>Seller <span>Dashboard</span></h2>
     <div class="underline"></div>
@@ -365,13 +422,14 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 
 <script>
 /* ============================================================
-   CREDENTIALS
+   CREDENTIALS & CONSTANTS
    ============================================================ */
 const SUPABASE_URL  = 'https://uasoggnjhuipsglhxfzx.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhc29nZ25qaHVpcHNnbGh4Znp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMDYxNDQsImV4cCI6MjEwNjc4MjE0NH0.QZxKLyCTLaTpzy3gaPiOa3DUJIsQOtlRs_LGk_mws_o';
 
-const ADMIN_KEY_STORE = 'chella_admin_key_v4';
 const SESSION_FLAG    = 'chella_dash_session';
+const REMEMBER_FLAG   = 'chella_dash_remember';
+const REMEMBER_MS     = 30 * 24 * 60 * 60 * 1000; // 30 days
 const STATUS_FLOW     = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 const $ = id => document.getElementById(id);
@@ -379,46 +437,15 @@ const R = n => 'R' + Number(n).toFixed(2).replace(/\.00$/,'');
 const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeJsonParse = (s, fb) => { try { return JSON.parse(s); } catch(e){ return fb; } };
 
-/* ============================================================
-   ACCESS CONTROL
-   ============================================================ */
-function checkAccess(){
-  try { if (sessionStorage.getItem(SESSION_FLAG) === '1') return true; } catch(e){}
-  let urlKey = null;
-  try { urlKey = new URLSearchParams(location.search).get('key'); } catch(e){}
-  let storedKey = null;
-  try { storedKey = localStorage.getItem(ADMIN_KEY_STORE); } catch(e){}
-  if (urlKey && storedKey && urlKey === storedKey){
-    try { sessionStorage.setItem(SESSION_FLAG, '1'); } catch(e){}
-    try { history.replaceState(null, '', location.pathname); } catch(e){}
-    return true;
-  }
-  return false;
-}
-
-if (!checkAccess()){
-  const rs = $('redirect-screen');
-  if (rs) rs.classList.add('show');
-  setTimeout(() => { try { window.location.replace('landing.html'); } catch(e){ window.location.href = 'landing.html'; } }, 900);
-}
-
-function logout(){
-  try { sessionStorage.removeItem(SESSION_FLAG); } catch(e){}
-  window.location.replace('landing.html');
-}
-
-/* ============================================================
-   STATE
-   ============================================================ */
 let sb = null;
 let allOrders = [];
 let allProducts = [];
 let selectedStatusFilter = 'all';
 let newOrderRefs = new Set();
-let cloudReady = false;
+let bootstrapped = false;
 
 /* ============================================================
-   SUPABASE INIT
+   INIT SUPABASE
    ============================================================ */
 function waitForSupabase(){
   return new Promise(resolve => {
@@ -459,6 +486,112 @@ function toast(msg, type='pink'){
   t.innerHTML = msg;
   wrap.appendChild(t);
   setTimeout(()=>{ t.style.opacity = '0'; t.style.transform = 'translateY(-16px)'; setTimeout(()=>t.remove(),350); }, 3000);
+}
+
+/* ============================================================
+   AUTHENTICATION
+   ============================================================ */
+function isLoggedIn(){
+  try { if (sessionStorage.getItem(SESSION_FLAG) === '1') return true; } catch(e){}
+  try {
+    const raw = localStorage.getItem(REMEMBER_FLAG);
+    if (raw){
+      const data = JSON.parse(raw);
+      if (data.token && data.expires > Date.now()){
+        sessionStorage.setItem(SESSION_FLAG, '1');
+        return true;
+      } else {
+        localStorage.removeItem(REMEMBER_FLAG);
+      }
+    }
+  } catch(e){}
+  return false;
+}
+
+function showLoginScreen(){
+  $('login-screen').classList.add('show');
+  $('login-yr').textContent = new Date().getFullYear();
+  setTimeout(() => $('admin-password')?.focus(), 300);
+}
+
+function hideLoginScreen(){
+  $('login-screen').classList.remove('show');
+  $('main-dashboard').classList.add('show');
+}
+
+function togglePw(){
+  const inp = $('admin-password');
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function doAdminLogin(){
+  const email = $('admin-email').value.trim().toLowerCase();
+  const password = $('admin-password').value;
+  const remember = $('admin-remember').checked;
+  const errBox = $('login-error');
+  const btn = $('login-btn');
+
+  errBox.style.display = 'none';
+
+  if (!email || !password){
+    errBox.textContent = '⚠ Please enter email and password';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  if (!sb){
+    errBox.textContent = '⚠ Cloud not ready — reload the page';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  try {
+    const { data, error } = await sb.rpc('admin_login', {
+      p_email: email,
+      p_password: password
+    });
+
+    if (error || !data?.ok){
+      errBox.textContent = '❌ ' + (error?.message || data?.error || 'Invalid credentials');
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Sign In →';
+      return;
+    }
+
+    // Success
+    sessionStorage.setItem(SESSION_FLAG, '1');
+    
+    if (remember){
+      localStorage.setItem(REMEMBER_FLAG, JSON.stringify({
+        token: data.token,
+        email: data.email,
+        expires: Date.now() + REMEMBER_MS
+      }));
+    }
+
+    btn.textContent = '✓ Welcome';
+    hideLoginScreen();
+    toast('👋 Welcome back, Admin', 'teal');
+
+    await bootstrapDashboard();
+
+  } catch(err){
+    console.error(err);
+    errBox.textContent = '❌ Network error — try again';
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Sign In →';
+  }
+}
+
+function logout(){
+  try { sessionStorage.removeItem(SESSION_FLAG); } catch(e){}
+  try { localStorage.removeItem(REMEMBER_FLAG); } catch(e){}
+  window.location.reload(); 
 }
 
 /* ============================================================
@@ -823,16 +956,11 @@ async function uploadLogo(){
 }
 
 /* ============================================================
-   INIT
+   BOOTSTRAP
    ============================================================ */
-(async function init(){
-  if (!checkAccess()) return;
-
-  // Persist admin key so main site can verify (optional)
-  try {
-    const k = new URLSearchParams(location.search).get('key');
-    if (k) localStorage.setItem(ADMIN_KEY_STORE, k);
-  } catch(e){}
+async function bootstrapDashboard(){
+  if (bootstrapped) return;
+  bootstrapped = true;
 
   setBadge('connecting', 'Connecting…');
   const client = await waitForSupabase();
@@ -842,13 +970,11 @@ async function uploadLogo(){
     return;
   }
 
-  cloudReady = true;
   allOrders = await loadOrders();
   renderDashboard();
   await refreshProducts();
   await loadLogo();
 
-  // Realtime orders
   try {
     sb.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
@@ -886,13 +1012,27 @@ async function uploadLogo(){
       .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => loadLogo())
       .subscribe();
   } catch(e){ console.warn('realtime:', e); }
+}
 
-  console.log('%c📊 Chella Designs — Cloud Dashboard', 'font-size:16px;font-weight:bold;background:linear-gradient(135deg,#eab308,#f97316);color:#fff;padding:8px 16px;border-radius:8px');
+/* ============================================================
+   PAGE INIT
+   ============================================================ */
+(async function pageInit(){
+  await waitForSupabase();
+
+  if (isLoggedIn()){
+    hideLoginScreen();
+    await bootstrapDashboard();
+  } else {
+    showLoginScreen();
+  }
 })();
 
-/* Expose globals */
-window.manualRefresh = manualRefresh;
+// Expose globals
+window.doAdminLogin = doAdminLogin;
+window.togglePw = togglePw;
 window.logout = logout;
+window.manualRefresh = manualRefresh;
 window.setStatusFilter = setStatusFilter;
 window.setOrderStatus = setOrderStatus;
 window.advanceOrder = advanceOrder;
