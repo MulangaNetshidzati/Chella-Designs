@@ -329,7 +329,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
       <table class="dash">
         <thead>
           <tr>
-            <th>Emoji</th><th>Name</th><th>Category</th>
+            <th>Image/Emoji</th><th>Name</th><th>Category</th>
             <th>Price</th><th>Old Price</th><th>Discount</th>
             <th>Active</th><th>Actions</th>
           </tr>
@@ -368,6 +368,13 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
     </div>
     <div class="admin-modal-body">
       <input type="hidden" id="pm-id">
+      
+      <div class="admin-form-group">
+        <label>Product Image</label>
+        <input type="file" id="pm-image" accept="image/*" style="padding:10px;border:1.5px solid var(--line);border-radius:12px;width:100%;background:#fcfcfd">
+        <p style="font-size:.72rem;color:var(--muted);margin-top:4px">Upload an image (Max 2MB). If left blank, the emoji will be used.</p>
+      </div>
+
       <div class="admin-form-group">
         <label>Product Name *</label>
         <input id="pm-name" placeholder="Custom Mug">
@@ -413,7 +420,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
     </div>
     <div class="admin-modal-foot">
       <button onclick="closeProductEditor()" class="act act-view" style="flex:1;justify-content:center;padding:12px">Cancel</button>
-      <button onclick="saveProduct()" class="act act-accept" style="flex:1;justify-content:center;padding:12px">💾 Save</button>
+      <button onclick="saveProduct()" class="act act-accept" style="flex:1;justify-content:center;padding:12px" id="save-product-btn">💾 Save</button>
     </div>
   </div>
 </div>
@@ -848,7 +855,7 @@ function renderProductTable(){
   }
   tb.innerHTML = allProducts.map(p => `
     <tr>
-      <td style="font-size:1.4rem">${p.emoji || '📦'}</td>
+      <td style="font-size:1.4rem">${p.image_url ? `<img src="${p.image_url}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;">` : (p.emoji || '📦')}</td>
       <td><strong>${escapeHtml(p.name)}</strong><br><span class="cust-sub">${escapeHtml(p.description || '')}</span></td>
       <td><span class="status-pill sp-accepted">${escapeHtml(p.cat)}</span></td>
       <td><strong style="color:var(--pink-deep)">R${Number(p.price).toFixed(2)}</strong></td>
@@ -867,6 +874,7 @@ function renderProductTable(){
 function openProductEditor(){
   $('pm-title').innerText = 'Add Product';
   ['pm-id','pm-name','pm-emoji','pm-price','pm-oldprice','pm-discount','pm-badge','pm-desc'].forEach(id => $(id).value = '');
+  $('pm-image').value = ''; // Clear file input
   $('pm-active').checked = true;
   $('pm-cat').value = 'Mugs';
   $('product-modal').classList.add('active');
@@ -887,12 +895,46 @@ function editProduct(id){
   $('pm-discount').value = p.discount || 0;
   $('pm-badge').value = p.badge || '';
   $('pm-desc').value = p.description || '';
+  $('pm-image').value = ''; // Clear file input on edit
   $('pm-active').checked = !!p.active;
   $('product-modal').classList.add('active');
 }
 
 async function saveProduct(){
   const id = $('pm-id').value;
+  const btn = $('save-product-btn');
+  const imageFile = $('pm-image').files[0];
+  
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  let imageUrl = null;
+
+  // 1. Upload image if one was selected
+  if (imageFile) {
+    if (imageFile.size > 2 * 1024 * 1024) {
+      toast('❌ Image must be under 2MB', 'error');
+      btn.disabled = false;
+      btn.textContent = '💾 Save';
+      return;
+    }
+
+    const ext = imageFile.name.split('.').pop();
+    const path = `product-${Date.now()}.${ext}`;
+
+    const { error: upErr } = await sb.storage.from('site-assets').upload(path, imageFile, { upsert: true });
+    if (upErr) {
+      toast('❌ Image upload failed: ' + upErr.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '💾 Save';
+      return;
+    }
+
+    const { data: pub } = sb.storage.from('site-assets').getPublicUrl(path);
+    imageUrl = pub.publicUrl;
+  }
+
+  // 2. Save product data
   const payload = {
     name: $('pm-name').value.trim(),
     cat: $('pm-cat').value,
@@ -905,17 +947,34 @@ async function saveProduct(){
     active: $('pm-active').checked,
     updated_at: new Date().toISOString()
   };
-  if (!payload.name){ toast('❌ Name is required', 'error'); return; }
-  if (payload.price <= 0){ toast('❌ Price must be > 0', 'error'); return; }
+
+  if (imageUrl) payload.image_url = imageUrl;
+
+  if (!payload.name){ 
+    toast('❌ Name is required', 'error'); 
+    btn.disabled = false;
+    btn.textContent = '💾 Save';
+    return; 
+  }
 
   let res;
   if (id) res = await sb.from('products').update(payload).eq('id', id);
   else   res = await sb.from('products').insert(payload);
 
-  if (res.error){ console.error(res.error); toast('❌ Save failed: ' + res.error.message, 'error'); return; }
+  if (res.error){ 
+    console.error(res.error); 
+    toast('❌ Save failed: ' + res.error.message, 'error'); 
+    btn.disabled = false;
+    btn.textContent = '💾 Save';
+    return; 
+  }
+
   toast(id ? '✅ Product updated' : '✅ Product added', 'teal');
   closeProductEditor();
   await refreshProducts();
+  
+  btn.disabled = false;
+  btn.textContent = '💾 Save';
 }
 
 async function deleteProduct(id){
