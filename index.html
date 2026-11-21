@@ -38,18 +38,6 @@ button{font-family:'Poppins',sans-serif;cursor:pointer;border:none}
 input,textarea,select{font-family:'Poppins',sans-serif;font-size:16px;-webkit-appearance:none;appearance:none}
 img,svg{max-width:100%;display:block}
 
-.bg-blobs{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:floaty 18s ease-in-out infinite}
-.blob.b1{width:420px;height:420px;background:#f9a8d4;top:-120px;left:-100px}
-.blob.b2{width:380px;height:380px;background:#99f6e4;top:35%;right:-140px;animation-delay:-5s}
-.blob.b3{width:340px;height:340px;background:#e9d5ff;bottom:-120px;left:20%;animation-delay:-9s}
-.blob.b4{width:280px;height:280px;background:#fde68a;bottom:20%;right:25%;animation-delay:-13s}
-@keyframes floaty{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-50px) scale(1.12)}66%{transform:translate(-35px,35px) scale(.92)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
-
 /* HEADER */
 header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 .nav-wrap{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 20px}
@@ -130,7 +118,7 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .p-img{position:relative;height:172px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .p-img .glow{position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.65);filter:blur(6px);transition:.5s}
 .product-card:hover .p-img .glow{transform:scale(1.5)}
-.p-img .emo{position:relative;z-index:2;transition:transform .5s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 10px 16px rgba(0,0,0,.16));font-size:3.8rem;line-height:1}
+.p-img .emo{position:relative;z-index:2;transition:transform .5s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 10px 16px rgba(0,0,0,.16));font-size:3.8rem;line-height:1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;}
 .product-card:hover .p-img .emo{transform:scale(1.18) rotate(-7deg)}
 .p-badge{position:absolute;top:12px;left:12px;z-index:3;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:50px;background:rgba(255,255,255,.92);color:var(--purple-deep);box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .p-badge.custom{background:var(--grad-pink);color:#fff}
@@ -201,7 +189,7 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .cart-list{display:flex;flex-direction:column;gap:14px}
 .cart-item{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);transition:.3s;animation:fadeUp .4s both}
 .cart-item:hover{box-shadow:var(--shadow-lg);transform:translateX(4px)}
-.ci-thumb{width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex:0 0 auto;background:#fff0f7}
+.ci-thumb{width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex:0 0 auto;background:#fff0f7;overflow:hidden;}
 .ci-main{flex:1;min-width:0}
 .ci-main h4{font-size:.95rem;font-family:'Poppins';font-weight:600;margin-bottom:3px}
 .ci-main .ci-cat{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-deep);font-weight:700}
@@ -515,7 +503,13 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;back
       <h3>Welcome Back</h3>
       <p class="sub">Sign in to see your orders and checkout faster.</p>
       <div class="field"><label>Email</label><input id="si-email" type="email" placeholder="you@example.com" autocomplete="email"></div>
-      <div class="field"><label>Password</label><input id="si-password" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="field">
+        <label>Password</label>
+        <div style="position:relative">
+          <input id="si-password" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px">
+          <button type="button" onclick="toggleUserPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;font-size:1.1rem;color:var(--muted);padding:4px;cursor:pointer">👁</button>
+        </div>
+      </div>
       <button class="btn btn-pink btn-block" id="si-btn" onclick="doSignin()">Sign In</button>
       <p class="auth-switch">No account? <a onclick="showSection('signup')">Create one</a></p>
     </div>
@@ -709,6 +703,11 @@ function showSection(name){
    ============================================================ */
 function currentUser(){ return safeStore.get('chella_user', null); }
 
+function toggleUserPw(){
+  const inp = document.getElementById('si-password');
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
 function validatePassword(pw){
   if (pw.length < 8) return 'Password must be at least 8 characters';
   if (!/[A-Z]/.test(pw)) return 'Password must contain an uppercase letter';
@@ -832,6 +831,7 @@ async function loadProductsFromCloud(){
     oldPrice: p.old_price ? Number(p.old_price) : null,
     discount: Number(p.discount) || 0,
     emoji: p.emoji || '📦',
+    image_url: p.image_url || null, // <--- ADDED THIS LINE
     desc: p.description || '',
     badge: p.badge || ''
   }));
@@ -879,11 +879,17 @@ function renderProductGrid(){
       ? `<span class="p-old">${R(p.oldPrice)}</span>` : '';
     const discountHtml = p.discount > 0
       ? `<span class="p-disc">${p.discount}% off</span>` : '';
+      
+    // IMAGE OR EMOJI RENDER LOGIC
+    const visualHtml = p.image_url 
+      ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;">` 
+      : p.emoji;
+
     return `<div class="product-card" onclick="openProductModal('${p.id}')">
       <div class="p-img" style="background:linear-gradient(135deg,#fff0f7,#f5f3ff)">
         ${p.badge ? `<div class="p-badge custom">${escapeHtml(p.badge)}</div>` : ''}
         <div class="glow"></div>
-        <div class="emo">${p.emoji}</div>
+        <div class="emo">${visualHtml}</div>
       </div>
       <div class="p-body">
         <span class="p-cat">${escapeHtml(p.cat)}</span>
@@ -912,13 +918,18 @@ function openProductModal(id){
   const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
   const oldPriceHtml = (p.oldPrice && p.oldPrice > finalPrice)
     ? `<span class="pd-price-old">${R(p.oldPrice)}</span>` : '';
+    
+  // IMAGE OR EMOJI RENDER LOGIC FOR MODAL
+  const visualHtml = p.image_url
+    ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+    : p.emoji;
 
   $('pm-title').textContent = p.name;
   $('product-modal-body').innerHTML = `
     <div class="pd-grid">
       <div class="pd-visual" style="background:linear-gradient(135deg,#fff0f7,#f5f3ff)">
         <div class="glow"></div>
-        <div class="pd-preview" style="background:linear-gradient(135deg,#fce7f3,#e9d5ff)">${p.emoji}</div>
+        <div class="pd-preview" style="background:linear-gradient(135deg,#fce7f3,#e9d5ff);overflow:hidden;">${visualHtml}</div>
       </div>
       <div class="pd-info">
         <span class="p-cat">${escapeHtml(p.cat)}</span>
@@ -963,7 +974,7 @@ function addModalToCart(){
   const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
   const existing = cart.find(c => c.id === p.id && !c.custom);
   if (existing) existing.qty += modalQty;
-  else cart.push({ id: p.id, name: p.name, cat: p.cat, emoji: p.emoji, unitPrice: finalPrice, qty: modalQty });
+  else cart.push({ id: p.id, name: p.name, cat: p.cat, emoji: p.emoji, image_url: p.image_url, unitPrice: finalPrice, qty: modalQty });
   saveCart();
   toast(`🛒 Added ${p.name} ×${modalQty}`, 'teal');
   closeProductModal();
@@ -1014,7 +1025,9 @@ function renderCart(){
       <div class="cart-list">
         ${cart.map((c, i) => `
           <div class="cart-item">
-            <div class="ci-thumb">${c.emoji}</div>
+            <div class="ci-thumb">
+              ${c.image_url ? `<img src="${c.image_url}" style="width:100%;height:100%;object-fit:cover;">` : c.emoji}
+            </div>
             <div class="ci-main">
               <h4>${escapeHtml(c.name)}</h4>
               <span class="ci-cat">${escapeHtml(c.cat)}</span>
@@ -1315,6 +1328,7 @@ window.doSignup = doSignup;
 window.logoutUser = logoutUser;
 window.checkPwStrength = checkPwStrength;
 window.acceptCookies = acceptCookies;
+window.toggleUserPw = toggleUserPw;
 </script>
 </body>
 </html>
