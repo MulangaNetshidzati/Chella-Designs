@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <style>
-/* [Keep all your existing CSS here - no changes needed] */
 :root{
   --pink:#ec4899;--pink-soft:#f9a8d4;--pink-deep:#be185d;
   --purple:#a855f7;--purple-deep:#7e22ce;
@@ -49,6 +48,7 @@ img{max-width:100%;display:block}
 @keyframes fadeOutDown{to{opacity:0;transform:translateY(-16px) scale(.94)}}
 @keyframes pulseLive{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}60%{box-shadow:0 0 0 10px rgba(34,197,94,0)}}
 
+/* ============ ADMIN LOGIN ============ */
 #login-screen{
   position:fixed;inset:0;z-index:10000;
   background:linear-gradient(135deg,#fff0f7 0%,#f5f3ff 45%,#ecfeff 100%);
@@ -195,6 +195,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 .flash-banner{position:fixed;top:88px;left:50%;transform:translateX(-50%);background:var(--grad-gold);color:#3a2c00;padding:13px 26px;border-radius:50px;font-size:.88rem;font-weight:700;box-shadow:0 18px 40px rgba(234,179,8,.45);z-index:950;display:none;align-items:center;gap:10px;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1) both;max-width:90vw}
 .flash-banner.show{display:flex}
 
+/* Admin product modal */
 .admin-modal-overlay{position:fixed;inset:0;background:rgba(21,18,28,.55);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
 .admin-modal-overlay.active{display:flex}
 .admin-modal-box{background:#fff;border-radius:22px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.35)}
@@ -223,6 +224,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">🔐</div>
@@ -315,6 +317,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
     <div class="bars" id="revenue-chart"></div>
   </div>
 
+  <!-- MANAGE SHOP -->
   <div class="chart-card">
     <h3>🛍️ Manage Shop Products
       <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
@@ -336,6 +339,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
     </div>
   </div>
 
+  <!-- SITE SETTINGS -->
   <div class="chart-card">
     <h3>🎨 Site Settings — Logo</h3>
     <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center">
@@ -355,6 +359,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
   </div>
 </main>
 
+<!-- PRODUCT EDITOR MODAL -->
 <div id="product-modal" class="admin-modal-overlay" onclick="if(event.target===this)closeProductEditor()">
   <div class="admin-modal-box">
     <div class="admin-modal-head">
@@ -416,12 +421,15 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
-const SUPABASE_URL  = 'https://ameievgeatgzqtdhdkq.supabase.co';
+/* ============================================================
+   CREDENTIALS & CONSTANTS
+   ============================================================ */
+const SUPABASE_URL  = 'https://ameievgeatgzqtdhdktq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtZWlldmdlYXRnenF0ZGhka3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyMDk2MTQsImV4cCI6MjExMDc4NTYxNH0.1ifjvin1cjPWRDH_qgXwb_CbjGDKzJ0PbXnzBDXHVpM';
 
 const SESSION_FLAG    = 'chella_dash_session';
 const REMEMBER_FLAG   = 'chella_dash_remember';
-const REMEMBER_MS     = 30 * 24 * 60 * 60 * 1000;
+const REMEMBER_MS     = 30 * 24 * 60 * 60 * 1000; // 30 days
 const STATUS_FLOW     = ['Pending','Accepted','Printing','Shipped','Completed'];
 
 const $ = id => document.getElementById(id);
@@ -436,6 +444,9 @@ let selectedStatusFilter = 'all';
 let newOrderRefs = new Set();
 let bootstrapped = false;
 
+/* ============================================================
+   INIT SUPABASE
+   ============================================================ */
 function waitForSupabase(){
   return new Promise(resolve => {
     if (window.supabase && typeof window.supabase.createClient === 'function'){
@@ -465,6 +476,9 @@ function setBadge(state, text){
   t.innerText = text;
 }
 
+/* ============================================================
+   TOASTS
+   ============================================================ */
 function toast(msg, type='pink'){
   const wrap = $('toast-wrap');
   const t = document.createElement('div');
@@ -474,6 +488,9 @@ function toast(msg, type='pink'){
   setTimeout(()=>{ t.style.opacity = '0'; t.style.transform = 'translateY(-16px)'; setTimeout(()=>t.remove(),350); }, 3000);
 }
 
+/* ============================================================
+   AUTHENTICATION
+   ============================================================ */
 function isLoggedIn(){
   try { if (sessionStorage.getItem(SESSION_FLAG) === '1') return true; } catch(e){}
   try {
@@ -586,6 +603,9 @@ function logout(){
   window.location.reload(); 
 }
 
+/* ============================================================
+   ORDERS
+   ============================================================ */
 async function loadOrders(){
   if (!sb) return [];
   const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
@@ -609,6 +629,9 @@ async function updateOrderStatusInCloud(ref, status){
   return true;
 }
 
+/* ============================================================
+   FLASH BANNER
+   ============================================================ */
 let flashTimer = null;
 function flashNewOrder(order){
   const banner = $('flash-banner');
@@ -620,6 +643,9 @@ function flashNewOrder(order){
   flashTimer = setTimeout(() => banner.classList.remove('show'), 5000);
 }
 
+/* ============================================================
+   DASHBOARD RENDER
+   ============================================================ */
 function renderDashboard(){
   updatePendingDot();
   renderStats();
@@ -798,6 +824,9 @@ async function manualRefresh(){
   toast('🔄 Data refreshed', 'teal');
 }
 
+/* ============================================================
+   PRODUCT MANAGEMENT
+   ============================================================ */
 async function loadProducts(){
   if (!sb) return [];
   const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
@@ -897,6 +926,9 @@ async function deleteProduct(id){
   await refreshProducts();
 }
 
+/* ============================================================
+   LOGO MANAGEMENT
+   ============================================================ */
 async function loadLogo(){
   if (!sb) return;
   const { data } = await sb.from('site_settings').select('value').eq('key', 'logo_url').maybeSingle();
@@ -932,6 +964,9 @@ async function uploadLogo(){
   toast('🎨 Logo updated!', 'gold');
 }
 
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
 async function bootstrapDashboard(){
   if (bootstrapped) return;
   bootstrapped = true;
@@ -988,6 +1023,9 @@ async function bootstrapDashboard(){
   } catch(e){ console.warn('realtime:', e); }
 }
 
+/* ============================================================
+   PAGE INIT
+   ============================================================ */
 (async function pageInit(){
   await waitForSupabase();
 
@@ -999,6 +1037,7 @@ async function bootstrapDashboard(){
   }
 })();
 
+// Expose globals
 window.doAdminLogin = doAdminLogin;
 window.togglePw = togglePw;
 window.logout = logout;
