@@ -539,7 +539,6 @@ async function doAdminLogin(){
     return;
   }
 
-  // Ensure Supabase is initialized before trying to log in
   if (!sb) {
     btn.textContent = 'Connecting…';
     sb = await waitForSupabase();
@@ -1021,8 +1020,8 @@ async function bootstrapDashboard(){
   } catch(e){ console.warn('realtime:', e); }
 }
 
-/* ============================================================ */
-   // PAGE INIT
+/* ============================================================
+   PAGE INIT
    ============================================================ */
 (async function pageInit(){
   await waitForSupabase();
