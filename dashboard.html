@@ -424,7 +424,7 @@ table.dash tbody tr.is-new{background:linear-gradient(90deg,#fff7dc,#fffafc);ani
 /* ============================================================
    CREDENTIALS & CONSTANTS
    ============================================================ */
-const SUPABASE_URL  = 'https://ameievgeatgzqtdhdktq.supabase.co';
+const SUPABASE_URL  = 'https://ameievgeatgzqtdhdkqi.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtZWlldmdlYXRnenF0ZGhka3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyMDk2MTQsImV4cCI6MjExMDc4NTYxNH0.1ifjvin1cjPWRDH_qgXwb_CbjGDKzJ0PbXnzBDXHVpM';
 
 const SESSION_FLAG    = 'chella_dash_session';
@@ -560,8 +560,8 @@ async function doAdminLogin(){
       p_password: password
     });
 
-    if (error || !data?.ok){
-      errBox.textContent = '❌ ' + (error?.message || data?.error || 'Invalid credentials');
+    if (error || !data || !data[0] || !data[0].ok) {
+      errBox.textContent = '❌ ' + (error?.message || (data && data[0] ? data[0].error : 'Invalid credentials'));
       errBox.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Sign In →';
@@ -573,8 +573,8 @@ async function doAdminLogin(){
     
     if (remember){
       localStorage.setItem(REMEMBER_FLAG, JSON.stringify({
-        token: data.token,
-        email: data.email,
+        token: data[0].token,
+        email: data[0].email,
         expires: Date.now() + REMEMBER_MS
       }));
     }
