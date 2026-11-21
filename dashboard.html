@@ -106,7 +106,7 @@ header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdr
 .icon-btn.spinning{animation:spin .8s linear}
 .notify-dot{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;background:var(--gold);color:#3a2c00;border-radius:50%;font-size:.64rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;animation:pulseGold 1.6s ease-in-out infinite}
 
-main{max-width:1400px;margin:0 auto;padding:30px 20px 60px;display:none} /* Hidden until login */
+main{max-width:1400px;margin:0 auto;padding:30px 20px 60px;display:none}
 main.show{display:block}
 
 .section-head{text-align:center;margin-bottom:30px}
@@ -539,10 +539,17 @@ async function doAdminLogin(){
     return;
   }
 
-  if (!sb){
-    errBox.textContent = '⚠ Cloud not ready — reload the page';
-    errBox.style.display = 'block';
-    return;
+  // Ensure Supabase is initialized before trying to log in
+  if (!sb) {
+    btn.textContent = 'Connecting…';
+    sb = await waitForSupabase();
+    if (!sb) {
+      errBox.textContent = '⚠ Cloud not ready — check internet and reload';
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Sign In →';
+      return;
+    }
   }
 
   btn.disabled = true;
@@ -581,7 +588,7 @@ async function doAdminLogin(){
 
   } catch(err){
     console.error(err);
-    errBox.textContent = '❌ Network error — try again';
+    errBox.textContent = '❌ Network error — check connection';
     errBox.style.display = 'block';
     btn.disabled = false;
     btn.textContent = 'Sign In →';
@@ -1014,8 +1021,8 @@ async function bootstrapDashboard(){
   } catch(e){ console.warn('realtime:', e); }
 }
 
-/* ============================================================
-   PAGE INIT
+/* ============================================================ */
+   // PAGE INIT
    ============================================================ */
 (async function pageInit(){
   await waitForSupabase();
