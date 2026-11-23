@@ -38,6 +38,18 @@ button{font-family:'Poppins',sans-serif;cursor:pointer;border:none}
 input,textarea,select{font-family:'Poppins',sans-serif;font-size:16px;-webkit-appearance:none;appearance:none}
 img,svg{max-width:100%;display:block}
 
+.bg-blobs{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:floaty 18s ease-in-out infinite}
+.blob.b1{width:420px;height:420px;background:#f9a8d4;top:-120px;left:-100px}
+.blob.b2{width:380px;height:380px;background:#99f6e4;top:35%;right:-140px;animation-delay:-5s}
+.blob.b3{width:340px;height:340px;background:#e9d5ff;bottom:-120px;left:20%;animation-delay:-9s}
+.blob.b4{width:280px;height:280px;background:#fde68a;bottom:20%;right:25%;animation-delay:-13s}
+@keyframes floaty{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-50px) scale(1.12)}66%{transform:translate(-35px,35px) scale(.92)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
+
 /* HEADER */
 header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);box-shadow:0 4px 24px rgba(190,24,93,.06);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 .nav-wrap{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 20px}
@@ -115,10 +127,11 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
 .product-card{background:#fff;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);cursor:pointer;transition:transform .4s cubic-bezier(.34,1.4,.64,1),box-shadow .4s;position:relative;display:flex;flex-direction:column;animation:fadeUp .5s both}
 .product-card:hover{transform:translateY(-10px);box-shadow:var(--shadow-lg)}
-.p-img{position:relative;height:172px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.p-img{position:relative;height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden; background: #f8f9fa;}
 .p-img .glow{position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.65);filter:blur(6px);transition:.5s}
 .product-card:hover .p-img .glow{transform:scale(1.5)}
 .p-img .emo{position:relative;z-index:2;transition:transform .5s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 10px 16px rgba(0,0,0,.16));font-size:3.8rem;line-height:1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;}
+.p-img .emo img{width:100%;height:100%;object-fit:cover;}
 .product-card:hover .p-img .emo{transform:scale(1.18) rotate(-7deg)}
 .p-badge{position:absolute;top:12px;left:12px;z-index:3;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:50px;background:rgba(255,255,255,.92);color:var(--purple-deep);box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .p-badge.custom{background:var(--grad-pink);color:#fff}
@@ -168,7 +181,8 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .pd-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:320px;padding:30px;overflow:hidden}
 .pd-visual .glow{position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.7);filter:blur(10px);animation:floaty 9s ease-in-out infinite}
-.pd-preview{position:relative;z-index:3;width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -14px 30px rgba(0,0,0,.07),0 20px 40px rgba(0,0,0,.12);font-size:4.5rem;line-height:1}
+.pd-preview{position:relative;z-index:3;width:220px;height:220px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -14px 30px rgba(0,0,0,.07),0 20px 40px rgba(0,0,0,.12);font-size:4.5rem;line-height:1; background: #fff; overflow: hidden;}
+.pd-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .pd-info{padding:28px 30px;display:flex;flex-direction:column;gap:14px}
 .pd-info .p-cat{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-deep);font-weight:700}
 .pd-info h3{font-size:1.6rem}
@@ -190,6 +204,7 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .cart-item{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);transition:.3s;animation:fadeUp .4s both}
 .cart-item:hover{box-shadow:var(--shadow-lg);transform:translateX(4px)}
 .ci-thumb{width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex:0 0 auto;background:#fff0f7;overflow:hidden;}
+.ci-thumb img{width:100%;height:100%;object-fit:cover;}
 .ci-main{flex:1;min-width:0}
 .ci-main h4{font-size:.95rem;font-family:'Poppins';font-weight:600;margin-bottom:3px}
 .ci-main .ci-cat{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-deep);font-weight:700}
@@ -831,7 +846,7 @@ async function loadProductsFromCloud(){
     oldPrice: p.old_price ? Number(p.old_price) : null,
     discount: Number(p.discount) || 0,
     emoji: p.emoji || '📦',
-    image_url: p.image_url || null, // <--- ADDED THIS LINE
+    image_url: p.image_url || null,
     desc: p.description || '',
     badge: p.badge || ''
   }));
@@ -880,9 +895,8 @@ function renderProductGrid(){
     const discountHtml = p.discount > 0
       ? `<span class="p-disc">${p.discount}% off</span>` : '';
       
-    // IMAGE OR EMOJI RENDER LOGIC
     const visualHtml = p.image_url 
-      ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;">` 
+      ? `<img src="${p.image_url}">` 
       : p.emoji;
 
     return `<div class="product-card" onclick="openProductModal('${p.id}')">
@@ -919,9 +933,8 @@ function openProductModal(id){
   const oldPriceHtml = (p.oldPrice && p.oldPrice > finalPrice)
     ? `<span class="pd-price-old">${R(p.oldPrice)}</span>` : '';
     
-  // IMAGE OR EMOJI RENDER LOGIC FOR MODAL
   const visualHtml = p.image_url
-    ? `<img src="${p.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+    ? `<img src="${p.image_url}">`
     : p.emoji;
 
   $('pm-title').textContent = p.name;
@@ -1026,7 +1039,7 @@ function renderCart(){
         ${cart.map((c, i) => `
           <div class="cart-item">
             <div class="ci-thumb">
-              ${c.image_url ? `<img src="${c.image_url}" style="width:100%;height:100%;object-fit:cover;">` : c.emoji}
+              ${c.image_url ? `<img src="${c.image_url}">` : c.emoji}
             </div>
             <div class="ci-main">
               <h4>${escapeHtml(c.name)}</h4>
@@ -1134,7 +1147,6 @@ async function placeOrder(){
     date: new Date().toLocaleDateString('en-ZA', { year:'numeric', month:'short', day:'numeric' })
   };
 
-  // Show loading
   const btn = event?.target;
   if (btn){ btn.disabled = true; btn.innerHTML = '⏳ Placing order...'; }
 
@@ -1285,7 +1297,6 @@ async function loadLogoFromCloud(){
   updateCartCount();
   updateAuthUI();
 
-  // Handle hash from landing page
   const authHint = (()=>{ try{ return sessionStorage.getItem('chella_open_auth'); }catch(e){ return null; } })();
   if (authHint){
     try{ sessionStorage.removeItem('chella_open_auth'); }catch(e){}
@@ -1301,7 +1312,6 @@ async function loadLogoFromCloud(){
   await loadLogoFromCloud();
   await loadProductsFromCloud();
 
-  // Realtime: products + logo
   try {
     sb.channel('shop-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => loadProductsFromCloud())
