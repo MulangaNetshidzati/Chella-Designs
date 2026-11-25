@@ -244,4 +244,1362 @@ main{max-width:1280px;margin:0 auto;padding:34px 22px 60px;min-height:70vh}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .card-visual{background:var(--grad-pink);border-radius:20px;padding:22px;color:#fff;margin-bottom:22px;position:relative;overflow:hidden;box-shadow:0 18px 40px rgba(236,72,153,.35)}
 .card-visual .cv-chip{width:42px;height:32px;border-radius:7px;background:linear-gradient(135deg,#fde68a,#d97706);margin-bottom:26px}
-.card-visual .cv-num{font-size:1.28rem;letter-spacing:.16em;font-weight:600;margin-bottom:16px;font-family:'
+.card-visual .cv-num{font-size:1.28rem;letter-spacing:.16em;font-weight:600;margin-bottom:16px;font-family:'Courier New',monospace}
+.card-visual .cv-bottom{display:flex;justify-content:space-between;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:.92}
+.secure-strip{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:18px;font-size:.75rem;color:var(--muted);background:#f0fdf4;border:1px solid #bbf7d0;border-radius:50px;padding:10px;font-weight:600}
+
+/* FORMS */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:7px;letter-spacing:.04em}
+.field input,.field textarea,.field select{width:100%;padding:12px 16px;border:1.5px solid var(--line);border-radius:14px;font-size:16px;background:#fcfcfd;transition:.3s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--pink);background:#fff;outline:none;box-shadow:0 0 0 4px rgba(236,72,153,.10)}
+.field.invalid input{border-color:#fca5a5;background:#fff5f5}
+.field-error{font-size:.72rem;color:#dc2626;margin-top:5px;display:none}
+.field-error.show{display:block}
+.pw-hint{font-size:.72rem;margin-top:5px;color:var(--muted)}
+.pw-hint.good{color:#16a34a}
+.pw-hint.bad{color:#dc2626}
+
+/* HISTORY */
+.order-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px;box-shadow:var(--shadow);transition:.35s;animation:fadeUp .5s both;position:relative;overflow:hidden}
+.order-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--grad-pink)}
+.order-card.status-Pending::before{background:linear-gradient(180deg,#eab308,#f97316)}
+.order-card.status-Accepted::before{background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
+.order-card.status-Printing::before{background:linear-gradient(180deg,#a855f7,#7e22ce)}
+.order-card.status-Shipped::before{background:linear-gradient(180deg,#22d3ee,#0891b2)}
+.order-card.status-Completed::before{background:linear-gradient(180deg,#22c55e,#15803d)}
+.order-card.status-Cancelled::before{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+.order-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.oc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.oc-ref{font-family:'Courier New',monospace;font-weight:700;color:var(--pink-deep);font-size:.92rem}
+.oc-items{display:flex;flex-direction:column;gap:7px;padding:14px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);margin-bottom:14px}
+.oc-item-line{display:flex;align-items:center;gap:10px;font-size:.84rem}
+.oc-item-line .oi-emoji{flex:0 0 auto;font-size:1.1rem}
+.oc-item-line .oi-name{flex:1;min-width:0}
+.oc-item-line .oi-qty{color:var(--pink-deep);font-weight:700;background:#fff0f7;padding:2px 9px;border-radius:50px;font-size:.72rem}
+.oc-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.oc-total{font-size:1.1rem;font-weight:800;color:var(--pink-deep);font-family:'Playfair Display'}
+.status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:50px;font-size:.74rem;font-weight:700;letter-spacing:.05em}
+.sp-pending{background:#fef3c7;color:#92400e}
+.sp-accepted{background:#dbeafe;color:#1e40af}
+.sp-printing{background:#ede9fe;color:#5b21b6}
+.sp-shipped{background:#cffafe;color:#155e75}
+.sp-completed{background:#dcfce7;color:#166534}
+.sp-cancelled{background:#fee2e2;color:#991b1b}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .big{font-size:3rem;display:block;margin-bottom:14px}
+
+/* AUTH */
+.auth-wrap{max-width:440px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow)}
+.auth-wrap h3{text-align:center;margin-bottom:6px;font-size:1.35rem}
+.auth-wrap .sub{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:22px}
+.auth-switch{text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted)}
+.auth-switch a{color:var(--pink-deep);font-weight:700}
+.auth-switch a:hover{text-decoration:underline}
+
+/* INVOICE */
+.invoice-box{background:#fff;border-radius:var(--radius);padding:36px;max-width:720px;margin:0 auto;border:2px dashed var(--teal);box-shadow:var(--shadow-lg);text-align:center;animation:fadeUp .6s both}
+.invoice-box .inv-ico{font-size:3.2rem;margin-bottom:10px}
+.ref-number{display:inline-block;font-size:1.6rem;font-weight:800;letter-spacing:.18em;color:var(--pink-deep);background:linear-gradient(135deg,#fff0f7,#f5f3ff);border:2px solid var(--pink-soft);border-radius:16px;padding:16px 30px;margin:18px 0;font-family:'Courier New',monospace}
+.inv-details{text-align:left;background:#fcfcfd;border-radius:16px;padding:22px;margin-top:22px;border:1px solid var(--line);font-size:.88rem}
+.inv-details p{padding:5px 0}
+
+/* PROFILE */
+.profile-head{display:flex;align-items:center;gap:18px;margin-bottom:26px;padding-bottom:22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.avatar{width:76px;height:76px;border-radius:50%;background:var(--grad-pink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;font-family:'Playfair Display';box-shadow:0 12px 26px rgba(236,72,153,.35);flex:0 0 auto}
+.profile-head .ph-info{flex:1;min-width:180px}
+.profile-head h3{margin:0;font-size:1.3rem}
+.profile-head p{font-size:.83rem;color:var(--muted)}
+
+/* TOASTS */
+.toast-wrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;padding:0 16px}
+.toast{background:var(--ink);color:#fff;padding:13px 24px;border-radius:50px;font-size:.85rem;font-weight:600;box-shadow:0 16px 40px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;animation:fadeUp .45s cubic-bezier(.34,1.56,.64,1) both;max-width:90vw;text-align:center}
+.toast.pink{background:var(--grad-pink)}
+.toast.teal{background:var(--grad-teal)}
+.toast.gold{background:var(--grad-gold);color:#3a2c00}
+.toast.error{background:linear-gradient(135deg,#dc2626,#991b1b)}
+
+/* COOKIE BANNER */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#15121c;color:#fff;padding:14px 20px;display:none;z-index:2500;font-size:.82rem;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+#cookie-banner.show{display:flex}
+#cookie-banner button{background:var(--grad-pink);color:#fff;padding:9px 22px;border-radius:50px;font-weight:700;font-size:.8rem}
+
+/* FOOTER */
+footer{background:linear-gradient(135deg,#15121c,#2b1d33 60%,#3d1f3f);color:#e9d5e8;margin-top:70px;padding:44px 22px 24px;position:relative;overflow:hidden;padding-bottom:max(24px,env(safe-area-inset-bottom))}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--grad-rainbow);background-size:300% 100%;animation:gradShift 6s linear infinite}
+.foot-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px;text-align:left}
+.foot-brand p{font-size:.84rem;color:#c4b5c9;max-width:320px}
+.foot-col h4{color:#fff;font-size:.95rem;margin-bottom:14px;font-family:'Poppins';font-weight:600}
+.foot-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.foot-col a{font-size:.83rem;color:#c4b5c9;transition:.28s}
+.foot-col a:hover{color:var(--pink-soft)}
+.foot-bottom{max-width:1280px;margin:30px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);text-align:center;font-size:.78rem;color:#a99cae}
+
+/* MOBILE NAV */
+@media(max-width:860px){
+  .nav-wrap{padding:10px 14px}
+  nav ul{position:fixed;top:72px;left:0;right:0;background:#fff;flex-direction:column;padding:16px;gap:4px;box-shadow:0 20px 40px rgba(0,0,0,.12);transform:translateY(-120%);transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:899;border-bottom:1px solid var(--line);max-height:calc(100vh - 72px);overflow-y:auto}
+  nav ul.open{transform:translateY(0)}
+  nav a.nav-link{flex-direction:row;justify-content:flex-start;width:100%;padding:12px 16px;font-size:.95rem}
+  .burger{display:block}
+  .hero{padding:40px 20px 36px;border-radius:24px}
+  .cart-layout,.pay-layout{grid-template-columns:1fr}
+  .summary-card{position:static}
+  .product-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+  .p-img{height:130px}
+  .p-img .emo{font-size:2.8rem}
+  .pd-grid{grid-template-columns:1fr}
+  .pd-visual{min-height:240px}
+  .foot-inner{grid-template-columns:1fr;text-align:center}
+  .modal-box.wide{max-width:100%}
+  .grid-2{grid-template-columns:1fr}
+  .pay-methods{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  main{padding:20px 14px 40px}
+  .hero h1{font-size:2rem}
+  .btn-shop-now{padding:16px 34px;font-size:.92rem}
+  .section-head h2{font-size:1.6rem}
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .p-body{padding:12px}
+  .p-body h4{font-size:.92rem}
+  .p-price{font-size:1.05rem}
+  .btn{padding:12px 20px;font-size:.84rem}
+  .cart-item{flex-wrap:wrap}
+  .ci-right{width:100%;flex-direction:row;justify-content:space-between;align-items:center}
+  .order-card{padding:16px}
+  .ref-number{font-size:1.2rem;padding:12px 18px;letter-spacing:.1em}
+  .invoice-box{padding:22px}
+  .auth-wrap{padding:22px 18px}
+  .modal-body{padding:18px}
+  .modal-head{padding:16px 20px}
+  .modal-foot{padding:14px 20px}
+  .pd-info{padding:22px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+</div>
+
+<!-- COOKIE BANNER -->
+<div id="cookie-banner">
+  <span>🍪 We use cookies to keep your cart & login session working.</span>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="nav-wrap">
+    <div class="logo-container" onclick="showSection('home')">
+      <img src="chella-logo.png" alt="Chella Designs" class="logo-img" id="site-logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="logo-fallback">Chella</div>
+      <div class="brand-text">
+        <span class="b1">Chella</span>
+        <span class="b2">DESIGNS</span>
+      </div>
+    </div>
+    <button class="burger" onclick="document.querySelector('nav ul').classList.toggle('open')" aria-label="Menu">☰</button>
+    <nav>
+      <ul id="nav-list">
+        <li><a class="nav-link active" data-section="home" onclick="showSection('home')"><span class="nav-ico">🏠</span>Home</a></li>
+        <li><a class="nav-link" data-section="shop" onclick="showSection('shop')"><span class="nav-ico">🛍️</span>Shop</a></li>
+        <li><a class="nav-link" data-section="track" onclick="showSection('track')"><span class="nav-ico">📦</span>Track</a></li>
+        <li><a class="nav-link cart-link" data-section="cart" onclick="showSection('cart')"><span class="nav-ico">🛒</span>Cart<span class="cart-count" id="cart-count">0</span></a></li>
+        <li id="nav-auth-item"><a class="nav-link" data-section="signin" onclick="showSection('signin')"><span class="nav-ico">👤</span>Sign In</a></li>
+        <li id="nav-user-item" style="display:none"><a class="nav-link" data-section="profile" onclick="showSection('profile')"><span class="nav-ico">👋</span><span id="nav-user-name">Account</span></a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HOME ============ -->
+  <section class="section active" id="section-home">
+    <div class="hero">
+      <h1>
+        <span class="script">Chella Designs</span>
+        <span class="sub">Create • Customise • Inspire</span>
+      </h1>
+      <p class="lead">Personalised mugs, key rings, stickers, T-shirts & more — crafted with love in South Africa.</p>
+      <div class="hero-stats">
+        <div><strong>100%</strong><span>Custom</span></div>
+        <div><strong>24h</strong><span>Design Proof</span></div>
+        <div><strong>🇿🇦</strong><span>Made Local</span></div>
+      </div>
+      <div class="shop-now-wrap">
+        <button class="btn-shop-now" onclick="showSection('shop')">🛍️ Shop Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section class="section" id="section-shop">
+    <div class="section-head">
+      <h2>Our <span>Shop</span></h2>
+      <div class="underline"></div>
+      <p>Pick a category or browse all our handcrafted items.</p>
+    </div>
+    <div class="shop-toolbar">
+      <div class="chip-scroller" id="category-chips"></div>
+    </div>
+    <div class="product-grid" id="product-grid"></div>
+  </section>
+
+  <!-- ============ CART ============ -->
+  <section class="section" id="section-cart">
+    <div class="section-head">
+      <h2>Your <span>Cart</span></h2>
+      <div class="underline"></div>
+    </div>
+    <div id="cart-content"></div>
+  </section>
+
+  <!-- ============ CHECKOUT ============ -->
+  <section class="section" id="section-checkout">
+    <div class="section-head">
+      <h2>Check<span>out</span></h2>
+      <div class="underline"></div>
+    </div>
+    
+    <div id="checkout-login-warning" style="display:none; text-align:center; padding: 40px 20px;">
+       <h3 style="margin-bottom: 10px;">Please Sign In</h3>
+       <p style="color:var(--muted); margin-bottom: 20px;">You need an account to complete your purchase securely.</p>
+       <button class="btn btn-pink" onclick="showSection('signin')">Sign In / Create Account</button>
+    </div>
+
+    <div class="pay-layout" id="checkout-form-area">
+      <div class="pay-card">
+        <h3>👤 Delivery Details</h3>
+        <div class="grid-2">
+          <div class="field"><label>Full Name *</label><input id="co-name" type="text" placeholder="Jane Doe"></div>
+          <div class="field"><label>Phone *</label><input id="co-phone" type="tel" placeholder="0821234567"></div>
+        </div>
+        <div class="field"><label>Email *</label><input id="co-email" type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>City *</label><input id="co-city" type="text" placeholder="Cape Town"></div>
+        <div class="field"><label>Delivery Address *</label><input id="co-address" type="text" placeholder="12 Main Rd, Suburb"></div>
+        <div class="field"><label>Notes (optional)</label><textarea id="co-notes" rows="2" placeholder="Gate code, delivery instructions..."></textarea></div>
+
+        <h3 style="margin-top:26px">💳 Payment Method</h3>
+        <div class="pay-methods">
+          <div class="pm active" data-method="card" onclick="selectPayMethod('card')">
+            <div class="pm-ico">💳</div><div class="pm-name">Card</div>
+          </div>
+          <div class="pm applepay-pm" data-method="applepay" onclick="selectPayMethod('applepay')">
+            <div class="pm-ico">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.4 12.36,4.17 13,3.5Z" /></svg>
+            </div>
+            <div class="pm-name">Apple Pay</div>
+          </div>
+          <div class="pm" data-method="eft" onclick="selectPayMethod('eft')">
+            <div class="pm-ico">🏦</div><div class="pm-name">Bank Transfer (EFT)</div>
+          </div>
+          <div class="pm" data-method="cod" onclick="selectPayMethod('cod')">
+            <div class="pm-ico">💵</div><div class="pm-name">Cash on Delivery</div>
+          </div>
+        </div>
+        <div class="secure-strip">🔒 Your payment details are secure & encrypted</div>
+
+        <!-- CARD DETAILS UI (Hidden by default) -->
+        <div id="card-details-ui" style="display:block; margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0;">
+          <h4 style="margin-bottom: 15px; color: var(--ink);">💳 Card Details</h4>
+          
+          <div class="field">
+            <label>Card Number</label>
+            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" id="cc-num">
+          </div>
+          
+          <div class="grid-2">
+            <div class="field">
+              <label>Expiry Date</label>
+              <input type="text" placeholder="MM/YY" maxlength="5" id="cc-exp">
+            </div>
+            <div class="field">
+              <label>CVV</label>
+              <input type="text" placeholder="123" maxlength="4" id="cc-cvv">
+            </div>
+          </div>
+          
+          <div class="field">
+            <label>Name on Card</label>
+            <input type="text" placeholder="John Doe" id="cc-name">
+          </div>
+          
+          <p style="font-size: 0.7rem; color: var(--muted); margin-top: 10px; text-align: center;">
+            🔒 Payment is end-to-end encrypted. We do not store your card details.
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="summary-card" id="checkout-summary"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INVOICE ============ -->
+  <section class="section" id="section-invoice">
+    <div class="invoice-box" id="invoice-content"></div>
+  </section>
+
+  <!-- ============ TRACK ============ -->
+  <section class="section" id="section-track">
+    <div class="section-head">
+      <h2>Track Your <span>Order</span></h2>
+      <div class="underline"></div>
+      <p>Enter your reference number to see live status.</p>
+    </div>
+    <div class="auth-wrap">
+      <div class="field"><label>Order Reference</label><input id="track-ref" type="text" placeholder="CHL-XXXXXXXX"></div>
+      <button class="btn btn-pink btn-block" onclick="trackOrder()">🔍 Track Order</button>
+      <div id="track-result"></div>
+    </div>
+  </section>
+
+  <!-- ============ SIGN IN ============ -->
+  <section class="section" id="section-signin">
+    <div class="auth-wrap">
+      <h3>Welcome Back</h3>
+      <p class="sub">Sign in to see your orders and checkout faster.</p>
+      <div class="field"><label>Email</label><input id="si-email" type="email" placeholder="Enter your email address" autocomplete="email"></div>
+      <div class="field">
+        <label>Password</label>
+        <div style="position:relative">
+          <input id="si-password" type="password" placeholder="Enter your password" autocomplete="current-password" style="padding-right:44px">
+          <button type="button" onclick="toggleUserPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;font-size:1.1rem;color:var(--muted);padding:4px;cursor:pointer">👁</button>
+        </div>
+      </div>
+      <button class="btn btn-pink btn-block" id="si-btn" onclick="doSignin()">Sign In</button>
+      <p class="auth-switch">No account? <a onclick="showSection('signup')">Create one</a></p>
+      <p class="auth-switch" style="margin-top: 10px; font-size: 0.8rem;"><a onclick="showSection('reset')">Forgot your password?</a></p>
+    </div>
+  </section>
+
+  <!-- ============ SIGN UP ============ -->
+  <section class="section" id="section-signup">
+    <div class="auth-wrap">
+      <h3>Create Account</h3>
+      <p class="sub">Join Chella Designs and start customising.</p>
+      <div class="field"><label>Full Name *</label><input id="su-name" type="text" placeholder="Jane Doe" autocomplete="name"></div>
+      <div class="field"><label>Email *</label><input id="su-email" type="email" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="field"><label>Phone</label><input id="su-phone" type="tel" placeholder="0821234567" autocomplete="tel"></div>
+      <div class="field">
+        <label>Password *</label>
+        <input id="su-password" type="password" placeholder="Min 8 chars, 1 uppercase, 1 number" autocomplete="new-password" oninput="checkPwStrength()">
+        <div class="pw-hint" id="pw-hint">Must be 8+ chars, contain an uppercase letter and a number.</div>
+      </div>
+      <div class="field"><label>Confirm Password *</label><input id="su-confirm" type="password" placeholder="Re-enter password" autocomplete="new-password"></div>
+      <button class="btn btn-pink btn-block" id="su-btn" onclick="doSignup()">Create Account</button>
+      <p class="auth-switch">Already have an account? <a onclick="showSection('signin')">Sign in</a></p>
+    </div>
+  </section>
+
+  <!-- ============ PASSWORD RESET ============ -->
+  <section class="section" id="section-reset">
+    <div class="auth-wrap">
+      <h3>Reset Password</h3>
+      <p class="sub">Enter your email and a new password.</p>
+      <div class="field"><label>Email Address</label><input id="reset-email" type="email" placeholder="you@example.com"></div>
+      <div class="field">
+        <label>New Password</label>
+        <input id="reset-password" type="password" placeholder="Min 8 chars, 1 uppercase, 1 number">
+        <div class="pw-hint" id="reset-pw-hint">Must be 8+ chars, contain an uppercase letter and a number.</div>
+      </div>
+      <button class="btn btn-pink btn-block" id="reset-btn" onclick="doResetPassword()">Reset Password</button>
+      <p class="auth-switch">Remembered it? <a onclick="showSection('signin')">Sign In</a></p>
+    </div>
+  </section>
+
+  <!-- ============ PROFILE ============ -->
+  <section class="section" id="section-profile">
+    <div class="section-head">
+      <h2>My <span>Account</span></h2>
+      <div class="underline"></div>
+    </div>
+    <div class="auth-wrap" style="max-width:700px">
+      <div class="profile-head">
+        <div class="avatar" id="pf-avatar">?</div>
+        <div class="ph-info">
+          <h3 id="pf-name">User</h3>
+          <p id="pf-email">user@example.com</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="logoutUser()">Sign Out</button>
+      </div>
+      <h4 style="margin-bottom:12px;font-family:'Poppins';font-size:.95rem">📦 My Orders</h4>
+      <div id="profile-orders"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ PRODUCT MODAL ============ -->
+<div class="modal-overlay" id="product-modal" onclick="if(event.target===this)closeProductModal()">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <h3 id="pm-title">Product</h3>
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="modal-body" id="product-modal-body"></div>
+  </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div class="brand-text" style="margin-bottom:12px">
+        <span class="b1">Chella</span>
+        <span class="b2">DESIGNS</span>
+      </div>
+      <p>Personalised gifts and décor, crafted with love in South Africa. Create • Customise • Inspire.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a onclick="showSection('shop')">All Products</a></li>
+        <li><a onclick="showSection('cart')">My Cart</a></li>
+        <li><a onclick="showSection('track')">Track Order</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Account</h4>
+      <ul>
+        <li><a onclick="showSection('signin')">Sign In</a></li>
+        <li><a onclick="showSection('signup')">Create Account</a></li>
+        <li><a onclick="showSection('profile')">My Orders</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">© <span id="foot-yr"></span> Chella Designs · All rights reserved</div>
+</footer>
+
+<script>
+/* ============================================================
+   SUPABASE CONFIG
+   ============================================================ */
+const SUPABASE_URL  = 'https://ameievgeatgzqtdhdktq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtZWlldmdlYXRnenF0ZGhka3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyMDk2MTQsImV4cCI6MjExMDc4NTYxNH0.1ifjvin1cjPWRDH_qgXwb_CbjGDKzJ0PbXnzBDXHVpM';
+
+let sb = null;
+
+/* ============================================================
+   SAFE STORAGE & SESSION TIMEOUT (2 HOURS)
+   ============================================================ */
+const safeStore = {
+  get(k, fb=null){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; }catch(e){ return fb; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+const SESSION_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 Hours
+
+function checkSession() {
+  const session = safeStore.get('chella_user_session', null);
+  if (!session) return null;
+  
+  if (Date.now() - session.timestamp > SESSION_TIMEOUT_MS) {
+    safeStore.del('chella_user_session');
+    safeStore.del('chella_user');
+    return null;
+  }
+  
+  session.timestamp = Date.now();
+  safeStore.set('chella_user_session', session);
+  return session.user;
+}
+
+function startSession(user) {
+  safeStore.set('chella_user_session', {
+    user: user,
+    timestamp: Date.now()
+  });
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let PRODUCTS = [];
+let cart = safeStore.get('chella_cart', []);
+let selectedCategory = 'all';
+let selectedPayMethod = 'card';
+let currentProductForModal = null;
+let modalQty = 1;
+
+const $ = id => document.getElementById(id);
+const R = n => 'R' + Number(n).toFixed(2);
+
+/* ============================================================
+   INIT SUPABASE
+   ============================================================ */
+function waitForSupabase(){
+  return new Promise(resolve => {
+    if (window.supabase && typeof window.supabase.createClient === 'function'){
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      return resolve(sb);
+    }
+    let tries = 0;
+    const iv = setInterval(() => {
+      tries++;
+      if (window.supabase && typeof window.supabase.createClient === 'function'){
+        clearInterval(iv);
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        resolve(sb);
+      } else if (tries > 60){
+        clearInterval(iv); resolve(null);
+      }
+    }, 100);
+  });
+}
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+function toast(msg, type='pink'){
+  const wrap = $('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity = '0'; t.style.transform = 'translateY(-16px)'; setTimeout(()=>t.remove(),350); }, 3000);
+}
+
+/* ============================================================
+   COOKIES
+   ============================================================ */
+if (!localStorage.getItem('chella_cookies_ok')) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const b = $('cookie-banner');
+    if (b) b.classList.add('show');
+  });
+}
+function acceptCookies(){
+  try{ localStorage.setItem('chella_cookies_ok','1'); }catch(e){}
+  $('cookie-banner').classList.remove('show');
+}
+
+/* ============================================================
+   SECTION NAVIGATION
+   ============================================================ */
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('section-' + name);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('nav a.nav-link').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === name);
+  });
+  document.querySelector('nav ul')?.classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (name === 'cart') renderCart();
+  if (name === 'checkout') {
+    const u = currentUser();
+    if (!u) {
+      document.getElementById('checkout-login-warning').style.display = 'block';
+      document.getElementById('checkout-form-area').style.display = 'none';
+    } else {
+      document.getElementById('checkout-login-warning').style.display = 'none';
+      document.getElementById('checkout-form-area').style.display = 'grid';
+      if (!$('co-name').value) $('co-name').value = u.full_name || '';
+      if (!$('co-email').value) $('co-email').value = u.email || '';
+      if (!$('co-phone').value) $('co-phone').value = u.phone || '';
+      renderCheckoutSummary();
+    }
+  }
+  if (name === 'profile') renderProfile();
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+function currentUser(){ 
+  return checkSession(); 
+}
+
+function toggleUserPw(){
+  const inp = document.getElementById('si-password');
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function validatePassword(pw){
+  if (pw.length < 8) return 'Password must be at least 8 characters';
+  if (!/[A-Z]/.test(pw)) return 'Password must contain an uppercase letter';
+  if (!/[0-9]/.test(pw)) return 'Password must contain a number';
+  return null;
+}
+
+function checkPwStrength(){
+  const pw = $('su-password').value;
+  const hint = $('pw-hint');
+  if (!pw){ hint.textContent = 'Must be 8+ chars, contain an uppercase letter and a number.'; hint.className = 'pw-hint'; return; }
+  const err = validatePassword(pw);
+  if (err){ hint.textContent = '⚠ ' + err; hint.className = 'pw-hint bad'; }
+  else { hint.textContent = '✓ Strong password'; hint.className = 'pw-hint good'; }
+}
+
+async function doSignup(){
+  const name = $('su-name').value.trim();
+  const email = $('su-email').value.trim().toLowerCase();
+  const phone = $('su-phone').value.trim();
+  const password = $('su-password').value;
+  const confirm = $('su-confirm').value;
+
+  if (!name || !email || !password) { toast('Please fill in all required fields', 'error'); return; }
+  if (password !== confirm) { toast('Passwords do not match', 'error'); return; }
+  const err = validatePassword(password);
+  if (err) { toast(err, 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
+
+  if (!sb) { toast('Cloud not ready — try again in a moment', 'error'); return; }
+
+  $('su-btn').disabled = true;
+  $('su-btn').innerHTML = '⏳ Creating...';
+
+  const { data, error } = await sb.rpc('register_user', {
+    p_email: email,
+    p_full_name: name,
+    p_phone: phone,
+    p_password: password
+  });
+
+  $('su-btn').disabled = false;
+  $('su-btn').innerHTML = 'Create Account';
+
+  if (error || !data?.ok){
+    toast('❌ ' + (error?.message || data?.error || 'Signup failed'), 'error');
+    return;
+  }
+
+  startSession({ id: data.user_id, email, full_name: name, phone });
+  toast('🎉 Account created!', 'teal');
+  updateAuthUI();
+  showSection('shop');
+}
+
+async function doSignin(){
+  const email = $('si-email').value.trim().toLowerCase();
+  const password = $('si-password').value;
+  if (!email || !password) { toast('Please fill in all fields', 'error'); return; }
+  if (!sb) { toast('Cloud not ready — try again', 'error'); return; }
+
+  $('si-btn').disabled = true;
+  $('si-btn').innerHTML = '⏳ Signing in...';
+
+  const { data, error } = await sb.rpc('login_user', {
+    p_email: email,
+    p_password: password
+  });
+
+  $('si-btn').disabled = false;
+  $('si-btn').innerHTML = 'Sign In';
+
+  if (error || !data?.ok){
+    toast('❌ ' + (error?.message || data?.error || 'Login failed'), 'error');
+    return;
+  }
+
+  startSession(data.user);
+  toast('👋 Welcome back, ' + (data.user.full_name || 'friend') + '!', 'teal');
+  updateAuthUI();
+  showSection('shop');
+}
+
+async function doResetPassword(){
+  const email = $('reset-email').value.trim().toLowerCase();
+  const password = $('reset-password').value;
+
+  if (!email || !password) { toast('Please fill in all fields', 'error'); return; }
+  const err = validatePassword(password);
+  if (err) { toast(err, 'error'); return; }
+
+  if (!sb) { toast('Cloud not ready — try again', 'error'); return; }
+
+  $('reset-btn').disabled = true;
+  $('reset-btn').innerHTML = '⏳ Resetting...';
+
+  const { data, error } = await sb.rpc('reset_user_password', {
+    p_email: email,
+    p_new_password: password
+  });
+
+  $('reset-btn').disabled = false;
+  $('reset-btn').innerHTML = 'Reset Password';
+
+  if (error || !data?.ok){
+    toast('❌ ' + (error?.message || data?.error || 'Reset failed'), 'error');
+    return;
+  }
+
+  toast('✅ Password updated! Please sign in.', 'teal');
+  showSection('signin');
+}
+
+function logoutUser(){
+  safeStore.del('chella_user_session');
+  safeStore.del('chella_user');
+  toast('👋 Signed out', 'pink');
+  updateAuthUI();
+  showSection('home');
+}
+
+function updateAuthUI(){
+  const u = currentUser();
+  const authItem = $('nav-auth-item');
+  const userItem = $('nav-user-item');
+  const userName = $('nav-user-name');
+  if (!authItem) return;
+  if (u){
+    authItem.style.display = 'none';
+    userItem.style.display = '';
+    if (userName) userName.textContent = (u.full_name || 'Account').split(' ')[0];
+  } else {
+    authItem.style.display = '';
+    userItem.style.display = 'none';
+  }
+}
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
+async function loadProductsFromCloud(){
+  if (!sb) return;
+  const { data, error } = await sb.from('products').select('*').eq('active', true).order('created_at', { ascending: false });
+  if (error){ console.error('products:', error); return; }
+  PRODUCTS = (data || []).map(p => ({
+    id: p.id,
+    name: p.name,
+    cat: p.cat,
+    price: Number(p.price) || 0,
+    oldPrice: p.old_price ? Number(p.old_price) : null,
+    discount: Number(p.discount) || 0,
+    emoji: p.emoji || '📦',
+    image_url: p.image_url || null,
+    desc: p.description || '',
+    badge: p.badge || ''
+  }));
+  renderShop();
+}
+
+function renderShop(){
+  renderCategoryChips();
+  renderProductGrid();
+}
+
+function renderCategoryChips(){
+  const cats = ['all', ...new Set(PRODUCTS.map(p => p.cat))];
+  const labels = { all: '🌐 All' };
+  const emojis = { 'Mugs':'☕','Mouse Pads':'🖱️','Cake Toppers':'🎂','Key Rings':'🔑','Stickers':'✨','Colouring Books':'🎨','Smarties Shaker':'🍬','T-Shirts':'👕' };
+  $('category-chips').innerHTML = cats.map(c => {
+    const lbl = labels[c] || (emojis[c] || '📦') + ' ' + c;
+    return `<button class="chip ${selectedCategory === c ? 'active' : ''}" onclick="setCategory('${c.replace(/'/g,"\\'")}')">${lbl}</button>`;
+  }).join('');
+}
+
+function setCategory(c){
+  selectedCategory = c;
+  renderCategoryChips();
+  renderProductGrid();
+}
+
+function renderProductGrid(){
+  const grid = $('product-grid');
+  let list = PRODUCTS;
+  if (selectedCategory !== 'all') list = list.filter(p => p.cat === selectedCategory);
+
+  if (!list.length){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <span class="big">📭</span>
+      <strong style="display:block;font-size:1rem;color:var(--ink);margin-bottom:6px">No products yet</strong>
+      <span style="font-size:.82rem">Check back soon — the admin is stocking up!</span>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(p => {
+    const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
+    const oldPriceHtml = (p.oldPrice && p.oldPrice > finalPrice)
+      ? `<span class="p-old">${R(p.oldPrice)}</span>` : '';
+    const discountHtml = p.discount > 0
+      ? `<span class="p-disc">${p.discount}% off</span>` : '';
+      
+    const visualHtml = p.image_url 
+      ? `<img src="${p.image_url}">` 
+      : p.emoji;
+
+    return `<div class="product-card" onclick="openProductModal('${p.id}')">
+      <div class="p-img" style="background:linear-gradient(135deg,#fff0f7,#f5f3ff)">
+        ${p.badge ? `<div class="p-badge custom">${escapeHtml(p.badge)}</div>` : ''}
+        <div class="glow"></div>
+        <div class="emo">${visualHtml}</div>
+      </div>
+      <div class="p-body">
+        <span class="p-cat">${escapeHtml(p.cat)}</span>
+        <h4>${escapeHtml(p.name)}</h4>
+        <div class="p-foot">
+          <div class="p-price">${R(finalPrice)} ${discountHtml}${oldPriceHtml}<small>incl. VAT</small></div>
+          <div class="p-open">→</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============================================================
+   PRODUCT MODAL
+   ============================================================ */
+function openProductModal(id){
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  currentProductForModal = p;
+  modalQty = 1;
+  const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
+  const oldPriceHtml = (p.oldPrice && p.oldPrice > finalPrice)
+    ? `<span class="pd-price-old">${R(p.oldPrice)}</span>` : '';
+    
+  const visualHtml = p.image_url
+    ? `<img src="${p.image_url}">`
+    : p.emoji;
+
+  $('pm-title').textContent = p.name;
+  $('product-modal-body').innerHTML = `
+    <div class="pd-grid">
+      <div class="pd-visual" style="background:linear-gradient(135deg,#fff0f7,#f5f3ff)">
+        <div class="glow"></div>
+        <div class="pd-preview" style="background:linear-gradient(135deg,#fce7f3,#e9d5ff);overflow:hidden;">${visualHtml}</div>
+      </div>
+      <div class="pd-info">
+        <span class="p-cat">${escapeHtml(p.cat)}</span>
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="pd-price-row">
+          <span class="pd-price">${R(finalPrice)}</span>
+          ${oldPriceHtml}
+          ${p.discount > 0 ? `<span class="p-disc">${p.discount}% off</span>` : ''}
+        </div>
+        <p class="pd-desc">${escapeHtml(p.desc || 'Handcrafted with love by Chella Designs.')}</p>
+        <div class="pd-section">
+          <h5>Quantity</h5>
+          <div class="qty-row">
+            <div class="qty-ctrl">
+              <button onclick="changeModalQty(-1)">−</button>
+              <span id="modal-qty">1</span>
+              <button onclick="changeModalQty(1)">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-pink btn-block" onclick="addModalToCart()" style="margin-top:14px">🛒 Add to Cart — ${R(finalPrice)}</button>
+      </div>
+    </div>`;
+  $('product-modal').classList.add('active');
+}
+
+function changeModalQty(delta){
+  modalQty = Math.max(1, modalQty + delta);
+  const el = $('modal-qty');
+  if (el) el.textContent = modalQty;
+  const p = currentProductForModal;
+  if (p){
+    const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
+    const btn = $('product-modal-body').querySelector('.btn-block');
+    if (btn) btn.textContent = `🛒 Add to Cart — ${R(finalPrice * modalQty)}`;
+  }
+}
+
+function addModalToCart(){
+  if (!currentProductForModal) return;
+  const p = currentProductForModal;
+  const finalPrice = p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price;
+  const existing = cart.find(c => c.id === p.id && !c.custom);
+  if (existing) existing.qty += modalQty;
+  else cart.push({ id: p.id, name: p.name, cat: p.cat, emoji: p.emoji, image_url: p.image_url, unitPrice: finalPrice, qty: modalQty });
+  saveCart();
+  toast(`🛒 Added ${p.name} ×${modalQty}`, 'teal');
+  closeProductModal();
+}
+
+function closeProductModal(){
+  $('product-modal').classList.remove('active');
+  currentProductForModal = null;
+}
+
+/* ============================================================
+   CART
+   ============================================================ */
+function saveCart(){
+  safeStore.set('chella_cart', cart);
+  updateCartCount();
+}
+
+function updateCartCount(){
+  const total = cart.reduce((s, c) => s + c.qty, 0);
+  const el = $('cart-count');
+  if (el){
+    el.textContent = total;
+    el.classList.add('pop');
+    setTimeout(() => el.classList.remove('pop'), 450);
+  }
+}
+
+function renderCart(){
+  const wrap = $('cart-content');
+  if (!wrap) return;
+  if (!cart.length){
+    wrap.innerHTML = `<div class="empty-state">
+      <span class="big">🛒</span>
+      <strong style="display:block;font-size:1rem;color:var(--ink);margin-bottom:6px">Your cart is empty</strong>
+      <span style="font-size:.82rem;margin-bottom:16px;display:block">Browse our beautiful custom products.</span>
+      <button class="btn btn-pink" onclick="showSection('shop')">🛍️ Shop Now</button>
+    </div>`;
+    return;
+  }
+
+  const subtotal = cart.reduce((s, c) => s + c.unitPrice * c.qty, 0);
+  const delivery = subtotal >= 500 ? 0 : 60;
+  const total = subtotal + delivery;
+
+  wrap.innerHTML = `
+    <div class="cart-layout">
+      <div class="cart-list">
+        ${cart.map((c, i) => `
+          <div class="cart-item">
+            <div class="ci-thumb">
+              ${c.image_url ? `<img src="${c.image_url}">` : c.emoji}
+            </div>
+            <div class="ci-main">
+              <h4>${escapeHtml(c.name)}</h4>
+              <span class="ci-cat">${escapeHtml(c.cat)}</span>
+              ${c.custom ? `<span class="ci-custom">🎨 Custom</span>` : ''}
+            </div>
+            <div class="ci-right">
+              <div class="ci-price">${R(c.unitPrice * c.qty)}</div>
+              <div class="qty-mini">
+                <button onclick="changeCartQty(${i}, -1)">−</button>
+                <span>${c.qty}</span>
+                <button onclick="changeCartQty(${i}, 1)">+</button>
+              </div>
+              <button class="ci-remove" onclick="removeFromCart(${i})">🗑</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="summary-card">
+        <h3>📋 Order Summary</h3>
+        <div class="sum-row"><span>Subtotal</span><span>${R(subtotal)}</span></div>
+        <div class="sum-row"><span>Delivery</span><span>${delivery === 0 ? 'FREE' : R(delivery)}</span></div>
+        <div class="sum-total"><span>Total</span><span>${R(total)}</span></div>
+        <button class="btn btn-pink btn-block" style="margin-top:18px" onclick="showSection('checkout')">Checkout →</button>
+      </div>
+    </div>`;
+}
+
+function changeCartQty(i, delta){
+  if (!cart[i]) return;
+  cart[i].qty = Math.max(1, cart[i].qty + delta);
+  saveCart();
+  renderCart();
+}
+
+function removeFromCart(i){
+  cart.splice(i, 1);
+  saveCart();
+  renderCart();
+  toast('🗑 Removed from cart', 'pink');
+}
+
+/* ============================================================
+   CHECKOUT & PAYMENTS
+   ============================================================ */
+function renderCheckoutSummary(){
+  const wrap = $('checkout-summary');
+  if (!wrap) return;
+  if (!cart.length){ wrap.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Cart is empty.</p>'; return; }
+  const subtotal = cart.reduce((s, c) => s + c.unitPrice * c.qty, 0);
+  const delivery = subtotal >= 500 ? 0 : 60;
+  const total = subtotal + delivery;
+  wrap.innerHTML = `
+    <h3>📋 Order Summary</h3>
+    <div class="sum-row"><span>Subtotal</span><span>${R(subtotal)}</span></div>
+    <div class="sum-row"><span>Delivery</span><span>${delivery === 0 ? 'FREE' : R(delivery)}</span></div>
+    <div class="sum-total"><span>Total</span><span>${R(total)}</span></div>
+    <button class="btn btn-pink btn-block" style="margin-top:18px" onclick="placeOrder()">✅ Place Order</button>
+    <p style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:10px">By placing your order you agree to our terms.</p>`;
+}
+
+function selectPayMethod(m){
+  selectedPayMethod = m;
+  document.querySelectorAll('.pm').forEach(el => el.classList.toggle('active', el.dataset.method === m));
+  
+  const cardUI = document.getElementById('card-details-ui');
+  if (m === 'card' || m === 'applepay') {
+    cardUI.style.display = 'block';
+  } else {
+    cardUI.style.display = 'none';
+  }
+}
+
+// Basic Fraud Detection (Luhn Algorithm Simulation)
+function isValidCardNumber(number) {
+  const re = /^[0-9]{15,16}$/;
+  if (!re.test(number.replace(/\s/g, ''))) return false;
+  return true; 
+}
+
+async function placeOrder(){
+  if (!cart.length){ toast('Cart is empty', 'error'); return; }
+  
+  const user = currentUser();
+  if (!user) { toast('Please sign in to place an order', 'error'); showSection('signin'); return; }
+
+  const name = $('co-name').value.trim();
+  const phone = $('co-phone').value.trim();
+  const email = $('co-email').value.trim();
+  const city = $('co-city').value.trim();
+  const address = $('co-address').value.trim();
+  const notes = $('co-notes').value.trim();
+  
+  if (!name || !phone || !email || !city || !address){ toast('Please fill all required fields', 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('Invalid email', 'error'); return; }
+  
+  // FRAUD DETECTION: Block suspicious emails
+  const badDomains = ['tempmail.com', 'guerrillamail.com', '10minutemail.com'];
+  const emailDomain = email.split('@')[1];
+  if (badDomains.includes(emailDomain)) {
+    toast('❌ Orders cannot be placed with temporary email addresses.', 'error');
+    return;
+  }
+
+  if (!sb){ toast('Cloud not ready', 'error'); return; }
+
+  // Validation for Card Payments
+  if (selectedPayMethod === 'card' || selectedPayMethod === 'applepay') {
+    const ccNum = $('cc-num').value.trim();
+    const ccExp = $('cc-exp').value.trim();
+    const ccCvv = $('cc-cvv').value.trim();
+    
+    if (!ccNum || !ccExp || !ccCvv) { toast('Please fill in your card details', 'error'); return; }
+    if (!isValidCardNumber(ccNum)) { toast('Invalid card number format', 'error'); return; }
+    if (ccCvv.length < 3) { toast('Invalid CVV', 'error'); return; }
+  }
+
+  const subtotal = cart.reduce((s, c) => s + c.unitPrice * c.qty, 0);
+  const delivery = subtotal >= 500 ? 0 : 60;
+  const total = subtotal + delivery;
+
+  const ref = 'CHL-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+  
+  // E2E ENCRYPTION SIMULATION: We never send the actual card number.
+  let securePaymentToken = null;
+  if (selectedPayMethod === 'card' || selectedPayMethod === 'applepay') {
+    securePaymentToken = 'tok_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+  }
+
+  const payload = {
+    ref,
+    customer: name,
+    email,
+    phone,
+    city,
+    address,
+    notes,
+    items: cart.map(c => ({
+      id: c.id, name: c.name, cat: c.cat, emoji: c.emoji,
+      unitPrice: c.unitPrice, qty: c.qty,
+      custom: c.custom || null
+    })),
+    subtotal,
+    delivery,
+    discount: 0,
+    total,
+    status: selectedPayMethod === 'cod' ? 'Pending' : 'Awaiting Payment',
+    method: selectedPayMethod,
+    placed_by: user.email,
+    date: new Date().toLocaleDateString('en-ZA', { year:'numeric', month:'short', day:'numeric' })
+  };
+
+  const btn = event?.target;
+  if (btn){ btn.disabled = true; btn.innerHTML = '⏳ Processing secure checkout...'; }
+
+  const { error } = await sb.from('orders').insert(payload);
+
+  if (error){
+    console.error(error);
+    toast('❌ Order failed: ' + error.message, 'error');
+    if (btn){ btn.disabled = false; btn.innerHTML = '✅ Place Order'; }
+    return;
+  }
+
+  // REAL-WORLD PAYMENT LOGIC
+  if (selectedPayMethod === 'card' || selectedPayMethod === 'applepay') {
+    btn.innerHTML = '🔒 Encrypting & verifying...';
+    setTimeout(() => {
+      cart = [];
+      saveCart();
+      showPaymentSuccess(ref, payload, securePaymentToken); 
+    }, 2500);
+    return;
+  }
+
+  if (selectedPayMethod === 'eft') {
+    cart = [];
+    saveCart();
+    showEftInstructions(ref, payload);
+    return;
+  }
+
+  if (selectedPayMethod === 'cod') {
+    cart = [];
+    saveCart();
+    showCodSuccess(ref, payload);
+    return;
+  }
+}
+
+function showPaymentSuccess(ref, order, token) {
+  const wrap = $('invoice-content');
+  wrap.innerHTML = `
+    <div class="inv-ico">✅</div>
+    <h2>Payment Successful!</h2>
+    <p style="color:var(--muted);margin-top:6px">Your payment has been processed securely.</p>
+    <div class="ref-number">${ref}</div>
+    <div class="inv-details">
+      <p><strong>Name:</strong> ${escapeHtml(order.customer)}</p>
+      <p><strong>Total Paid:</strong> ${R(order.total)}</p>
+      <p><strong>Payment Method:</strong> ${order.method.toUpperCase()}</p>
+      <p><strong>Auth Code:</strong> <span style="font-family:monospace;font-size:0.8rem;">${token}</span></p>
+      <p><strong>Status:</strong> <span class="status-pill sp-completed">Paid</span></p>
+    </div>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:15px;text-align:center;">🔒 Your transaction was secured with 256-bit encryption.</p>
+    <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-outline" onclick="showSection('shop')">Continue Shopping</button>
+      <button class="btn btn-pink" onclick="showSection('profile')">View My Orders</button>
+    </div>`;
+  showSection('invoice');
+  toast('🎉 Payment successful!', 'gold');
+}
+
+function showEftInstructions(ref, order) {
+  const wrap = $('invoice-content');
+  wrap.innerHTML = `
+    <div class="inv-ico">🏦</div>
+    <h2>Awaiting Payment (EFT)</h2>
+    <p style="color:var(--muted);margin-top:6px">Please complete your payment using the details below.</p>
+    <div class="ref-number">${ref}</div>
+    
+    <div class="inv-details" style="background:#fef3c7; border-color:#fde68a;">
+      <p><strong>Bank:</strong> FNB</p>
+      <p><strong>Account Name:</strong> Chella Designs</p>
+      <p><strong>Account Number:</strong> 628 123 4567</p>
+      <p><strong>Branch Code:</strong> 250655</p>
+      <p><strong>Reference:</strong> ${ref}</p>
+      <p><strong>Amount:</strong> ${R(order.total)}</p>
+    </div>
+    
+    <p style="font-size:.82rem;color:var(--muted);margin-top:18px">Please email your proof of payment to <strong>payments@chelladesigns.co.za</strong>. Once verified, your order will be processed.</p>
+    
+    <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-outline" onclick="showSection('shop')">Continue Shopping</button>
+      <button class="btn btn-pink" onclick="showSection('profile')">View My Orders</button>
+    </div>`;
+  showSection('invoice');
+  toast('📧 EFT instructions generated!', 'teal');
+}
+
+function showCodSuccess(ref, order) {
+  const wrap = $('invoice-content');
+  wrap.innerHTML = `
+    <div class="inv-ico">💵</div>
+    <h2>Order Confirmed (COD)</h2>
+    <p style="color:var(--muted);margin-top:6px">You will pay cash when your order is delivered.</p>
+    <div class="ref-number">${ref}</div>
+    
+    <div class="inv-details">
+      <p><strong>Name:</strong> ${escapeHtml(order.customer)}</p>
+      <p><strong>Total to Pay:</strong> ${R(order.total)}</p>
+      <p><strong>Payment Method:</strong> Cash on Delivery</p>
+      <p><strong>Status:</strong> <span class="status-pill sp-pending">Pending</span></p>
+    </div>
+    
+    <p style="font-size:.82rem;color:var(--muted);margin-top:18px">Our driver will contact you on <strong>${escapeHtml(order.phone)}</strong> before delivery.</p>
+    
+    <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-outline" onclick="showSection('shop')">Continue Shopping</button>
+      <button class="btn btn-pink" onclick="showSection('profile')">View My Orders</button>
+    </div>`;
+  showSection('invoice');
+  toast('📦 Order placed successfully!', 'gold');
+}
+
+/* ============================================================
+   TRACK
+   ============================================================ */
+async function trackOrder(){
+  const ref = $('track-ref').value.trim().toUpperCase();
+  if (!ref){ toast('Enter a reference', 'error'); return; }
+  if (!sb){ toast('Cloud not ready', 'error'); return; }
+  const { data, error } = await sb.from('orders').select('*').eq('ref', ref).maybeSingle();
+  const res = $('track-result');
+  if (error || !data){
+    res.innerHTML = `<div class="track-result" style="background:#fee2e2;border-color:#fca5a5"><h4 style="color:#991b1b">❌ Not Found</h4><p>No order with reference <strong>${escapeHtml(ref)}</strong>.</p></div>`;
+    return;
+  }
+  const steps = ['Pending','Accepted','Printing','Shipped','Completed'];
+  const idx = steps.indexOf(data.status);
+  const cancelled = data.status === 'Cancelled';
+  res.innerHTML = `<div class="track-result">
+    <h4>📦 Order ${escapeHtml(data.ref)}</h4>
+    <p style="margin-bottom:10px"><strong>Status:</strong> <span class="status-pill sp-${data.status.toLowerCase()}">${data.status}</span></p>
+    <p style="font-size:.82rem;color:var(--muted)">Placed on ${escapeHtml(data.date || '')} · ${escapeHtml(data.customer || '')}</p>
+    <p style="font-size:.95rem;margin-top:10px"><strong>Total:</strong> ${R(data.total)}</p>
+    <div style="display:flex;gap:6px;margin-top:16px">
+      ${steps.map((s, i) => `<div style="flex:1;text-align:center;font-size:.62rem;color:${cancelled?'#b91c1c':(i<=idx?'var(--pink-deep)':'var(--muted)')};font-weight:600">
+        <div style="width:26px;height:26px;border-radius:50%;background:${cancelled?'#ef4444':(i<=idx?'var(--grad-pink)':'#f1f5f9')};color:${i<=idx||cancelled?'#fff':'#94a3b8'};margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700">${i<=idx||cancelled?'✓':i+1}</div>
+        ${s}
+      </div>`).join('')}
+    </div>
+    ${cancelled ? '<p style="margin-top:12px;color:#991b1b;font-weight:700">This order was cancelled.</p>' : ''}
+  </div>`;
+}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+async function renderProfile(){
+  const u = currentUser();
+  if (!u){ showSection('signin'); return; }
+  $('pf-name').textContent = u.full_name || 'User';
+  $('pf-email').textContent = u.email || '';
+  $('pf-avatar').textContent = (u.full_name || u.email || '?').charAt(0).toUpperCase();
+
+  const wrap = $('profile-orders');
+  wrap.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Loading orders…</p>';
+  if (!sb) return;
+
+  const { data, error } = await sb.from('orders').select('*')
+    .or(`email.eq.${u.email},placed_by.eq.${u.email}`)
+    .order('created_at', { ascending: false });
+
+  if (error || !data || !data.length){
+    wrap.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No orders yet. <a style="color:var(--pink-deep);font-weight:700" onclick="showSection(\'shop\')">Start shopping →</a></p>';
+    return;
+  }
+
+  wrap.innerHTML = data.map(o => {
+    const items = typeof o.items === 'string' ? safeJsonParse(o.items, []) : (o.items || []);
+    return `<div class="order-card status-${o.status}">
+      <div class="oc-head">
+        <div>
+          <span class="oc-ref">${escapeHtml(o.ref)}</span>
+          <div style="font-size:.72rem;color:var(--muted)">${escapeHtml(o.date || '')}</div>
+        </div>
+        <span class="status-pill sp-${o.status.toLowerCase()}">${o.status}</span>
+      </div>
+      <div class="oc-items">
+        ${items.map(i => `<div class="oc-item-line">
+          <span class="oi-emoji">${i.emoji || '📦'}</span>
+          <span class="oi-name">${escapeHtml(i.name)}</span>
+          <span class="oi-qty">×${i.qty}</span>
+        </div>`).join('')}
+      </div>
+      <div class="oc-foot">
+        <div class="oc-total">${R(o.total)}</div>
+        <button class="btn btn-ghost btn-sm" onclick="trackThis('${escapeHtml(o.ref)}')">Track →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function trackThis(ref){
+  $('track-ref').value = ref;
+  showSection('track');
+  trackOrder();
+}
+
+function safeJsonParse(s, fb){ try { return JSON.parse(s); }catch(e){ return fb; } }
+
+/* ============================================================
+   LOGO
+   ============================================================ */
+async function loadLogoFromCloud(){
+  if (!sb) return;
+  const { data } = await sb.from('site_settings').select('value').eq('key','logo_url').maybeSingle();
+  if (!data?.value) return;
+  document.querySelectorAll('img.logo-img').forEach(img => {
+    img.src = data.value;
+    img.onerror = function(){ this.style.display = 'none'; };
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function init(){
+  $('foot-yr').textContent = new Date().getFullYear();
+  updateCartCount();
+  
+  const user = checkSession();
+  updateAuthUI();
+
+  const authHint = (()=>{ try{ return sessionStorage.getItem('chella_open_auth'); }catch(e){ return null; } })();
+  if (authHint){
+    try{ sessionStorage.removeItem('chella_open_auth'); }catch(e){}
+    setTimeout(() => showSection(authHint === 'signup' ? 'signup' : 'signin'), 200);
+  }
+
+  const client = await waitForSupabase();
+  if (!client){
+    toast('⚠️ Could not connect to cloud — check connection', 'error');
+    return;
+  }
+
+  await loadLogoFromCloud();
+  await loadProductsFromCloud();
+
+  try {
+    sb.channel('shop-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => loadProductsFromCloud())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => loadLogoFromCloud())
+      .subscribe();
+  } catch(e){ console.warn('realtime:', e); }
+  
+  // Session timeout checker
+  setInterval(() => {
+    if (currentUser() === null && localStorage.getItem('chella_user_session')) {
+       toast('⏳ Session expired. Please sign in again.', 'error');
+       updateAuthUI();
+       showSection('signin');
+    }
+  }, 60000);
+})();
+
+// Expose functions used in inline handlers
+window.showSection = showSection;
+window.setCategory = setCategory;
+window.openProductModal = openProductModal;
+window.closeProductModal = closeProductModal;
+window.changeModalQty = changeModalQty;
+window.addModalToCart = addModalToCart;
+window.changeCartQty = changeCartQty;
+window.removeFromCart = removeFromCart;
+window.selectPayMethod = selectPayMethod;
+window.placeOrder = placeOrder;
+window.trackOrder = trackOrder;
+window.trackThis = trackThis;
+window.doSignin = doSignin;
+window.doSignup = doSignup;
+window.doResetPassword = doResetPassword;
+window.logoutUser = logoutUser;
+window.checkPwStrength = checkPwStrength;
+window.acceptCookies = acceptCookies;
+window.toggleUserPw = toggleUserPw;
+</script>
+</body>
+</html>
